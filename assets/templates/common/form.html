@@ -1,0 +1,30 @@
+<div class="message-form">
+	<div class="page-header">
+			<h4>{{ title }}</h4>
+	</div>
+	<form ng-submit="send()">
+		<div class="users-wrapper">
+			<ul>
+				<li ng-repeat="user in users">
+					{{ user }}
+				</li>
+			</ul>
+		</div>
+		<div class="messages-wrapper">
+			<ul>
+			  <li ng-repeat="message in messages">
+			    <blockquote>
+			      <cite class="clearfix">{{message.user}} </cite>
+			      {{ message.text }}
+			    </blockquote>
+			  </li>
+			</ul>
+		</div>
+		<div class="input-group">
+			<label class="label label-info"> Your name/alias is </label>
+			<input type="text" class="form-control" ng-model="name" name="alias">
+			<textarea rows="2" cols="40" ng-model="message" placeholder="Your message..."></textarea>
+			<button class="btn btn-md btn-primary" type="submit">Send</button>
+		</div>
+	</form>
+</div>

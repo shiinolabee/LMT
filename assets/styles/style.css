@@ -1,0 +1,44 @@
+
+/*.input-group button {
+	vertical-align : top;
+	margin-top : 5px;
+	margin-left : 7px;
+}
+
+.input-group label{
+	display : block;
+	font-size : 15px;
+	margin : 10px auto;
+}
+
+blockquote {
+	margin: 0 0 5px;
+    font-size: 13.5px;
+}*/
+
+ main {
+    /* start 'enter' transition */
+    &.ng-enter {
+        /* transition on enter for .5s */
+        transition: .5s;
+ 
+        /* start with opacity 0 (invisible) */
+        opacity: 0;
+    }
+ 
+    /* end 'enter' transition */
+    &.ng-enter-active {
+        /* end with opacity 1 (fade in) */
+        opacity: 1;
+    }
+}
+
+.sidebar-sub-menu {
+    background: #2c3b41;
+    list-style-type: none;
+}
+.sidebar-sub-menu li a{
+    padding: 12px 5px 12px 0px;
+    display: block;
+    color: #b8c7ce;
+}
