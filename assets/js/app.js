@@ -41,10 +41,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             views :{
                 'parent-content' : {
                     templateUrl : 'templates/common/layout.html',
-                    controller : function($scope) {
-                        $scope.isCollapsed = false;
-                        $scope.isCollapsedHorizontal = false;
-                    }
+                    controller : 'adminController'
                 }                  
             },
             data: {
@@ -62,18 +59,37 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 }
             },
             data: {
-              access: AccessLevels.user
+                access: AccessLevels.user,
+                menuCode : 1,
+                isChild : false
             },
         })
 
         .state('admin.employees', {               
-            url : 'employees/index',
+            url : 'employees/time_records',
             views : {
                 'child-content' : {
-                    templateUrl : 'templates/employees/list.html',
+                    templateUrl : 'templates/employees/list.html',                    
                     controller : 'employeeController',
                     controllerAs : 'employeeCtrl'
                 }
+            },
+            data : {
+                menuCode : 2,
+                isChild : false
+            }
+        })  
+
+        .state('admin.settings', {               
+            url : 'time_records/settings',
+            views : {
+                'child-content' : {
+                    templateUrl : 'templates/employees/settings.html',                  
+                }
+            },
+            data : {
+                menuCode : 2.5,
+                isChild : false
             }
         })  
 
@@ -83,6 +99,10 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 'child-content' : {
                     templateUrl : 'templates/reports/index.html'
                 }
+            },
+            data : {
+                menuCode : 3,
+                isChild : false
             }
         })  
 
@@ -92,6 +112,10 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 'child-content' : {
                     templateUrl : 'templates/accounting/index.html'
                 }
+            },
+            data : {
+                menuCode : 4,
+                isChild : false
             }
         }) 
 
@@ -138,7 +162,10 @@ cereliApp
             //         $state.go('login');
             //     }
               
-            // }
+            // }                               
+            $rootScope.selectedMenu = toState.data.menuCode;
+
+
             $rootScope.isAuthenticated = true;
             $rootScope.currentState = toState.name.split('.')[1];                 
 

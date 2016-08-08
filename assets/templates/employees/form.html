@@ -1,28 +1,111 @@
 <div class="modal-header">
     <h4>{{modalOptions.headerText}}</h4>
 </div>
-<div class="modal-body">   
-    <form method="post" name="employeeForm" ng-model="employeeForm" ng-submit="saveUser(employeeForm.$valid)" novalidate>
-        <div class="form-group" ng-class="{ 'has-error': (employeeForm.name.$touched || employeeForm.$submitted) && employeeForm.name.$invalid }">
-            <label for="">Full Name</label>
-            <input type="text" class="form-control" name="name" id="name" ng-model="user.name" required />
-            <span class="help-block" ng-if="(employeeForm.name.$touched || employeeForm.$submitted) && employeeForm.name.$error.required">Full Name is required</span>
-        </div>
-        <div class="form-group" ng-class="{ 'has-error': (employeeForm.email.$touched || employeeForm.$submitted) && employeeForm.email.$invalid }">
-            <label for="">Email</label>
-            <input type="email" class="form-control" name="email" id="email" ng-model="user.email" required />
-            <span class="help-block" ng-if="(employeeForm.email.$touched || employeeForm.$submitted) && employeeForm.email.$error.required">Email is required</span>
-            <span class="help-block" ng-if="(employeeForm.email.$touched || employeeForm.$submitted) && employeeForm.email.$error.email">Email is invalid</span>
-        </div>
-        <div class="form-group" ng-class="{ 'has-error': (employeeForm.password.$touched || employeeForm.$submitted) && employeeForm.password.$invalid }">
-            <label for="">Password</label>
-            <input type="password" class="form-control" name="password" id="password" ng-model="user.password" ng-minlength="6" ng-required="!editmode" />
-            <span class="help-block" ng-if="(employeeForm.password.$touched || employeeForm.$submitted) && employeeForm.password.$error.required">Password is required</span>
-            <span class="help-block" ng-if="(employeeForm.password.$touched || employeeForm.$submitted) && employeeForm.password.$error.minlength">Password must be 6 characters</span>
-        </div>          
-    </form>        
+<div class="modal-body">  
+    <div class="row">        
+        <form method="post" name="employeeForm" ng-model="employeeForm" ng-submit="saveUser(employeeForm.$valid)" novalidate>
+
+            <div class="col-md-10">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Employee Information</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="col-md-4">                            
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$invalid }">
+                                <label for="">Employee I.D</label>
+                                <input type="text" class="form-control" ng-maxlength="9" ng-required="number" name="empId" id="empId" ng-model="employee.empId" required />
+                                <span class="help-block" ng-if="(employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$error.required">Employee ID is required</span>
+                            </div>
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.position.$touched || employeeForm.$submitted) && employeeForm.position.$invalid }">
+                                <label for="">Position</label>
+                                <input type="text" class="form-control" name="position" id="position" ng-model="employee.position" required />
+                                <span class="help-block" ng-if="(employeeForm.position.$touched || employeeForm.$submitted) && employeeForm.position.$error.required">Position is required</span>
+                            </div>        
+                        </div>
+                        <div class="col-md-3">                            
+                            <div class="form-group">
+                                <label for="">Paid Leave Limit</label>
+                                <input type="text" class="form-control" name="paidLeaveLimit" id="paidLeaveLimit" ng-model="employee.paidLeaveLimit" />
+                                <!-- <span class="help-block" ng-if="(employeeForm.paidLeaveLimit.$touched || employeeForm.$submitted) && employeeForm.paidLeaveLimit.$error.required">Employee ID is required</span> -->
+                            </div>              
+                            <div class="form-group">
+                                <label for="">Unpaid Leave Limit</label>
+                                <input type="text" class="form-control" name="unPaidLeaveLimit" id="unPaidLeaveLimit" ng-model="employee.unPaidLeaveLimit" />
+                                <!-- <span class="help-block" ng-if="(employeeForm.unPaidLeaveLimit.$touched || employeeForm.$submitted) && employeeForm.unPaidLeaveLimit.$error.required">Employee ID is required</span> -->
+                            </div>   
+                        </div>
+                        <div class="col-md-3">                            
+                            <div class="form-group">
+                                <label for="">No. of Absences</label>
+                                <input type="text" class="form-control" name="noOfAbsences" id="noOfAbsences" ng-model="employee.noOfAbsences" />
+                                <!-- <span class="help-block" ng-if="(employeeForm.noOfAbsences.$touched || employeeForm.$submitted) && employeeForm.noOfAbsences.$error.required">Employee ID is required</span> -->
+                            </div> 
+                            <div class="form-group">
+                                <label for="">No. of Lates</label>
+                                <input type="text" class="form-control" name="noOfLates" id="noOfLates" ng-model="employee.noOfLates" />
+                                <!-- <span class="help-block" ng-if="(employeeForm.noOfLates.$touched || employeeForm.$submitted) && employeeForm.noOfLates.$error.required">Employee ID is required</span> -->
+                            </div> 
+                        </div> 
+                        <div class="col-md-3">                            
+                            <div class="form-group">
+                                <label for="">Total Overtime</label>
+                                <input type="text" class="form-control" name="totalOvertime" id="totalOvertime" ng-model="employee.totalOvertime" />
+                                <!-- <span class="help-block" ng-if="(employeeForm.totalOvertime.$touched || employeeForm.$submitted) && employeeForm.totalOvertime.$error.required">Employee ID is required</span> -->
+                            </div>
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.recordStatus.$touched || employeeForm.$submitted) && employeeForm.recordStatus.$invalid }">
+                                <label for="">Record Status</label>
+                                <select class="form-control" ng-init="Active = options[0]" name="recordStatus" ng-model="employee.recordStatus" required>
+                                    <option value="" selected>Is Active?</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                                <span class="help-block" ng-if="(employeeForm.recordStatus.$touched || employeeForm.$submitted) && employeeForm.recordStatus.$error.required">Record Status is required</span>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Basic Information</h3>
+                    </div>
+                    <div class="box-body">
+                        
+                        <div class="col-md-5">                            
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.name.$touched || employeeForm.$submitted) && employeeForm.name.$invalid }">
+                                <label for="">First Name</label>
+                                <input type="text" class="form-control" name="firstName" id="name" ng-model="employee.firstName" required />
+                                <span class="help-block" ng-if="(employeeForm.firstName.$touched || employeeForm.$submitted) && employeeForm.firstName.$error.required">First Name is required</span>
+                            </div>
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.lastName.$touched || employeeForm.$submitted) && employeeForm.lastName.$invalid }">
+                                <label for="">Last Name</label>
+                                <input type="text" class="form-control" name="lastName" id="lastName" ng-model="employee.lastName" required />
+                                <span class="help-block" ng-if="(employeeForm.lastName.$touched || employeeForm.$submitted) && employeeForm.lastName.$error.required">Last Name is required</span>
+                            </div>     
+                        </div>
+                        <div class="col-md-5">                            
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.contactNumber.$touched || employeeForm.$submitted) && employeeForm.contactNumber.$invalid }">
+                                <label for="">Contact No.</label>
+                                <input type="text" class="form-control" name="contactNumber" id="contactNumber" ng-model="employee.contactNumber" required />
+                                <!-- <span class="help-block" ng-if="(employeeForm.contactNumber.$touched || employeeForm.$submitted) && employeeForm.contactNumber.$error.required">Contact Number is required</span> -->
+                            </div>                                    
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.emailAddress.$touched || employeeForm.$submitted) && employeeForm.emailAddress.$invalid }">
+                                <label for="">Email Address</label>
+                                <input type="email" class="form-control" name="emailAddress" id="emailAddress" ng-model="employee.emailAddress" required />
+                                <span class="help-block" ng-if="(employeeForm.emailAddress.$touched || employeeForm.$submitted) && employeeForm.emailAddress.$error.required">Email Address is required</span>
+                                <span class="help-block" ng-if="(employeeForm.emailAddress.$touched || employeeForm.$submitted) && employeeForm.emailAddress.$error.email">Email Address is invalid</span>
+                            </div>                        
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            
+        </form>        
+    </div> 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn" data-ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>
-    <button class="btn btn-primary" data-ng-click="modalOptions.ok();">{{modalOptions.actionButtonText}}</button>
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
 </div>

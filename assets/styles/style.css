@@ -42,3 +42,7 @@ blockquote {
     display: block;
     color: #b8c7ce;
 }
+
+.skin-red .treeview-menu>li.active>a, .skin-red .treeview-menu>li>a:hover, .sidebar-sub-menu li > a:hover, .sidebar-sub-menu li.active > a{
+    color: #fff;
+}

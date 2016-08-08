@@ -106,18 +106,18 @@
                     Dashboard
                 </a>
             </li>
-            <li ng-class="{active: $state.includes('admin.employees')}" ng-click="isCollapsed = !isCollapsed">
-                <a>
+            <li ng-class="{active: $state.includes('admin.employees') || $state.includes('admin.settings')}" class="">
+                <a ng-click="checkToggleMenu(2);">
                     <i class="fa fa-user"></i>
                     Employees
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
-                <ul class="sidebar-sub-menu" uib-collapse="isCollapsed"> 
+                <ul class="sidebar-sub-menu" uib-collapse="selectedMenu!=2"> 
                   <li ng-class="{active: $state.includes('admin.employees')}"> 
                     <a ui-sref=".employees" href="#/dashboard/panels-wells"><i class="fa fa-list-alt"></i> Time Records</a> 
                   </li>  
-                  <li ng-class="{active: $state.includes('admin.employees.settings')}"> 
-                    <a ui-sref=".employees.settings" href="#/dashboard/panels-wells"><i class="fa fa-gear"></i> Time Record Settings</a> 
+                  <li ng-class="{active: $state.includes('admin.settings')}"> 
+                    <a ui-sref=".settings" href="#/dashboard/panels-wells"><i class="fa fa-gear"></i> Time Record Settings</a> 
                   </li> 
                 </ul> <!-- /.nav-second-level -->
             </li>

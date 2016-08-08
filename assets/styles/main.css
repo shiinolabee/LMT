@@ -81,3 +81,7 @@ body {
 text-decoration: none;
 background-color: #eee;
 }
+
+/*.form-control {
+  width: 80% !important;
+}*/

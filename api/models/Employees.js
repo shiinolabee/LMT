@@ -11,20 +11,26 @@ module.exports = {
 
     attributes: {
 
-        id: {
-            type: 'integer',
-            unique: true,
-            primaryKey: true,
-            columnName: 'id'
-        },
+        // id: {
+        //     type: 'integer',
+        //     unique: true,
+        //     primaryKey: true,
+        //     columnName: 'id'
+        // },
 
         empId : {
             type : 'integer',
             unique : true
         },
 
-        fullName : {
-            type : 'string'            
+        firstName : {
+            type : 'string',
+            defaultsTo : ''
+        },
+
+        lastName : {
+            type : 'string',
+            defaultsTo : ''            
         },
 
         position : {
@@ -32,6 +38,10 @@ module.exports = {
         },
 
         contactNumber : {
+            type : 'string'
+        },        
+         
+        emailAddress : {
             type : 'string'
         },        
 
@@ -58,6 +68,15 @@ module.exports = {
         recordStatus : {
             type : 'integer',
             defaultsTo : 0
+        },
+
+        //attribute methods
+        getAllAttributes : function(){
+            return this;
+        },
+
+        getFullName : function(){
+            return this.firstName + ' ' + this.lastName;
         }
 
     }

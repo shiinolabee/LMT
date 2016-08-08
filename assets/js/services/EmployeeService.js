@@ -3,11 +3,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
         
     return {
 
-        getEmployee : function() {
+        getEmployee : function( id ) {
 
             var defer = $q.defer();
 
-            $http.get('/employee/getEmployees')
+            $http.get('employees/getEmployee/' + id)
                 .success(function( response ){
                     defer.resolve(response);
                 })
@@ -19,11 +19,43 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        addEmployee: function(employee) {
+        getListEmployees : function() {
+
+            var defer = $q.defer();
+
+            $http.get('/employees/getEmployeeList')
+                .success(function( response ){
+                    defer.resolve(response);
+                })
+                .error(function( error ){
+                    defer.reject(error);
+                })
+            ;
+
+            return defer.promise;
+        },
+
+        saveEmployee: function(employee) {
 
             var defer = $q.defer();
             
-            $http.post('/employee/addEmployee', employee)
+            $http.post('employees/saveEmployee', employee)
+                .success(function(resp){
+                    defer.resolve(resp);
+                })
+                .error( function(err) {
+                    defer.reject(err);
+                })
+            ;
+            
+            return defer.promise;
+        }, 
+
+        editEmployee: function(employee) {
+
+            var defer = $q.defer();
+            
+            $http.post('employees/editEmployee', employee)
                 .success(function(resp){
                     defer.resolve(resp);
                 })
@@ -35,11 +67,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        remove : function( employee ) {
+        removeEmployee : function( employee ) {
 
             var defer = $q.defer();
             
-            $http.post('/employee/remove', employee)
+            $http.post('employees/removeEmployee', { empId : employee })
                 .success(function(resp){
                     defer.resolve(resp);
                 })
