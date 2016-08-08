@@ -18,6 +18,8 @@
 //  to change `assets/styles/importer.less` instead.)
 var cssFilesToInject = [
   // 'bower_components/bootswatch/dist/css/bootstrap.css',
+  // 'bower_components/**/**/*.css',
+  // 'bower_components/**/**/**/*.css',
   'styles/bootstrap.css',
   'styles/**/*.css'
 ];
@@ -36,6 +38,7 @@ var jsFilesToInject = [
   // 'js/dependencies/jquery.min.js',
 
   // Dependencies like jQuery, or Angular are brought in here
+  // 'bower_components/**/*.js', 
   'js/dependencies/**/*.js', 
 
   // All of the rest of your client-side js files

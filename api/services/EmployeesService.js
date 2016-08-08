@@ -47,9 +47,9 @@ module.exports = {
         });
     },
 
-    removeEmployee : function( data, next) {
+    removeEmployee : function( id, next) {
 
-        Employees.destroy( { empId : data } ).exec(function( err, todo ){
+        Employees.destroy( { id : id } ).exec(function( err, todo ){
             if( err ) throw err;
 
             next(todo);

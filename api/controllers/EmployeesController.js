@@ -28,22 +28,35 @@ module.exports = {
         });
     },
 
-    saveEmployee: function(req, res) {
+    saveEmployee: function(req, res) {     
 
-        var employeeVal = (req.body.value) ? req.body.value : undefined;       
-       
-        EmployeesService.saveEmployee(employeeVal, function(success) {
-            res.json(success);
-        });
+        if ( req.param('id') ) {
+
+            EmployeesService.editEmployee(req.param('employee'), function(success) {
+                if ( success ) {
+                    res.json( { success : true , data : success  });                
+                }
+            }, function( xhr, errMsg ){
+                res.json( { success : false , data : success  });                            
+            }); 
+        } else {           
+            EmployeesService.saveEmployee(req.param('employee'), function(success) {
+                if ( success ) {
+                    res.json( { success : true , data : success  });                
+                }
+            }, function( xhr, errMsg ){
+                res.json( { success : false , data : success  });                            
+            });
+        }
 
     },
 
     removeEmployee: function(req, res) {        
         
-        var employeeVal = ( req.param('empId') )  ? req.param('empId') : undefined;
+        var employeeVal = ( req.param('id') )  ? req.param('id') : undefined;
 
         EmployeesService.removeEmployee(employeeVal, function(success) {
-            res.json(success);
+            res.json( { success : true , data : success.id  });
         });
     }
 	

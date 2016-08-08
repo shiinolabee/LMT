@@ -35,11 +35,19 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        saveEmployee: function(employee) {
+        saveEmployee: function( employeeDetails, id) {
 
             var defer = $q.defer();
+
+            var postVars = {
+                employee : employeeDetails
+            };
+
+            if ( id ) {
+                postVars.id = id;
+            }   
             
-            $http.post('employees/saveEmployee', employee)
+            $http.post('employees/saveEmployee', postVars)
                 .success(function(resp){
                     defer.resolve(resp);
                 })
@@ -51,11 +59,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         }, 
 
-        editEmployee: function(employee) {
+        editEmployee: function( employeeDetails ) {
 
             var defer = $q.defer();
             
-            $http.post('employees/editEmployee', employee)
+            $http.post('employees/editEmployee', { employee : employeeDetails })
                 .success(function(resp){
                     defer.resolve(resp);
                 })
@@ -71,7 +79,7 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
 
             var defer = $q.defer();
             
-            $http.post('employees/removeEmployee', { empId : employee })
+            $http.post('employees/removeEmployee', { id : employee })
                 .success(function(resp){
                     defer.resolve(resp);
                 })

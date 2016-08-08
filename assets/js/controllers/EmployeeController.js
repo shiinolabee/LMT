@@ -12,15 +12,15 @@ cereliApp
             $scope[type].splice(index, 1);
         };
 
-        $scope.initEmployeeValues = function( selectedEmployee ){
+        $scope.initEmployeeValues = function( isEditMode, index){
 
-            if ( !selectedEmployee ) {
+            if ( !isEditMode && index == 0 ) {
                 var employee = {
                     id : '',
                     empId : '',
                     position : '',
                     paidLeaveLimit : 0,
-                    unPaidLeaveLimit : 0,
+                    unpaidLeaveLimit : 0,
                     noOfAbsences : 0,
                     noOfLates: 0,
                     totalOvertime : 0,
@@ -31,8 +31,8 @@ cereliApp
                     emailAddress : ''
                 };
                 
-            } else {
-                var employee = selectedEmployee;
+            } else {                
+                var employee = $scope.employeeList[index];
             }
 
             return employee;
@@ -58,24 +58,29 @@ cereliApp
 
         $scope.getListEmployees();
 
-        $scope.addEmployee = function() {
+        $scope.saveEmployee = function( index, isEditMode ) {
 
-            $scope.editMode = false;
+            $scope.editMode = isEditMode;
+            $scope.index = index;
 
             var modalInstance = $uibModal.open({
                 animation: true,
                 keyboard : false,
                 resolve : {
                     employeeInitialValues : function() {
-                        return $scope.initEmployeeValues(false);
+                        return $scope.initEmployeeValues($scope.editMode, $scope.index);
                     },
                     isEditMode : function(){
                         return $scope.editMode;
                     }
                 },                
+                
                 templateUrl: 'templates/employees/form.html',                
+                
                 windowTemplateUrl : 'templates/common/ui-modal.html',
+                
                 size: 'lg',
+
                 controller: function( $scope, employeeInitialValues, isEditMode ) {
 
                     $scope.employee = employeeInitialValues;
@@ -85,30 +90,31 @@ cereliApp
                     * Set Modal options such as messages, text, labels, etc
                     **/
                     $scope.modalOptions = {
-                        headerText : 'Add Employee',    
+                        headerText : !$scope.editMode ? 'New Employee' : 'Edit Employee',    
                         closeButtonText : 'Cancel',
                         actionButtonText : !$scope.editMode ? 'Save' : 'Save changes',
 
                         // execute when saving form
                         ok : function( result ) {
 
-                            var responseData;                           
+                            var responseData, id;                                                   
 
-                            employeeService.saveEmployee($scope.employee).then(function( response ) {
+                            employeeService.saveEmployee($scope.employee, $scope.editMode).then(function( response ) {
 
-                                if ( response.empId ) {
+                                if ( response.success ) {
                                     responseData = response;                                                                        
                                 }
 
                             }, function(){
 
-                                responseDa1ta = {
-                                    error: true,
+                                responseData = {
+                                    success: false,
                                     errors: ['Unknown error occured while deleting client note']
                                 };
 
                             }).finally(function(){
-                                $uibModalInstance.close(responseData);
+                                // $uibModalInstance.close(responseData);
+                                modalInstance.close(responseData);
                             });
                         },
 
@@ -122,7 +128,8 @@ cereliApp
 
             modalInstance.result.then(function( responseData ){
 
-                if ( !responseData.error ) {
+                if ( responseData.success ) {
+
                     $scope.getListEmployees();        
 
                     $scope.addAlert('employeeListAlerts', {
@@ -133,83 +140,8 @@ cereliApp
 
             });
 
+        };     
 
-        };
-
-        $scope.editEmployee = function( employee ) {
-
-            $scope.editMode = true;
-
-            var modalInstance = $uibModal.open({
-                animation: true,
-                resolve : {                    
-                    employeeInitialValues : function() {
-                        return $scope.initEmployeeValues(employee);
-                    },
-                    isEditMode : function(){
-                        return $scope.editMode;
-                    }
-                },        
-
-                templateUrl: 'templates/employees/form.html',          
-
-                windowTemplateUrl : 'templates/common/ui-modal.html',
-
-                controller: function( $scope, employeeInitialValues, isEditMode ) {
-
-                    $scope.employee = employeeInitialValues;
-                    $scope.editMode = isEditMode;     
-
-                    $scope.modalOptions = {
-                        headerText :  !$scope.editMode ? 'New Employee' : 'Edit Employee',    
-                        closeButtonText : 'Cancel',
-                        actionButtonText : !$scope.editMode ? 'Save' : 'Save changes',
-
-                        // execute when saving form
-                        ok : function() {
-
-                            var responseData;
-
-                            employeeService.editEmployee( $scope.employee ).then(function( response ){
-                                if ( response.empId ) {
-                                    responseData = response;
-                                }
-                            }, function(){
-                                responseDa1ta = {
-                                    error: true,
-                                    errors: ['Unknown error occured while deleting client note']
-                                };
-                            }).finally(function(){
-                                $uibModalInstance.close(responseData);                                
-                            })
-                        },
-
-                        close : function(){
-                            modalInstance.dismiss('cancel');
-                        }
-                    };
-
-                },
-                controllerAs : "employeeModalController",
-                size: 'lg'    
-
-            });    
-
-            modalInstance.result.then(function( responseData ){
-
-                if ( !responseData.error ) {
-                    $scope.getListEmployees();                                                                      
-
-                    $scope.addAlert('employeeListAlerts', {
-                        type: 'success',
-                        msg: 'Employee Details Successfully Updated'
-                    });
-                }
-
-            });
-
-
-        };
 
         $scope.searchEmployee = function(){
 
@@ -220,13 +152,9 @@ cereliApp
             var modalInstance = $uibModal.open({
                     animation: true,
                     keyboard: false,
-                    backdrop: 'static',
-                    
+                    backdrop: 'static',                    
                     templateUrl: 'templates/common/modal.html',          
-                    
-
                     windowTemplateUrl : 'templates/common/ui-modal.html',
-
                     resolve: {                       
                         employeeId: function() {
                             return id;
@@ -249,18 +177,24 @@ cereliApp
 
                             var responseData;
 
-                            employeeService.removeEmployee({ empId : employeeId}).then(function(response) {
-                                responseData = response;
+                            employeeService.removeEmployee(employeeId).then(function(response) {
+
+                                if ( response.success ) {
+                                    responseData = response;                                    
+                                }
                             }, function() {
                                 responseData = {
                                     success: false,
                                     errors: ['Unknown error occured while deleting client note']
                                 };
 
+                            }).finally(function(){
+                                modalInstance.close(responseData);                                
                             });                      
                         };
 
                         $scope.modalOptions.close = function (result) {
+                            // $uibModalInstance.dismiss('cancel');
                             $uibModalInstance.dismiss('cancel');
                         };
 
@@ -269,13 +203,17 @@ cereliApp
 
                 modalInstance.result.then(function(responseData) {
 
-                    $scope.employeeList.splice(index, 1);
-                    $scope.getListEmployees();
+                    if ( responseData.success ) {
 
-                    $scope.addAlert('employeeListAlerts', {
-                        type: 'success',
-                        msg: 'Employee Details Successfully Deleted'
-                    });                    
+                        $scope.employeeList.splice(index, 1);
+                        $scope.getListEmployees();
+
+                        $scope.addAlert('employeeListAlerts', {
+                            type: 'success',
+                            msg: 'Employee Details Successfully Deleted'
+                        });                    
+                        
+                    }
 
                 });
 
