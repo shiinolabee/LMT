@@ -1,8 +1,9 @@
 <div ng-show="isAuthenticated">
 
     <div class="col-md-12">
-        <div uib-alert ng-repeat="alert in employeeListAlerts" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="5000">{{alert.msg}}</div>
-        <button class="btn btn-primary margin-bottom" ng-click="saveEmployee(0, false)"><i class="fa fa-user"></i> New Employee</button>
+        <div uib-alert ng-repeat="alert in employeeListAlerts" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="8000">{{alert.msg}}</div>
+        <button class="btn btn-primary margin-bottom" ng-click="saveEmployee(0, false)"><i class="fa fa-user"></i> <b>New Employee</b></button>
+        <button class="btn btn-primary margin-bottom" ng-click="saveTimeRecord()"><i class="fa fa-calendar" aria-hidden="true"></i> <b>New Time Record</b></button>
     </div> 
    
     <div class="col-md-9">
@@ -12,7 +13,7 @@
 
           <div class="box-tools pull-right">
             <div class="has-feedback">
-              <input type="text" class="form-control input-sm" placeholder="Search Employee">
+              <input type="text" class="form-control input-sm" placeholder="Search Employee" ng-model="searchString" uib-typeahead="employee for searchList in searchEmployee($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults">
               <!-- <span class="glyphicon glyphicon-search form-control-feedback"></span> -->
             </div>
           </div>
@@ -21,7 +22,7 @@
         <!-- /.box-header -->
         <div class="box-body">
           <div class="table-responsive employee-list-content">
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped table-bordered">
               <thead>
                 <tr>
                   <th><input type="checkbox"></th>                
@@ -42,8 +43,8 @@
                 <td>{{ employee.emailAddress }}</td>
                 <td>{{ employee.createdAt | date }}</td>
                 <td colspan="4">
-                  <button class="btn btn-primary btn-sm" ng-click="saveEmployee($index, true)"><i class="fa fa-cog"></i> Edit</button>
-                  <button class="btn btn-primary btn-sm" ng-click="removeEmployee(employee.id, $index)"><i class="fa fa-close"></i> Remove</button>
+                  <button class="btn btn-primary btn-sm" ng-click="saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-cog"></i></button>
+                  <button class="btn btn-primary btn-sm" ng-click="removeEmployee(employee.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
                 </td>
               </tr>                                   
               </tbody>
@@ -85,7 +86,7 @@
 
       <div class="box box-solid">
         <div class="box-header with-border">
-          <h3 class="box-title">Folders</h3>
+          <h3 class="box-title">Tools</h3>
 
           <div class="box-tools">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -94,17 +95,17 @@
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li ><a href="#"><i class="fa fa-inbox"></i> Inbox
-              <span class="label label-primary pull-right">12</span></a></li>
-            <li class="active"><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
+            <li ><a href="javascript:void(0);" ng-click="importTimeRecords();"><i class="fa fa-cloud-download" aria-hidden="true"></i> Import Time Records</a></li>              
+            <li ><a href="javascript:void(0);" ng-click="exportRecords();"><i class="fa fa-cloud-upload" aria-hidden="true"></i> Export Time Records</a></li>              
+          <!--   <li class="active"><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
             <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
             <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a>
             </li>
-            <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li>
+            <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li> -->
           </ul>
         </div>        
       </div>
     </div>
-    <!-- /.col -->
+    <!-- /.col -->   
 
 </div>

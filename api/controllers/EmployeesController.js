@@ -32,7 +32,7 @@ module.exports = {
 
         if ( req.param('id') ) {
 
-            EmployeesService.editEmployee(req.param('employee'), function(success) {
+            EmployeesService.editEmployee(req.param('employee'), req.param('id'), function(success) {
                 if ( success ) {
                     res.json( { success : true , data : success  });                
                 }

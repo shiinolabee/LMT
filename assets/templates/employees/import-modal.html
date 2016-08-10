@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h4>{{modalOptions.headerText}}</h4>
+</div>
+<div class="modal-body">  
+    <div class="row">        
+        <form method="post" name="importRecordForm" ng-model="importRecordForm" novalidate> 
+            <div class="form-group">
+                <label>Select File to Import :</label>
+                <input type="file" name="file-import" ng-model="fileImport" required=""/>
+            </div>           
+        </form>        
+    </div> 
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
+</div>

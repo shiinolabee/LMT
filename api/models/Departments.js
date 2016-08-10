@@ -30,7 +30,7 @@ module.exports = {
         departmentCode : {
             type : 'string',
             defaultsTo : '0000'
-        },
+        }
 
     }
 };

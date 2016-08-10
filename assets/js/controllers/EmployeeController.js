@@ -3,6 +3,7 @@ cereliApp
     .controller('employeeController', [ '$scope', '$uibModal', 'employeeService',  function( $scope, $uibModal, employeeService ){
 
         $scope.employeeListAlerts = [];
+        $scope.employeeList = [];        
 
         $scope.addAlert = function(type, options) {
             $scope[type].push(options);
@@ -32,18 +33,10 @@ cereliApp
                 };
                 
             } else {                
-                var employee = $scope.employeeList[index];
+                var employee = angular.copy($scope.employeeList[index]);
             }
 
             return employee;
-        };
-
-        $scope.employeeList = [];        
-
-        $scope.getEmployee = function( id ) {
-            employeeService.getEmployee( id ).then(function(){
-
-            });
         };
 
         $scope.getListEmployees = function() {
@@ -53,10 +46,8 @@ cereliApp
                 console.log(response);
 
                 $scope.employeeList = response;
-            })
-        };
-
-        $scope.getListEmployees();
+            });
+        };        
 
         $scope.saveEmployee = function( index, isEditMode ) {
 
@@ -73,24 +64,20 @@ cereliApp
                     isEditMode : function(){
                         return $scope.editMode;
                     }
-                },                
-                
-                templateUrl: 'templates/employees/form.html',                
-                
-                windowTemplateUrl : 'templates/common/ui-modal.html',
-                
-                size: 'lg',
-
+                },                            
+                templateUrl: 'templates/employees/form.html', 
+                windowTemplateUrl : 'templates/common/ui-modal.html',                
+                size: 'md',
                 controller: function( $scope, employeeInitialValues, isEditMode ) {
 
                     $scope.employee = employeeInitialValues;
                     $scope.editMode = isEditMode;                    
-
+                    
                     /**
                     * Set Modal options such as messages, text, labels, etc
                     **/
                     $scope.modalOptions = {
-                        headerText : !$scope.editMode ? 'New Employee' : 'Edit Employee',    
+                        headerText : !$scope.editMode ? 'New Employee' : 'Edit Employee Details',    
                         closeButtonText : 'Cancel',
                         actionButtonText : !$scope.editMode ? 'Save' : 'Save changes',
 
@@ -105,15 +92,14 @@ cereliApp
                                     responseData = response;                                                                        
                                 }
 
-                            }, function(){
+                            }, function(xhr, errMsg){
 
                                 responseData = {
                                     success: false,
                                     errors: ['Unknown error occured while deleting client note']
                                 };
 
-                            }).finally(function(){
-                                // $uibModalInstance.close(responseData);
+                            }).finally(function(){                                
                                 modalInstance.close(responseData);
                             });
                         },
@@ -134,7 +120,7 @@ cereliApp
 
                     $scope.addAlert('employeeListAlerts', {
                         type: 'success',
-                        msg: 'Employee Details Successfully Added'
+                        msg: 'Employee Details Successfully ' + ( isEditMode ? 'Updated' : 'Added' )
                     });                                                              
                 }
 
@@ -142,90 +128,155 @@ cereliApp
 
         };     
 
-
-        $scope.searchEmployee = function(){
+        /**
+        * Checks employee id exists in collection
+        **/
+        $scope.checkEmpIdExists = function( val ){
 
         };
 
+
+        /**
+        * Fetches employee in search box via string
+        **/
+        $scope.searchEmployee = function( val ){
+
+            return employeeService.getEmployee( val );                
+
+        };
+
+        /**
+        * Removes/Deletes employee by id        
+        **/
         $scope.removeEmployee = function( id, index ) {
 
             var modalInstance = $uibModal.open({
-                    animation: true,
-                    keyboard: false,
-                    backdrop: 'static',                    
-                    templateUrl: 'templates/common/modal.html',          
-                    windowTemplateUrl : 'templates/common/ui-modal.html',
-                    resolve: {                       
-                        employeeId: function() {
-                            return id;
-                        },
-                        index: function() {
-                            return index;
-                        }
+                animation: true,
+                keyboard: false,
+                backdrop: 'static',                    
+                templateUrl: 'templates/common/modal.html',          
+                windowTemplateUrl : 'templates/common/ui-modal.html',
+                resolve: {                       
+                    employeeDetails: function() {
+                        return $scope.employeeList[index];
                     },
-                    size: 'sm',
-                    controller: function($scope, $uibModalInstance, employeeId, index, employeeService) {                       
-
-                        $scope.modalOptions = {
-                            closeButtonText: 'Cancel',
-                            actionButtonText: 'Delete Employee Details',
-                            headerText: 'Delete Employee details?',
-                            bodyText: 'Are you sure you want to delete this employee details?'
-                        };
-
-                        $scope.modalOptions.ok = function (result) {
-
-                            var responseData;
-
-                            employeeService.removeEmployee(employeeId).then(function(response) {
-
-                                if ( response.success ) {
-                                    responseData = response;                                    
-                                }
-                            }, function() {
-                                responseData = {
-                                    success: false,
-                                    errors: ['Unknown error occured while deleting client note']
-                                };
-
-                            }).finally(function(){
-                                modalInstance.close(responseData);                                
-                            });                      
-                        };
-
-                        $scope.modalOptions.close = function (result) {
-                            // $uibModalInstance.dismiss('cancel');
-                            $uibModalInstance.dismiss('cancel');
-                        };
-
+                    index: function() {
+                        return index;
                     }
-                });
+                },
+                size: 'sm',
+                controller: function($scope, $uibModalInstance, employeeDetails, index, employeeService) {                       
 
-                modalInstance.result.then(function(responseData) {
+                    $scope.modalOptions = {
+                        closeButtonText: 'Cancel',
+                        actionButtonText: 'Delete Employee Details',
+                        headerText: 'Delete Employee details?',
+                        bodyText: 'Are you sure you want to delete employ ' + (employeeDetails.firstName + ' ' + employeeDetails.lastName) + '\'s details?'
+                    };
 
-                    if ( responseData.success ) {
+                    $scope.modalOptions.ok = function (result) {
 
-                        $scope.employeeList.splice(index, 1);
-                        $scope.getListEmployees();
+                        var responseData;
 
-                        $scope.addAlert('employeeListAlerts', {
-                            type: 'success',
-                            msg: 'Employee Details Successfully Deleted'
-                        });                    
-                        
-                    }
+                        employeeService.removeEmployee(employeeDetails.id).then(function(response) {
 
-                });
+                            if ( response.success ) {
+                                responseData = response;                                    
+                            }
+                        }, function() {
+                            responseData = {
+                                success: false,
+                                errors: ['Unknown error occured while deleting client note']
+                            };
 
-            // employeeService.remove(id).then(function( response ) {
+                        }).finally(function(){
+                            modalInstance.close(responseData);                                
+                        });                      
+                    };
 
-            //     if ( response.empId ) {
-            //         // modalInstance.close(response);
-            //         $scope.getListEmployees();
-            //         $scope.employeeList.splice(id, 1);
-            //     }
+                    $scope.modalOptions.close = function (result) {
+                        // $uibModalInstance.dismiss('cancel');
+                        $uibModalInstance.dismiss('cancel');
+                    };
 
-            // });
+                }
+            });
+
+            modalInstance.result.then(function(responseData) {
+
+                if ( responseData.success ) {
+
+                    $scope.employeeList.splice(index, 1);
+                    $scope.getListEmployees();
+
+                    $scope.addAlert('employeeListAlerts', {
+                        type: 'success',
+                        msg: 'Employee Details Successfully Deleted'
+                    });                    
+                    
+                }
+
+            });
         };
+
+
+        /**
+        * Import Time Records via csv file        
+        **/
+        $scope.importTimeRecords = function(){
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                keyboard: false,                
+                templateUrl: 'templates/employees/import-modal.html',          
+                windowTemplateUrl : 'templates/common/ui-modal.html',             
+                size: 'md',
+                controller: function($scope, $uibModalInstance, employeeService) {                       
+
+                    $scope.modalOptions = {
+                        closeButtonText: 'Cancel',
+                        actionButtonText: 'Import & Save',
+                        headerText: 'Import Employee Time Records',                        
+                    };
+
+                    $scope.modalOptions.ok = function (result) {
+
+                        var responseData;
+
+                        employeeService.saveImportedTimeRecords().then(function(response) {
+
+                            if ( response.success ) {
+                                responseData = response;                                    
+                            }
+                        }, function() {
+                            responseData = {
+                                success: false,
+                                errors: ['Unknown error occured while deleting client note']
+                            };
+
+                        }).finally(function(){
+                            modalInstance.close(responseData);                                
+                        });                      
+                    };
+
+                    $scope.modalOptions.close = function (result) {
+                        // $uibModalInstance.dismiss('cancel');
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                }
+            });
+        };
+
+        $scope.saveTimeRecord = function(){
+
+            var modalInstance = $uibModal.open({
+                animation : true,
+                size : 'md'
+            });
+
+        };
+
+        $scope.getListEmployees();
 
     }]);

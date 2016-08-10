@@ -31,28 +31,28 @@ module.exports = {
 
     saveEmployee : function ( data, next ) {
 
-        Employees.create( data ).exec(function( err, todo ){
+        Employees.create( data ).exec(function( err, employee ){
             if( err ) throw err;
 
-            next(todo);
+            next(employee);
         });
     },
 
-    editEmployee : function ( data, next ) {
+    editEmployee : function ( data, id, next ) {
 
-        Employees.update( data ).exec(function( err, todo ){
+        Employees.update( { id : id }, data ).exec(function( err, employee ){
             if( err ) throw err;
 
-            next(todo);
+            next(employee);
         });
     },
 
     removeEmployee : function( id, next) {
 
-        Employees.destroy( { id : id } ).exec(function( err, todo ){
+        Employees.destroy( { id : id } ).exec(function( err, employee ){
             if( err ) throw err;
 
-            next(todo);
+            next(employee);
         });
     }
 };

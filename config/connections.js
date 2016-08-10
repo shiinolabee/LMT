@@ -45,7 +45,7 @@ module.exports.connections = {
     host: 'localhost',
     port : 3306,
     user: 'root',
-    password: '',
+    password: 'clouduser101',
     database: 'cereli_app'
   },
 

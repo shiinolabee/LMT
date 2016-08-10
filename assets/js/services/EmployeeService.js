@@ -3,11 +3,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
         
     return {
 
-        getEmployee : function( id ) {
+        getEmployee : function( criteria ) {
 
             var defer = $q.defer();
 
-            $http.get('employees/getEmployee/' + id)
+            $http.get('employees/getEmployee/' + criteria)
                 .success(function( response ){
                     defer.resolve(response);
                 })
@@ -35,17 +35,22 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        saveEmployee: function( employeeDetails, id) {
+        saveEmployee: function( employeeDetails, isEditMode) {
 
             var defer = $q.defer();
 
-            var postVars = {
-                employee : employeeDetails
-            };
+            var postVars = {};
 
-            if ( id ) {
-                postVars.id = id;
-            }   
+            postVars.id = isEditMode ? employeeDetails.id : 0;
+
+            // edit mode remove id from update object
+            if ( isEditMode ) {
+                delete employeeDetails.id;  
+                delete employeeDetails.createdAt;
+                delete employeeDetails.updatedAt;
+            } 
+
+            postVars.employee = employeeDetails;
             
             $http.post('employees/saveEmployee', postVars)
                 .success(function(resp){

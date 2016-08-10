@@ -1,4 +1,4 @@
-# todoApp
+# Cereli Electrical Services Information System App
 
-a [Sails](http://sailsjs.org) application
+a we application for managing internal services including payroll systems
 # cereli_sails

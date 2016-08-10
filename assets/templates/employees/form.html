@@ -3,18 +3,20 @@
 </div>
 <div class="modal-body">  
     <div class="row">        
-        <form method="post" name="employeeForm" ng-model="employeeForm" ng-submit="saveUser(employeeForm.$valid)" novalidate>
+        <form method="post" name="employeeForm" ng-model="employeeForm" novalidate>
 
-            <div class="col-md-10">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Employee Information</h3>
-                    </div>
-                    <div class="box-body">
+            <div class="nav-tabs-custom">
+
+                <uib-tabset active="active">
+                    <uib-tab index="0">
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-home"></i> Employee Information
+                        </uib-tab-heading>
+                      
                         <div class="col-md-4">                            
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$invalid }">
                                 <label for="">Employee I.D</label>
-                                <input type="text" class="form-control" ng-maxlength="9" ng-required="number" name="empId" id="empId" ng-model="employee.empId" required />
+                                <input type="text" class="form-control" ng-model-options="{debounce: 1000}" ng-maxlength="9" ng-required="number" name="empId" id="empId" ng-model="employee.empId" required />
                                 <span class="help-block" ng-if="(employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$error.required">Employee ID is required</span>
                             </div>
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.position.$touched || employeeForm.$submitted) && employeeForm.position.$invalid }">
@@ -55,24 +57,22 @@
                             </div>
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.recordStatus.$touched || employeeForm.$submitted) && employeeForm.recordStatus.$invalid }">
                                 <label for="">Record Status</label>
-                                <select class="form-control" ng-init="Active = options[0]" name="recordStatus" ng-model="employee.recordStatus" required>
-                                    <option value="" selected>Is Active?</option>
+                                <select class="form-control" name="recordStatus" ng-model="employee.recordStatus">
+                                    <option value="" selected="selected">Is Active?</option>
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
                                 </select>
                                 <span class="help-block" ng-if="(employeeForm.recordStatus.$touched || employeeForm.$submitted) && employeeForm.recordStatus.$error.required">Record Status is required</span>
                             </div>                        
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-10">
-                <div class="box box-success">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Basic Information</h3>
-                    </div>
-                    <div class="box-body">
-                        
+                        </div> 
+                        <div class="clearfix"></div>
+                    </uib-tab>    
+
+                    <uib-tab index="1">
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-user"></i> Basic
+                        </uib-tab-heading>
+                                    
                         <div class="col-md-5">                            
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.name.$touched || employeeForm.$submitted) && employeeForm.name.$invalid }">
                                 <label for="">First Name</label>
@@ -97,15 +97,15 @@
                                 <span class="help-block" ng-if="(employeeForm.emailAddress.$touched || employeeForm.$submitted) && employeeForm.emailAddress.$error.required">Email Address is required</span>
                                 <span class="help-block" ng-if="(employeeForm.emailAddress.$touched || employeeForm.$submitted) && employeeForm.emailAddress.$error.email">Email Address is invalid</span>
                             </div>                        
-                        </div>
-                    </div>
-                </div> 
+                        </div>                                
+                        <div class="clearfix"></div>                        
+                    </uib-tab>
+                </uib-tabset> 
             </div>
-            
         </form>        
     </div> 
 </div>
 <div class="modal-footer">
     <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
-    <button class="btn btn-primary" data-ng-click="modalOptions.ok();"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="employeeForm.$invalid"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
 </div>
