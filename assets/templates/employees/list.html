@@ -42,8 +42,9 @@
                 <td><input type="checkbox" value="{{ employee.id }}"></td>                
                 <td>{{ employee.empId }}</td>
                 <td>{{ employee.fullName }} </td>
-                <td>{{ employee.departmentAssigned }} </td>
-                <td>{{ employee.position }}</td>
+                <td><show-subdetails-employee index="$index" id="{{employee.departmentAssigned}}" type="
+                  departmentAssigned"></show-subdetails></td>
+                <td>{{ employee.position | contentIsEmpty }}</td>
                 <!-- <td>{{ employee.emailAddress }}</td> -->
                 <td>{{ employee.updatedAt | date : short }}</td>
                 <td colspan="4">

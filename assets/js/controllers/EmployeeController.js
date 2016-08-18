@@ -4,10 +4,17 @@ cereliApp
 
         $scope.employeeListAlerts = [];
         $scope.employeeList = [];  
+
         $scope.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
             {  name : 'Inactive', value : 0}
         ];
+
+        $scope.genderArr = [
+            { name : 'Male', value : 1 },
+            { name : 'Female', value : 0}
+        ];
+
         $scope.dummyEmployeeList = [];  
 
         $scope.pager = {};        
@@ -37,6 +44,8 @@ cereliApp
                     firstName : '',
                     lastName : '',
                     contactNumber : '',
+                    gender : '',
+                    homeAddress : '',
                     emailAddress : '',
                     createdAt : '',
                     updatedAt : ''
@@ -84,29 +93,35 @@ cereliApp
                 }
             });
 
+            $scope.getEmployeeList();
+
         };  
 
         $scope.viewEmployeeDetails = function(index) {
 
-            $scope.index = index;
+            $scope.$index = index;
 
             var modalInstance = $uibModal.open({
                 animation : true,
                 keyboard : false,
                 resolve : {
                     employeeInitialValues : function(){
-                        return $scope.initEmployeeValues(true, $scope.index);                        
+                        return $scope.initEmployeeValues(true, $scope.$index);                        
+                    },
+                    getDepartmentList : function(){
+                        return $scope.departmentList;
                     },
                     isEditMode : function(){
                         return false;
                     }
                 },
                 templateUrl : 'templates/employees/view.html',
-                size : 'md',
-                controller : function( $scope, employeeInitialValues, isEditMode ){
+                size : 'lg',
+                controller : function( $scope, employeeInitialValues, isEditMode, getDepartmentList ){
 
                     $scope.editMode = isEditMode;
                     $scope.employee = employeeInitialValues;
+                    $scope.departmentList = getDepartmentList;
 
                     $scope.modalOptions = {
                         headerText : 'View Employee Details',
@@ -117,10 +132,39 @@ cereliApp
                             modalInstance.close();
                         },
 
-                        cancel : function(){
+                        close : function(){
                             modalInstance.dismiss('cancel');
                         }
                     };
+
+                    //Daily Time Record 
+                    $scope.calendarView = 'month';           
+                    $scope.calendarDate = 'date';           
+
+                    $scope.events = [
+                      {
+                        title: 'My event title', // The title of the event
+                        startsAt: new Date(2013,5,1,1), // A javascript date object for when the event starts
+                        endsAt: new Date(2014,8,26,15), // Optional - a javascript date object for when the event ends
+                        color: { // can also be calendarConfig.colorTypes.warning for shortcuts to the deprecated event types
+                          primary: '#e3bc08', // the primary event color (should be darker than secondary)
+                          secondary: '#fdf1ba' // the secondary event color (should be lighter than primary)
+                        },
+                        actions: [{ // an array of actions that will be displayed next to the event title
+                          label: '<i class=\'glyphicon glyphicon-pencil\'></i>', // the label of the action
+                          cssClass: 'edit-action', // a CSS class that will be added to the action element so you can implement custom styling
+                          onClick: function(args) { // the action that occurs when it is clicked. The first argument will be an object containing the parent event
+                            console.log('Edit event', args.calendarEvent);
+                          }
+                        }],
+                        draggable: true, //Allow an event to be dragged and dropped
+                        resizable: true, //Allow an event to be resizable
+                        incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
+                        recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+                        cssClass: 'a-css-class-name', //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+                        allDay: false // set to true to display the event as an all day event on the day view
+                      }
+                    ];
 
                 }
             });
@@ -147,20 +191,24 @@ cereliApp
                     },
                     getDepartmentList : function(){
                         return $scope.departmentList;
+                    },
+                    getGenderArr : function(){
+                        return $scope.genderArr;
                     }
                 },                            
                 templateUrl: 'templates/employees/form.html', 
                 windowTemplateUrl : 'templates/common/ui-modal.html',                
                 size: 'md',
-                controller: function( $scope, employeeInitialValues, isEditMode, getRecordStatusArr, getDepartmentList ) {
+                controller: function( $scope, employeeInitialValues, isEditMode, getRecordStatusArr, getDepartmentList, getGenderArr ) {
 
 
                     $scope.employee = employeeInitialValues;
                     $scope.editMode = isEditMode;                    
                     $scope.recordStatusArr = getRecordStatusArr;
                     $scope.departmentList = getDepartmentList;
+                    $scope.genderArr = getGenderArr;
 
-                    console.log($scope.departmentList);
+                    console.log($scope.employee);
                     
                     /**
                     * Set Modal options such as messages, text, labels, etc
@@ -371,9 +419,6 @@ cereliApp
 
         };
 
-
-
-        $scope.getEmployeeList();
-        $scope.getDepartmentList();
+        $scope.getDepartmentList();       
 
     }]);

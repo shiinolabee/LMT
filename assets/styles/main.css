@@ -127,3 +127,7 @@ background-color: #eee;
 .dataTables_paginate{
   text-align: right;
 }
+
+.avatar-holder img{
+  width: 50%;
+}

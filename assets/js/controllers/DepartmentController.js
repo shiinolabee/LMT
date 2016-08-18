@@ -138,7 +138,7 @@ cereliApp
         };
 
         $scope.getEmployeeList = function( department ){
-        	
+
         	activeRecordService.getActiveRecordList('employees/getEmployeeList').then(function( response ){
 
                 if ( response.success ) {

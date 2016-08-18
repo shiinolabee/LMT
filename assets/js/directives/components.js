@@ -7,6 +7,43 @@
 
 	}])
 
+	cereliDirectives.filter('contentIsEmpty', function(){
+		
+		return function( value ) {
+			if ( !value ) {
+				return 'Not yet specified.'
+			}
+			return value;
+		}
+	})
+
+	cereliDirectives.directive('showSubdetailsEmployee', function(){
+
+		return {		
+
+			scope : { id : '@', type : '@', index : '@' },			
+
+			link : function( scope, element, attr ) {				
+
+				if ( scope.id > 0 ) {
+
+					angular.forEach(scope.$parent.departmentList, function(value, key){
+
+						if ( value.id == scope.id ) {						
+							scope.selectedDepartment = value.departmentName;														
+						}
+					});
+
+				} else {
+					scope.selectedDepartment = "Not yet specified"					
+				}				
+			}, 		
+
+			template : '{{ selectedDepartment }}',
+		};
+
+	})
+
 
 	cereliDirectives.directive('tabs', function(){
 

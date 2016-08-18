@@ -25,14 +25,21 @@ module.exports = {
         },
 
         departmentAssigned : {
-            model : 'departments',
-            unique : true
+            model : 'departments'            
         },
 
         fullName : {
             type : 'string',
             defaultsTo : '',
             columnName : 'fullName'
+        },
+
+        gender: {
+            type : 'integer'
+        },
+
+        homeAddress : {
+            type : 'text'
         },
 
         position : {

@@ -33,6 +33,7 @@ var jsFilesToInject = [
   'js/dependencies/sails.io.js',
   'js/dependencies/angular.min.js',  
   'js/dependencies/angular-ui-router.min.js',
+  'js/dependencies/moment.min.js',
   // 'js/dependencies/ui-bootstrap.min.js',
   // 'js/dependencies/satellizer.min.js',
   // 'js/dependencies/jquery.min.js',
