@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h4>{{modalOptions.headerText}}</h4>
+</div>
+<div class="modal-body">
+	<form method="post" name="departmentForm" ng-model="departmentForm" novalidate>
+	   	<div class="form-group" ng-class="{ 'has-error': (departmentForm.departmentName.$touched || departmentForm.$submitted) && departmentForm.departmentName.$invalid }">
+            <label for="">Department Name</label>
+            <input type="text" class="form-control" name="departmentName" ng-model="department.departmentName" required />
+            <span class="help-block" ng-if="(departmentForm.departmentName.$touched || departmentForm.$submitted) && departmentForm.departmentName.$error.required">Department name is required</span>
+        </div>
+
+    	<div class="form-group" ng-class="{ 'has-error': (departmentForm.departmentCode.$touched || departmentForm.$submitted) && departmentForm.departmentCode.$invalid }">
+            <label for="">Department Code</label>
+            <input type="text" class="form-control" name="departmentCode" ng-model="department.departmentCode" required />
+            <span class="help-block" ng-if="(departmentForm.departmentCode.$touched || departmentForm.$submitted) && departmentForm.departmentCode.$error.required">Department code is required</span>
+        </div>
+
+    	<div class="form-group" ng-class="{ 'has-error': (departmentForm.locationId.$touched || departmentForm.$submitted) && departmentForm.locationId.$invalid }">
+            <label for="">Location</label>
+            <input type="text" class="form-control" name="locationId" ng-model="department.locationId" required />
+            <span class="help-block" ng-if="(departmentForm.locationId.$touched || departmentForm.$submitted) && departmentForm.locationId.$error.required">Location is required</span>
+        </div>
+   		<div class="form-group" ng-class="{ 'has-error': (departmentForm.recordStatus.$touched || departmentForm.$submitted) && departmentForm.recordStatus.$invalid }">
+	        <label for="">Record Status</label>
+	        <select class="form-control" name="recordStatus" ng-model="department.recordStatus" ng-options="recordstatus.value as recordstatus.name for recordstatus in recordStatusArr">
+	        </select>
+	        <span class="help-block" ng-if="(departmentForm.recordStatus.$touched || departmentForm.$submitted) && departmentForm.recordStatus.$error.required">Record Status is required</span>
+	    </div>   
+	</form>    
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="departmentForm.$invalid"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
+</div>

@@ -1,8 +1,10 @@
 <div ng-show="isAuthenticated">
 
     <div class="col-md-12">
-        <div uib-alert ng-repeat="alert in employeeListAlerts" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="8000">{{alert.msg}}</div>
+        <div uib-alert ng-repeat="alert in employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+
         <button class="btn btn-primary margin-bottom" ng-click="saveEmployee(0, false)"><i class="fa fa-user"></i> <b>New Employee</b></button>
+
         <button class="btn btn-primary margin-bottom" ng-click="saveTimeRecord()"><i class="fa fa-calendar" aria-hidden="true"></i> <b>New Time Record</b></button>
     </div> 
    
@@ -13,8 +15,8 @@
 
           <div class="box-tools pull-right">
             <div class="has-feedback">
-              <input type="text" class="form-control input-sm" placeholder="Search Employee" ng-model="searchString" uib-typeahead="employee for searchList in searchEmployee($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults">
-              <!-- <span class="glyphicon glyphicon-search form-control-feedback"></span> -->
+              <input type="text" class="form-control input-sm" placeholder="Search Employee" ng-model="searchString" uib-typeahead="employee for searchList in searchEmployee($viewValue)" typeahead-min-length="3" typeahead-no-results="noResults">
+              <span class="glyphicon glyphicon-search form-control-feedback"></span>
             </div>
           </div>
           <!-- /.box-tools -->
@@ -22,27 +24,30 @@
         <!-- /.box-header -->
         <div class="box-body">
           <div class="table-responsive employee-list-content">
-            <table class="table table-hover table-striped table-bordered">
+            <table class="table table-hover table-striped table-bordered dataTable">
               <thead>
                 <tr>
                   <th><input type="checkbox"></th>                
                   <th>Employee ID</th>
                   <th>Full Name</th>
+                  <th>Department Assigned</th>
                   <th>Position</th>
-                  <th>Email Address</th>
-                  <th>Date of Created</th>
+                  <!-- <th>Email Address</th> -->
+                  <th>Date Updated</th>
                   <th colspan="4">Actions</th>
                 </tr>
               </thead>
               <tbody>
-              <tr ng-repeat="employee in employeeList">
+              <tr ng-repeat="employee in employeeList | filter:searchString" class="animate-repeat">
                 <td><input type="checkbox" value="{{ employee.id }}"></td>                
                 <td>{{ employee.empId }}</td>
-                <td>{{ employee.firstName }} {{ employee.lastName }}</td>
+                <td>{{ employee.fullName }} </td>
+                <td>{{ employee.departmentAssigned }} </td>
                 <td>{{ employee.position }}</td>
-                <td>{{ employee.emailAddress }}</td>
-                <td>{{ employee.createdAt | date }}</td>
+                <!-- <td>{{ employee.emailAddress }}</td> -->
+                <td>{{ employee.updatedAt | date : short }}</td>
                 <td colspan="4">
+                  <button class="btn btn-primary btn-sm" ng-click="viewEmployeeDetails($index);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
                   <button class="btn btn-primary btn-sm" ng-click="saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-cog"></i></button>
                   <button class="btn btn-primary btn-sm" ng-click="removeEmployee(employee.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
                 </td>
@@ -52,36 +57,41 @@
             <!-- /.table -->
           </div>
           <!-- /.mail-box-messages -->
-        </div>
-        <!-- /.box-body -->
-        <div class="box-footer no-padding">
-          <div class="mailbox-controls">
-            <!-- Check all button -->
-            <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-            </button>
-            <div class="btn-group">
-              <button type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-              <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
-              <button type="button" class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
-            </div>
-            <!-- /.btn-group -->
-            <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-            <div class="pull-right">
-              1-50/200
-              <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
+
+          <div class="row">
+              <div class="col-sm-5">
+                <div class="dataTables_info">
+                  Showing {{ pager.startIndex + 1}} to {{ pager.endIndex + 1 }} of {{ pager.totalItems }} records
+                </div>
               </div>
-              <!-- /.btn-group -->
-            </div>
-            <!-- /.pull-right -->
+              <div class="col-sm-7">
+                <div class="dataTables_paginate paging_simple_numbers">                  
+                  <ul ng-if="pager.pages.length" class="pagination">
+                      <li ng-class="{disabled:pager.currentPage === 1}">
+                          <a ng-click="setPage(1)">First</a>
+                      </li>
+                      <li ng-class="{disabled:pager.currentPage === 1}">
+                          <a ng-click="setPage(pager.currentPage - 1)">Previous</a>
+                      </li>
+                      <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                          <a ng-click="setPage(page)">{{page}}</a>
+                      </li>                
+                      <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                          <a ng-click="setPage(pager.currentPage + 1)">Next</a>
+                      </li>
+                      <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                          <a ng-click="setPage(pager.totalPages)">Last</a>
+                      </li>
+                  </ul>
+                </div>
+              </div>
           </div>
         </div>
+        <!-- /.box-body -->       
       </div>
       <!-- /. box -->
     </div>
     <!-- /.col -->
-
      <div class="col-md-3">
 
       <div class="box box-solid">
@@ -107,5 +117,6 @@
       </div>
     </div>
     <!-- /.col -->   
+    <div class="clearfix"></div>
 
 </div>

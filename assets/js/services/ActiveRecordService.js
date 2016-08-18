@@ -1,13 +1,13 @@
 
-cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
+cereliApp.service('activeRecordService', [ '$http', '$q' , function( $http, $q ){
         
     return {
 
-        getEmployee : function( criteria ) {
+        getActiveRecord : function( criteria, url ) {
 
             var defer = $q.defer();
 
-            $http.get('employees/getEmployee?criteria=' + criteria)
+            $http.get(url + criteria)
                 .success(function( response ){
                     defer.resolve(response);
                 })
@@ -19,11 +19,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        getEmployeeList : function( limitValue, pageValue ) {
+        getActiveRecordList : function( url ) {
 
             var defer = $q.defer();
 
-            $http.get('/employees/getEmployeeList?limit=' + limitValue + '&page=' + pageValue)
+            $http.get(url)
                 .success(function( response ){
                     defer.resolve(response);
                 })
@@ -35,24 +35,24 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        saveEmployee: function( employeeDetails, isEditMode) {
+        saveActiveRecord: function( activeRecordDetails, isEditMode, url) {
 
             var defer = $q.defer();
 
             var postVars = {};
 
-            postVars.id = isEditMode ? employeeDetails.id : 0;
+            postVars.id = isEditMode ? activeRecordDetails.id : 0;
 
             // edit mode remove id from update object
             if ( isEditMode ) {
-                delete employeeDetails.id;  
-                delete employeeDetails.createdAt;
-                delete employeeDetails.updatedAt;
+                delete activeRecordDetails.id;  
+                delete activeRecordDetails.createdAt;
+                delete activeRecordDetails.updatedAt;
             } 
 
-            postVars.employee = employeeDetails;
+            postVars.activeRecord = activeRecordDetails;
             
-            $http.post('employees/saveEmployee', postVars)
+            $http.post(url, postVars)
                 .success(function(resp){
                     defer.resolve(resp);
                 })
@@ -64,11 +64,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         }, 
 
-        editEmployee: function( employeeDetails ) {
+        updateActiveRecord: function( activeRecordDetails, url ) {
 
             var defer = $q.defer();
             
-            $http.post('employees/editEmployee', { employee : employeeDetails })
+            $http.post(url, { activeRecordObj : activeRecordDetails })
                 .success(function(resp){
                     defer.resolve(resp);
                 })
@@ -80,11 +80,11 @@ cereliApp.service('employeeService', [ '$http', '$q' , function( $http, $q ){
             return defer.promise;
         },
 
-        removeEmployee : function( employee ) {
+        removeActiveRecord : function( activeRecord, url ) {
 
             var defer = $q.defer();
             
-            $http.post('employees/removeEmployee', { id : employee })
+            $http.post(url, { id : activeRecord })
                 .success(function(resp){
                     defer.resolve(resp);
                 })

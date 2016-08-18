@@ -1,0 +1,63 @@
+<div ng-show="isAuthenticated">
+
+	<div class="col-md-12">		
+	  	<div uib-alert ng-repeat="alert in departmentListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('departmentListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+
+     	<button class="btn btn-primary margin-bottom" ng-click="saveDepartmentRecord(0, false)"><i class="fa fa-building"></i> <b>New Department</b></button>
+
+	</div>	
+
+	<div class="col-md-9">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title">List of Departments</h3>
+				<div class="box-tools pull-right">
+					<div class="has-feedback">
+						<input type="text" class="form-control input-sm" placeholder="Search departments" ng-model="searchStringDepartments"/>
+              			<span class="glyphicon glyphicon-search form-control-feedback"></span>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="box-body">
+				<div class="table-responsive department-list-content">
+					
+					<!-- Show if no records saved. -->
+					<div ng-if="!departmentList.length" ng-class="'alert-info'" uib-alert type="info">No records yet saved.</div>
+
+					<!-- Records list table -->
+					<table class="table table-hover table-striped table-bordered" ng-if="departmentList.length">
+						<thead>
+						  	<th><input type="checkbox"></th>  
+							<th>ID</th>
+							<th>Department Code</th>
+							<th>Department Name</th>
+							<th>Location ID</th>							
+							<th>Date Updated</th>
+							<th colspan="4">Actions</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="deparment in departmentList | filter:searchStringDepartments">
+							  	<td><input type="checkbox" value="{{ deparment.id }}"></td>                
+				                <td>{{ deparment.id }}</td>
+				                <td>{{ deparment.departmentCode }} </td>
+				                <td>{{ deparment.departmentName }}</td>
+				                <td>{{ deparment.locationId }}</td>
+				                <td>{{ deparment.updatedAt | date }}</td>
+				                <td colspan="4">
+				                  <button class="btn btn-primary btn-sm" ng-click="saveDepartmentRecord($index, true)" uib-tooltip="Edit deparment Details"><i class="fa fa-cog"></i></button>
+				                  <button class="btn btn-primary btn-sm" ng-click="removeDepartment(deparment.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
+				                </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		
+	</div>
+</div>

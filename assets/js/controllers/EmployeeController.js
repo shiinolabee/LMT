@@ -1,9 +1,16 @@
 
 cereliApp
-    .controller('employeeController', [ '$scope', '$uibModal', 'employeeService',  function( $scope, $uibModal, employeeService ){
+    .controller('employeeController', [ '$scope', '$uibModal', 'activeRecordService', 'pagerService',  function( $scope, $uibModal, activeRecordService, pagerService ){
 
         $scope.employeeListAlerts = [];
-        $scope.employeeList = [];        
+        $scope.employeeList = [];  
+        $scope.recordStatusArr = [ 
+            {  name : 'Active', value : 1 },
+            {  name : 'Inactive', value : 0}
+        ];
+        $scope.dummyEmployeeList = [];  
+
+        $scope.pager = {};        
 
         $scope.addAlert = function(type, options) {
             $scope[type].push(options);
@@ -20,6 +27,7 @@ cereliApp
                     id : '',
                     empId : '',
                     position : '',
+                    departmentAssigned : '',
                     paidLeaveLimit : 0,
                     unpaidLeaveLimit : 0,
                     noOfAbsences : 0,
@@ -29,7 +37,9 @@ cereliApp
                     firstName : '',
                     lastName : '',
                     contactNumber : '',
-                    emailAddress : ''
+                    emailAddress : '',
+                    createdAt : '',
+                    updatedAt : ''
                 };
                 
             } else {                
@@ -39,15 +49,83 @@ cereliApp
             return employee;
         };
 
-        $scope.getListEmployees = function() {
+        $scope.setPage = function( page ){            
 
-            employeeService.getListEmployees().then(function( response ){
+            if (page < 1 || page > $scope.pager.totalPages) {
+                return;
+            }
 
-                console.log(response);
+            // get pager object from service
+            $scope.pager = pagerService.getPager($scope.dummyEmployeeList.length, page);
 
-                $scope.employeeList = response;
+            // get current page of items
+            $scope.employeeList = $scope.dummyEmployeeList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+            
+        }
+
+        $scope.getEmployeeList = function() {
+
+            activeRecordService.getActiveRecordList('employees/getEmployeeList').then(function( response ){
+
+                if ( response.success ) {
+                    $scope.employeeList = response.data;                    
+                    $scope.dummyEmployeeList = response.data;                    
+                    $scope.setPage(1);
+                }
             });
         };        
+
+        $scope.getDepartmentList = function(){
+
+            activeRecordService.getActiveRecordList('departments/getDepartmentList').then(function( response ){
+
+                if ( response.success ) {
+                    $scope.departmentList = response.data;                                                            
+                }
+            });
+
+        };  
+
+        $scope.viewEmployeeDetails = function(index) {
+
+            $scope.index = index;
+
+            var modalInstance = $uibModal.open({
+                animation : true,
+                keyboard : false,
+                resolve : {
+                    employeeInitialValues : function(){
+                        return $scope.initEmployeeValues(true, $scope.index);                        
+                    },
+                    isEditMode : function(){
+                        return false;
+                    }
+                },
+                templateUrl : 'templates/employees/view.html',
+                size : 'md',
+                controller : function( $scope, employeeInitialValues, isEditMode ){
+
+                    $scope.editMode = isEditMode;
+                    $scope.employee = employeeInitialValues;
+
+                    $scope.modalOptions = {
+                        headerText : 'View Employee Details',
+                        closeButtonText : 'Cancel',
+                        actionButtonText : 'Close',
+
+                        ok : function( result ){
+                            modalInstance.close();
+                        },
+
+                        cancel : function(){
+                            modalInstance.dismiss('cancel');
+                        }
+                    };
+
+                }
+            });
+        }      
+        
 
         $scope.saveEmployee = function( index, isEditMode ) {
 
@@ -63,15 +141,26 @@ cereliApp
                     },
                     isEditMode : function(){
                         return $scope.editMode;
+                    },
+                    getRecordStatusArr : function(){
+                        return $scope.recordStatusArr;
+                    },
+                    getDepartmentList : function(){
+                        return $scope.departmentList;
                     }
                 },                            
                 templateUrl: 'templates/employees/form.html', 
                 windowTemplateUrl : 'templates/common/ui-modal.html',                
                 size: 'md',
-                controller: function( $scope, employeeInitialValues, isEditMode ) {
+                controller: function( $scope, employeeInitialValues, isEditMode, getRecordStatusArr, getDepartmentList ) {
+
 
                     $scope.employee = employeeInitialValues;
                     $scope.editMode = isEditMode;                    
+                    $scope.recordStatusArr = getRecordStatusArr;
+                    $scope.departmentList = getDepartmentList;
+
+                    console.log($scope.departmentList);
                     
                     /**
                     * Set Modal options such as messages, text, labels, etc
@@ -86,7 +175,7 @@ cereliApp
 
                             var responseData, id;                                                   
 
-                            employeeService.saveEmployee($scope.employee, $scope.editMode).then(function( response ) {
+                            activeRecordService.saveActiveRecord($scope.employee, $scope.editMode, 'employees/saveEmployee').then(function( response ) {
 
                                 if ( response.success ) {
                                     responseData = response;                                                                        
@@ -116,7 +205,7 @@ cereliApp
 
                 if ( responseData.success ) {
 
-                    $scope.getListEmployees();        
+                    $scope.getEmployeeList();        
 
                     $scope.addAlert('employeeListAlerts', {
                         type: 'success',
@@ -141,7 +230,7 @@ cereliApp
         **/
         $scope.searchEmployee = function( val ){
 
-            return employeeService.getEmployee( val );                
+            return activeRecordService.getActiveRecord( val, 'employees/getEmployee?criteria=');                
 
         };
 
@@ -165,20 +254,20 @@ cereliApp
                     }
                 },
                 size: 'sm',
-                controller: function($scope, $uibModalInstance, employeeDetails, index, employeeService) {                       
+                controller: function($scope, $uibModalInstance, employeeDetails, index, activeRecordService) {                       
 
                     $scope.modalOptions = {
                         closeButtonText: 'Cancel',
-                        actionButtonText: 'Delete Employee Details',
-                        headerText: 'Delete Employee details?',
-                        bodyText: 'Are you sure you want to delete employ ' + (employeeDetails.firstName + ' ' + employeeDetails.lastName) + '\'s details?'
+                        headerText: 'Delete ' + (employeeDetails.fullName) + '?',
+                        actionButtonText: 'Delete Employee details',
+                        bodyText: 'Are you sure you want to delete employ ' + (employeeDetails.fullName)  + '\'s details?'
                     };
 
                     $scope.modalOptions.ok = function (result) {
 
                         var responseData;
 
-                        employeeService.removeEmployee(employeeDetails.id).then(function(response) {
+                        activeRecordService.removeActiveRecord(employeeDetails.id, 'employees/removeEmployee').then(function(response) {
 
                             if ( response.success ) {
                                 responseData = response;                                    
@@ -207,7 +296,7 @@ cereliApp
                 if ( responseData.success ) {
 
                     $scope.employeeList.splice(index, 1);
-                    $scope.getListEmployees();
+                    $scope.getEmployeeList();
 
                     $scope.addAlert('employeeListAlerts', {
                         type: 'success',
@@ -231,7 +320,7 @@ cereliApp
                 templateUrl: 'templates/employees/import-modal.html',          
                 windowTemplateUrl : 'templates/common/ui-modal.html',             
                 size: 'md',
-                controller: function($scope, $uibModalInstance, employeeService) {                       
+                controller: function($scope, $uibModalInstance, activeRecordService) {                       
 
                     $scope.modalOptions = {
                         closeButtonText: 'Cancel',
@@ -243,7 +332,7 @@ cereliApp
 
                         var responseData;
 
-                        employeeService.saveImportedTimeRecords().then(function(response) {
+                        activeRecordService.saveImportedTimeRecords().then(function(response) {
 
                             if ( response.success ) {
                                 responseData = response;                                    
@@ -272,11 +361,19 @@ cereliApp
 
             var modalInstance = $uibModal.open({
                 animation : true,
-                size : 'md'
+                size : 'md',
+                templateUrl: 'templates/employees/time-record-form.html',          
+                windowTemplateUrl : 'templates/common/ui-modal.html',
+                controller : function(){
+                    
+                }
             });
 
         };
 
-        $scope.getListEmployees();
+
+
+        $scope.getEmployeeList();
+        $scope.getDepartmentList();
 
     }]);

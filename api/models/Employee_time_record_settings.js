@@ -18,6 +18,11 @@ module.exports = {
             columnName: 'id'
         },
 
+        requiredHoursToRender : {
+            type : 'timestamp',
+            required : true
+        },
+
         startShiftTime : {
             type : 'timestamp',
             required : true

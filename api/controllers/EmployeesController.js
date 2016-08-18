@@ -9,22 +9,28 @@ module.exports = {
 
     getEmployeeAttributes : function( req, res ) {
 
-        // Employees.getAllAttributes()
+        return Employees.getAllAttributes();       
 
     },
 
     getEmployee : function( req, res ){  
         
-        var employeeVal = (req.body.value) ? req.body.value : undefined;       
+        var criteria = (req.param('criteria')) ? req.param('criteria') : undefined;       
 
-        EmployeesService.getEmployee(employeeVal, function( employee ){
+        EmployeesService.getEmployee(criteria, function( employee ){
             res.json(employee);
         });
     },
 
     getEmployeeList : function( req, res ){  
+
+        // var limitValue = req.param('limit');
+        // var pageValue = req.param('page');
+
         EmployeesService.getEmployeeList(function( employees ){
-            res.json(employees);
+            if ( employees ) {
+                res.json({ success : true, data : employees});                
+            }
         });
     },
 
@@ -32,7 +38,7 @@ module.exports = {
 
         if ( req.param('id') ) {
 
-            EmployeesService.editEmployee(req.param('employee'), req.param('id'), function(success) {
+            EmployeesService.editEmployee(req.param('activeRecord'), req.param('id'), function(success) {
                 if ( success ) {
                     res.json( { success : true , data : success  });                
                 }
@@ -40,7 +46,7 @@ module.exports = {
                 res.json( { success : false , data : success  });                            
             }); 
         } else {           
-            EmployeesService.saveEmployee(req.param('employee'), function(success) {
+            EmployeesService.saveEmployee(req.param('activeRecord'), function(success) {
                 if ( success ) {
                     res.json( { success : true , data : success  });                
                 }

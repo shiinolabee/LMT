@@ -19,7 +19,7 @@ module.exports = {
         },
 
         //reference for employees collection
-        employeeId : {            
+        empId : {            
             model : 'employees',
             unique : true
         },
@@ -31,37 +31,43 @@ module.exports = {
 
         dateAttended : {
             type : 'date',
-            required : true
+            required : true,
         },
 
         time1 : {
             type : 'datetime',
-            required : true
+            required : true,
+            columnName : 'time_1'
         },
         
         time2 : {
             type : 'datetime',
-            required : true        
+            required : true,
+            columnName : 'time_2'        
         },
         
         time3 : {
             type : 'datetime',
-            required : true        
+            required : true,
+            columnName : 'time_3'        
         },
         
         time4 : {
             type : 'datetime',
-            required : true        
+            required : true,
+            columnName : 'time_4'        
         },
         
         time5 : {
             type : 'datetime',
-            required : true        
+            required : true,
+            columnName : 'time_5'        
         },
         
         time6 : {
             type : 'datetime',
-            required : true        
+            required : true,
+            columnName : 'time_6'        
         }
 
     }

@@ -18,6 +18,12 @@ module.exports = {
             columnName: 'id'
         },
 
+        //reference for employees collection
+        empId : {            
+            model : 'employees',
+            unique : true
+        },
+
         type : {
             type : 'text',
             required : false

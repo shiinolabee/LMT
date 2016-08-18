@@ -111,3 +111,19 @@ background-color: #eee;
 /*.form-control {
   width: 80% !important;
 }*/
+
+.form-control-feedback{
+  top : 0px !important;
+}
+
+.pagination {
+  margin: 0px auto;
+}
+
+.pagination > li > a {
+  cursor: pointer;
+}
+
+.dataTables_paginate{
+  text-align: right;
+}

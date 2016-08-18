@@ -136,11 +136,17 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             }
         })
 
-        .state('user.messages', {
-            url: '/messages',
-            templateUrl: 'templates/user/messages.html',
-            controller: 'MessagesController'
+        .state('admin.departments', {
+            url : 'departments/list',
+            views : {
+                'child-content' : {
+                    templateUrl : 'templates/departments/index.html',
+                    controller : 'departmentController'
+                }
+            }
+
         })
+       
     ;
 
     $locationProvider.html5Mode(true);

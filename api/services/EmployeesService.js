@@ -9,6 +9,7 @@ module.exports = {
     
     getEmployeeList : function( next ) {
 
+        // Employees.find().paginate({ page : pageValue , limit : limitValue}).exec(function( err, employees ) {
         Employees.find().exec(function( err, employees ) {
 
             if( err ) throw err;
@@ -18,9 +19,9 @@ module.exports = {
 
     },
     
-    getEmployee : function( data, next ) {
+    getEmployee : function( criteria, next ) {
 
-        Employees.find(data).exec(function( err, employees ) {
+        Employees.find({ where : { fullName : criteria, emailAddress : criteria, empId : criteria } }).exec(function( err, employees ) {
 
             if( err ) throw err;
 

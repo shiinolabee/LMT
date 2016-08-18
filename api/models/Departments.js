@@ -12,15 +12,9 @@ module.exports = {
     attributes: {
 
         id: {
-
             type: 'integer',
-
             unique: true,
-
-            primaryKey: true,
-
-            columnName: 'id'
-
+            primaryKey: true,            
         },
 
         departmentName : {
@@ -30,6 +24,23 @@ module.exports = {
         departmentCode : {
             type : 'string',
             defaultsTo : '0000'
+        },
+
+        locationId : {
+            type : 'string'
+        },
+
+        createdAt : {
+            type : 'datetime'
+        },
+
+        updatedAt : {
+            type : 'datetime'            
+        },
+
+        recordStatus : {
+            type : 'integer',
+            defaultsTo : 1
         }
 
     }
