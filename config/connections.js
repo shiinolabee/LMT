@@ -45,7 +45,7 @@ module.exports.connections = {
     host: 'localhost',
     port : 3306,
     user: 'root',
-    password: 'clouduser101',
+    password: 'scav111190',
     database: 'cereli_employee_time_manager'
   },
 
