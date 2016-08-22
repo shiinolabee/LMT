@@ -1,7 +1,7 @@
 'use strict';
 
 
-var cereliApp = angular.module('cereliApp', [ 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router', 'cereliDirectives' ]);
+var cereliApp = angular.module('cereliApp', [ 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router', 'ngFileUpload', 'cereliDirectives' ]);
 
 
 cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
@@ -15,13 +15,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             url : '',
             views : {             
                 'extra-content' : {
-                    templateUrl : 'templates/common/modal.html',                    
-                    resolve : {
-
-                    },
-                    controller : function( modalService ){
-                    },
-                    controllerAs : 'loginModal',                                     
+                    templateUrl : 'templates/common/modal.html',                                                                                    
                 }
             }
         })
@@ -156,7 +150,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
 cereliApp
     .config(function(calendarConfig) {
 
-        console.log(calendarConfig); //view all available config
+        // console.log(calendarConfig); //view all available config
 
         // calendarConfig.templates.calendarMonthView = 'path/to/custom/template.html'; //change the month view template globally to a custom template
 

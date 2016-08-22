@@ -14,6 +14,7 @@
               <ul class="list-group list-group-unbordered">
                 <li class="list-group-item">
                   <b>Employee ID</b> <a class="pull-right">{{ employee.empId }}</a>
+                  <div class="clearfix"></div>                  
                 </li>
                 <li class="list-group-item">
                   <b>Department</b> <a class="pull-right"><show-subdetails-employee index="$index" id="{{employee.departmentAssigned}}" type="
@@ -22,6 +23,7 @@
                 </li>
                 <li class="list-group-item">
                   <b>Email</b> <a class="pull-right">{{ employee.emailAddress | contentIsEmpty}}</a>
+                  <div class="clearfix"></div>
                 </li>
               </ul>
 
@@ -44,7 +46,48 @@
 	    		<uib-tab index="1">
 	    			<uib-tab-heading>
 	    				 <i class="fa fa-calendar"></i> Daily Time Records    	
-	    			</uib-tab-heading>    	
+	    			</uib-tab-heading>    
+
+	    			<div class="col-md-6 text-center">
+				      <div class="btn-group">
+
+				        <button
+				          class="btn btn-primary"
+				          mwl-date-modifier
+				          date="viewDate"
+				          decrement="calendarView">
+				          Previous
+				        </button>
+				        <button
+				          class="btn btn-default"
+				          mwl-date-modifier
+				          date="viewDate"
+				          set-to-today>
+				          Today
+				        </button>
+				        <button
+				          class="btn btn-primary"
+				          mwl-date-modifier
+				          date="viewDate"
+				          increment="calendarView">
+				          Next
+				        </button>
+				      </div>
+				    </div>
+
+				    <br class="visible-xs visible-sm">	
+
+			     	<div class="col-md-6 text-center">
+				      <div class="btn-group">
+				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'year'">Year</label>
+				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'month'">Month</label>
+				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'week'">Week</label>
+				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'day'">Day</label>
+				      </div>
+				    </div>
+
+			     	<br>
+
 	    			<mwl-calendar
 					    view="calendarView"
 					    view-date="calendarDate"
@@ -54,6 +97,17 @@
 					    on-event-times-changed="calendarEvent.startsAt = calendarNewEventStart; calendarEvent.endsAt = calendarNewEventEnd"
 					    cell-is-open="true">
 					</mwl-calendar>
+
+					<h3 id="event-editor">
+					    Edit events
+					    <button
+					      class="btn btn-primary pull-right"
+					      ng-click="addEvent()">
+					      Add new
+					    </button>
+					    <div class="clearfix"></div>
+					</h3>
+					
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 	    	</uib-tabset>			
@@ -62,6 +116,6 @@
 	<div class="clearfix"></div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
-    <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="employeeForm.$invalid"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
+   <!--  <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button> -->
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="employeeForm.$invalid"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.actionButtonText}}</button>
 </div>

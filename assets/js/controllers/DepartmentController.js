@@ -147,7 +147,82 @@ cereliApp
                     $scope.setPage(1);
                 }
             });
-        }
+        };
+
+        /**
+        * Removes/Deletes department by id        
+        **/
+        $scope.removeDepartment = function( id, index ) {
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                keyboard: false,
+                backdrop: 'static',                    
+                templateUrl: 'templates/common/modal.html',          
+                windowTemplateUrl : 'templates/common/ui-modal.html',
+                resolve: {                       
+                    departmentDetails: function() {
+                        return $scope.departmentList[index];
+                    },
+                    index: function() {
+                        return index;
+                    }
+                },
+                size: 'sm',
+                controller: function($scope, $uibModalInstance, departmentDetails, index, activeRecordService) {                       
+
+                    $scope.modalOptions = {
+                        closeButtonText: 'Cancel',
+                        headerText: 'Delete ' + (departmentDetails.departmentName) + '?',
+                        actionButtonText: 'Delete Department details',
+                        bodyText: 'Are you sure you want to delete department ' + (departmentDetails.departmentName)  + '\'s details?'
+                    };
+
+                    $scope.modalOptions.ok = function (result) {
+
+                        var responseData;
+
+                        activeRecordService.removeActiveRecord(departmentDetails.id, 'departments/removeDepartment').then(function(response) {
+
+                            if ( response.success ) {
+                                responseData = response;                                    
+                            }
+                        }, function() {
+                            responseData = {
+                                success: false,
+                                errors: ['Unknown error occured while deleting client note']
+                            };
+
+                        }).finally(function(){
+                            modalInstance.close(responseData);                                
+                        });                      
+                    };
+
+                    $scope.modalOptions.close = function (result) {
+                        // $uibModalInstance.dismiss('cancel');
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                }
+            });
+
+            modalInstance.result.then(function(responseData) {
+
+                if ( responseData.success ) {
+
+                    $scope.employeeList.splice(index, 1);
+                    $scope.getDepartmentList();
+
+                    $scope.addAlert('departmentListAlerts', {
+                        type: 'success',
+                        msg: 'Department Details Successfully Deleted'
+                    });                    
+                    
+                }
+
+            });
+        };
+
 
         $scope.getDepartmentList();
 
