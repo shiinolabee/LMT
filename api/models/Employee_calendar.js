@@ -18,16 +18,52 @@ module.exports = {
             columnName: 'id'
         },
 
-        eventTitle : {
+        title : {
         	type : 'string',
         	defaulsTo : ''
         },
 
-        eventType : {
-        	type : 'integer',
-        	
-        }
+        description : {
+        	type : 'text',
+        	required : false
+        },
 
+        type : {
+        	type : 'integer',
+        	defaulsTo : 0,
+        	required : true
+        },
+
+        startsAt : {
+        	type : 'datetime',
+        	required : true
+        },
+
+        endsAt : {
+        	type : 'datetime',
+        	required : true	
+        },
+
+        isRecursive: {
+        	type : 'integer',
+        	required : true
+        },
+
+        applysToAll : {
+        	type : 'integer'
+        },
+
+        applysTo : {
+        	type : 'json'
+        },
+
+        createdAt : {
+            type : 'datetime',            
+        },
+
+        updatedAt : {
+            type : 'datetime',            
+        }
   	}
 };
 

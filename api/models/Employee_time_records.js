@@ -38,7 +38,15 @@ module.exports = {
             unique : true,
             required : true,
             columnName : 'time'
-        }      
+        }, 
+
+        createdAt : {
+            type : 'datetime',            
+        },
+
+        updatedAt : {
+            type : 'datetime',            
+        }
     }
 };
 

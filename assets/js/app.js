@@ -29,6 +29,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 }      
             }
         })
+        
         .state('admin', {
             abstract:true,      
             url : '/',      
@@ -69,7 +70,8 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                             return activeRecordService.getActiveRecordList('departments/getDepartmentList');
                         }
                     },            
-                    controller : 'employeeController',                    
+                    controller : 'employeeController',
+                    controllerAs : 'employeeCtrl'                    
                 }
             },
             data : {

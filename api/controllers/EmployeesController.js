@@ -98,10 +98,7 @@ module.exports = {
         });
     },
 
-    getEmployeeList : function( req, res ){  
-
-        // var limitValue = req.param('limit');
-        // var pageValue = req.param('page');
+    getEmployeeList : function( req, res ){         
 
         EmployeesService.getEmployeeList(function( employees ){
             if ( employees ) {

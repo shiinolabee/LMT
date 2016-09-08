@@ -115,7 +115,7 @@
 
 			controller : function( $scope ){
 
-				var _self = this;		
+				var _self = this;						
 
 				_self.events = [];		
                 _self.isCellOpen = true;  
@@ -153,9 +153,7 @@
                 }, 
                 {                	
                   label: '<i class=\'glyphicon glyphicon-remove\'></i>',
-                  onClick: function(args) {
-
-                    _self.timeRecordSelected = true;
+                  onClick: function(args) {                   
 
                     activeRecordService.removeActiveRecord(args.calendarEvent.id, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
                     	if ( response.success ) {
@@ -174,7 +172,7 @@
                 	startsAt : '',
                 	endsAt : '',
             	 	draggable: true,
-                    resizable: true,
+                    resizable: false,
                     actions: actions
                 };
 
@@ -299,6 +297,8 @@
 
 				_self.events = [];
 
+				_self.showLoader = false;
+
 				_self.externalEvents = [
 			      {
 			        title: 'Event 1',
@@ -355,6 +355,7 @@
 			scope : {
 				viewdate : '=',
 				calendarview : '=',
+				showLoader : '='				
 			},
 
 			templateUrl : 'templates/employees/calendar-controls.html'
