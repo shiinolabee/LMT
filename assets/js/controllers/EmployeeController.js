@@ -1,10 +1,11 @@
 
 cereliApp
-    .controller('employeeController', [ '$scope', '$uibModal', 'activeRecordService', 'pagerService', 'moment', 'calendarConfig', 'Upload',  
-        function( $scope, $uibModal, activeRecordService, pagerService, moment, calendarConfig, Upload ){
+    .controller('employeeController', [ '$scope', '$uibModal', 'activeRecordService', 'pagerService', 'moment', 'calendarConfig', 'uibDateParser', 'getDepartmentList',  
+        function( $scope, $uibModal, activeRecordService, pagerService, moment, calendarConfig, uibDateParser, getDepartmentList ){
 
         $scope.employeeListAlerts = [];
         $scope.employeeList = [];  
+        $scope.departmentList = getDepartmentList.data; // get department lists        
 
         $scope.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
@@ -36,12 +37,14 @@ cereliApp
                     empId : '',
                     position : '',
                     departmentAssigned : '',
+                    dateHired : new Date(),
+                    dateRegularized : new Date(),
                     paidLeaveLimit : 0,
                     unpaidLeaveLimit : 0,
                     noOfAbsences : 0,
                     noOfLates: 0,
                     totalOvertime : 0,
-                    recordStatus : 1,
+                    recordStatus : 1,                    
                     firstName : '',
                     lastName : '',
                     contactNumber : '',
@@ -71,7 +74,18 @@ cereliApp
             // get current page of items
             $scope.employeeList = $scope.dummyEmployeeList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
             
-        }
+        };
+
+        $scope.selectAllEmployees = function(){
+
+            
+            $scope.selectedAll = $scope.selectedAll ? true : false;
+
+            angular.forEach($scope.employeeList, function( employee ){
+                employee.selected = $scope.selectedAll;
+            });
+            
+        };
 
         $scope.getEmployeeList = function() {
 
@@ -83,28 +97,16 @@ cereliApp
                     $scope.setPage(1);
                 }
             });
-        };        
+        };      
 
-        $scope.getDepartmentList = function(){
-
-            activeRecordService.getActiveRecordList('departments/getDepartmentList').then(function( response ){
-
-                if ( response.success ) {
-                    $scope.departmentList = response.data;                                                            
-                }
-            });
-
-            $scope.getEmployeeList();
-
-        };  
-
-        $scope.viewEmployeeDetails = function(index) {
+        $scope.viewEmployeeDetails = function(index, empId) {
 
             $scope.$index = index;
 
             var modalInstance = $uibModal.open({
                 animation : true,
                 keyboard : false,
+                backdrop : 'static',
                 resolve : {
                     employeeInitialValues : function(){
                         return $scope.initEmployeeValues(true, $scope.$index);                        
@@ -114,15 +116,22 @@ cereliApp
                     },
                     isEditMode : function(){
                         return false;
+                    },
+                    getEmployeeTimeRecord : function( activeRecordService ){
+                        return activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord');
                     }
                 },
                 templateUrl : 'templates/employees/view.html',
                 size : 'lg',
-                controller : function( $scope, employeeInitialValues, isEditMode, getDepartmentList ){
+                controllerAs : 'vm',
+                controller : function( $scope, employeeInitialValues, isEditMode, getDepartmentList, getEmployeeTimeRecord, $uibModal ){                    
 
                     $scope.editMode = isEditMode;
                     $scope.employee = employeeInitialValues;
+
                     $scope.departmentList = getDepartmentList;
+
+                    $scope.employeeTimeRecords = getEmployeeTimeRecord.data;
 
                     $scope.modalOptions = {
                         headerText : 'View Employee Details',
@@ -136,92 +145,14 @@ cereliApp
                         close : function(){
                             modalInstance.dismiss('cancel');
                         }
-                    };
-
-                    //Daily Time Record 
-                    $scope.calendarView = 'month';           
-                    $scope.calendarDate = new Date();     
-                    $scope.calendarTitle = "Daily Time Record";
-
-                    var actions = [{
-                      label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
-                      onClick: function(args) {
-                        // alert.show('Edited', args.calendarEvent);
-                      }
-                    }, {
-                      label: '<i class=\'glyphicon glyphicon-remove\'></i>',
-                      onClick: function(args) {
-                        // alert.show('Deleted', args.calendarEvent);
-                      }
-                    }];
-
-                    $scope.addEvent = function(){
-                        $scope.events.push({
-                            title: 'New event',
-                            startsAt: moment().startOf('day').toDate(),
-                            endsAt: moment().endOf('day').toDate(),
-                            color: calendarConfig.colorTypes.important,
-                            draggable: true,
-                            resizable: true
-                        });
-                    }      
-
-                    $scope.eventClicked = function(event) {
-                      // alert.show('Clicked', event);
-                    };
-
-                    $scope.eventEdited = function(event) {
-                      // alert.show('Edited', event);
-                    };
-
-                    $scope.eventDeleted = function(event) {
-                      // alert.show('Deleted', event);
-                    };
-
-                    $scope.eventTimesChanged = function(event) {
-                      // alert.show('Dropped or resized', event);
-                    };
-
-                    $scope.toggle = function($event, field, event) {
-                      $event.preventDefault();
-                      $event.stopPropagation();
-                      event[field] = !event[field];
-                    };
-
-                    $scope.events = [
-                      {
-                        title: 'An event',
-                        color: calendarConfig.colorTypes.warning,
-                        startsAt: moment().startOf('week').subtract(2, 'days').add(8, 'hours').toDate(),
-                        endsAt: moment().startOf('week').add(1, 'week').add(9, 'hours').toDate(),
-                        draggable: true,
-                        resizable: true,
-                        actions: actions
-                      }, {
-                        title: '<i class="glyphicon glyphicon-asterisk"></i> <span class="text-primary">Another event</span>, with a <i>html</i> title',
-                        color: calendarConfig.colorTypes.info,
-                        startsAt: moment().subtract(1, 'day').toDate(),
-                        endsAt: moment().add(5, 'days').toDate(),
-                        draggable: true,
-                        resizable: true,
-                        actions: actions
-                      }, {
-                        title: 'This is a really long event title that occurs on every year',
-                        color: calendarConfig.colorTypes.important,
-                        startsAt: moment().startOf('day').add(7, 'hours').toDate(),
-                        endsAt: moment().startOf('day').add(19, 'hours').toDate(),
-                        recursOn: 'year',
-                        draggable: true,
-                        resizable: true,
-                        actions: actions
-                      }
-                    ];
-
+                    };                   
+                   
                 }                
             });
-        }      
-        
 
+        };
+        
+        
         $scope.saveEmployee = function( index, isEditMode ) {
 
             $scope.editMode = isEditMode;
@@ -247,19 +178,58 @@ cereliApp
                         return $scope.genderArr;
                     }
                 },                            
-                templateUrl: 'templates/employees/form.html', 
+                templateUrl: 'templates/employees/employee-record-form.html', 
                 windowTemplateUrl : 'templates/common/ui-modal.html',                
                 size: 'md',
                 controller: function( $scope, employeeInitialValues, isEditMode, getRecordStatusArr, getDepartmentList, getGenderArr ) {
 
 
                     $scope.employee = employeeInitialValues;
-                    $scope.editMode = isEditMode;                    
+                    $scope.editMode = isEditMode;   
+
                     $scope.recordStatusArr = getRecordStatusArr;
                     $scope.departmentList = getDepartmentList;
                     $scope.genderArr = getGenderArr;
+               
+                    $scope.datePickerOptions = {                                                
+                        // dateDisabled: disabled,  
+                        dateHiredOptions : {
+                            formatYear: 'yy',
+                            startingDay: 1                            
+                        }, 
+                        dateRegularizedOptions : {
+                            formatYear: 'yy',
+                            startingDay: 1                            
+                        },
+                        formats : ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+                        altInputFormats : ['M!/d!/yyyy'],
+                        openDateHired : function(){
+                            $scope.datePickerOptions.isOpenDateHired.opened = true;                            
+                        },
+                        openDateRegularized : function(){
+                            $scope.datePickerOptions.isOpenDateRegularized.opened = true;                            
+                        },
+                        isOpenDateHired : {
+                            opened :false
+                        },
+                        isOpenDateRegularized : {
+                            opened :false
+                        }
+                    };                  
 
-                    console.log($scope.employee);
+                    $scope.datePickerOptions.formatSelected = $scope.datePickerOptions.formats[0];
+
+                    // Disable weekend selection
+                    function disabled(data) {
+                        var date = data.date,
+                          mode = data.mode;
+                        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+                    }
+
+                    $scope.employee.dateHired = new Date($scope.employee.dateHired);
+                    $scope.employee.dateRegularized = new Date($scope.employee.dateRegularized);
+
+                    $scope.datePickerOptions.dateRegularizedOptions.minDate = $scope.employee.dateHired;
                     
                     /**
                     * Set Modal options such as messages, text, labels, etc
@@ -314,22 +284,14 @@ cereliApp
 
             });
 
-        };     
-
-        /**
-        * Checks employee id exists in collection
-        **/
-        $scope.checkEmpIdExists = function( val ){
-
-        };
-
+        };           
 
         /**
         * Fetches employee in search box via string
         **/
         $scope.searchEmployee = function( val ){
 
-            return activeRecordService.getActiveRecord( val, 'employees/getEmployee?criteria=');                
+            return activeRecordService.getActiveRecord( { criteria : val }, 'employees/getEmployee');                
 
         };
 
@@ -395,7 +357,7 @@ cereliApp
                 if ( responseData.success ) {
 
                     $scope.employeeList.splice(index, 1);
-                    $scope.getEmployeeList();
+                    // $scope.getEmployeeList();
 
                     $scope.addAlert('employeeListAlerts', {
                         type: 'success',
@@ -405,60 +367,7 @@ cereliApp
                 }
 
             });
-        };
-
-
-        /**
-        * Import Time Records via csv file        
-        **/
-        $scope.importTimeRecords = function(){
-
-            var modalInstance = $uibModal.open({
-                animation: true,
-                keyboard: false,                
-                templateUrl: 'templates/employees/import-modal.html',          
-                windowTemplateUrl : 'templates/common/ui-modal.html',             
-                size: 'md',
-                controller: function($scope, $uibModalInstance, activeRecordService) {                       
-
-                    $scope.modalOptions = {
-                        closeButtonText: 'Cancel',
-                        actionButtonText: 'Import & Save',
-                        headerText: 'Import Employee Time Records',                        
-                    };
-
-                    $scope.upload - function( file ){
-                        // Upload.upload({})
-                    };
-
-                    $scope.modalOptions.ok = function (result) {
-
-                        var responseData;
-
-                        // activeRecordService.saveImportedTimeRecords().then(function(response) {
-
-                        //     if ( response.success ) {
-                        //         responseData = response;                                    
-                        //     }
-                        // }, function() {
-                        //     responseData = {
-                        //         success: false,
-                        //         errors: ['Unknown error occured while deleting client note']
-                        //     };
-
-                        // }).finally(function(){
-                        //     modalInstance.close(responseData);                                
-                        // });                      
-                    };
-
-                    $scope.modalOptions.close = function (result) {
-                        // $uibModalInstance.dismiss('cancel');
-                        $uibModalInstance.dismiss('cancel');
-                    };
-
-                }
-            });
-        };
+        };       
 
         $scope.saveTimeRecord = function(){
 
@@ -474,6 +383,6 @@ cereliApp
 
         };
 
-        $scope.getDepartmentList();       
+        $scope.getEmployeeList();
 
     }]);

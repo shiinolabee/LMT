@@ -46,6 +46,14 @@ module.exports = {
             type : 'string'
         },
 
+        dateHired : {
+            type : 'date'
+        },
+
+        dateRegularized : {
+            type: 'date'
+        },
+
         contactNumber : {
             type : 'string'
         },        
@@ -85,6 +93,11 @@ module.exports = {
 
         updatedAt : {
             type : 'datetime',            
+        },
+
+        time_records : {
+            collection : 'Employee_time_records',
+            via : 'empId'
         },
 
         //attribute methods

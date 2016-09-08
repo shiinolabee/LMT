@@ -5,7 +5,7 @@
 	<div class="col-md-3">
 		<div class="box box-primary">
             <div class="box-body box-profile">
-              <img class="profile-user-img img-responsive img-circle" src="img/{{ employee.gender && 'avatar' || !employee.gender && 'avatar2' }}.png"/>  
+              <img class="profile-user-img img-responsive img-circle" ng-src="img/{{ employee.gender && 'avatar' || !employee.gender && 'avatar2' }}.png"/>  
 
               <h3 class="profile-username text-center">{{ employee.fullName }}</h3>
 
@@ -33,81 +33,41 @@
       	</div>    				    				
 	</div>
 	<div class="col-md-9">
+
 		<div class="nav-tabs-custom">
-	    	<uib-tabset active="active">
+	    	<uib-tabset active="active">	    	
 	    		<uib-tab index="0">
 	    			<uib-tab-heading>
-	                    <i class="fa fa-home"></i> Activity   				
+	    				 <i class="fa fa-calendar"></i> Daily Time Record Calendar    	
+	    			</uib-tab-heading>    
+	    			<employee-daily-time-record-calendar></employee-daily-time-record-calendar>					
+	    			<div class="clearfix"></div>
+	    		</uib-tab>
+
+	    		<uib-tab index="1">
+	    			<uib-tab-heading>
+	                    <i class="fa fa-calendar"></i> Event Calendar   				
+	    			</uib-tab-heading>
+
+	    			<employee-event-calendar></employee-event-calendar>
+	    			<div class="clearfix"></div>
+	    		</uib-tab>
+
+    			<uib-tab index="2">
+	    			<uib-tab-heading>
+	                    <i class="fa fa-home"></i> Tracking Activities
 	    			</uib-tab-heading>
 
 	    			<div class="col-md-4"></div>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
-	    		<uib-tab index="1">
+
+	    		<uib-tab index="3">
 	    			<uib-tab-heading>
-	    				 <i class="fa fa-calendar"></i> Daily Time Records    	
-	    			</uib-tab-heading>    
+	                    <i class="fa fa-filter"></i> Statistics & Report   				
+	    			</uib-tab-heading>
 
-	    			<div class="col-md-6 text-center">
-				      <div class="btn-group">
-
-				        <button
-				          class="btn btn-primary"
-				          mwl-date-modifier
-				          date="viewDate"
-				          decrement="calendarView">
-				          Previous
-				        </button>
-				        <button
-				          class="btn btn-default"
-				          mwl-date-modifier
-				          date="viewDate"
-				          set-to-today>
-				          Today
-				        </button>
-				        <button
-				          class="btn btn-primary"
-				          mwl-date-modifier
-				          date="viewDate"
-				          increment="calendarView">
-				          Next
-				        </button>
-				      </div>
-				    </div>
-
-				    <br class="visible-xs visible-sm">	
-
-			     	<div class="col-md-6 text-center">
-				      <div class="btn-group">
-				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'year'">Year</label>
-				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'month'">Month</label>
-				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'week'">Week</label>
-				        <label class="btn btn-primary" ng-model="calendarView" uib-btn-radio="'day'">Day</label>
-				      </div>
-				    </div>
-
-			     	<br>
-
-	    			<mwl-calendar
-					    view="calendarView"
-					    view-date="calendarDate"
-					    events="events"
-					    view-title="calendarTitle"
-					    on-event-click="eventClicked(calendarEvent)"
-					    on-event-times-changed="calendarEvent.startsAt = calendarNewEventStart; calendarEvent.endsAt = calendarNewEventEnd"
-					    cell-is-open="true">
-					</mwl-calendar>
-
-					<h3 id="event-editor">
-					    Edit events
-					    <button
-					      class="btn btn-primary pull-right"
-					      ng-click="addEvent()">
-					      Add new
-					    </button>
-					    <div class="clearfix"></div>
-					</h3>
-					
+	    			<employee-statistics-report timeRecords="employeeTimeRecords"></employee-statistics-report>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 	    	</uib-tabset>			

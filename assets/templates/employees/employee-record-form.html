@@ -25,7 +25,40 @@
                                 <span class="help-block" ng-if="(employeeForm.position.$touched || employeeForm.$submitted) && employeeForm.position.$error.required">Position is required</span>
                             </div>        
                         </div>
-                        <div class="col-md-3">                            
+
+                        <div class="col-md-4">
+                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.dateHired.$touched || employeeForm.$submitted) && employeeForm.dateHired.$invalid }">
+                                <label for="">Date Hired</label>
+                                <div class="input-group">
+                                    <input type="text" uib-datepicker-popup="{{datePickerOptions.formatSelected}}" datepicker-options="datePickerOptions.dateHiredOptions" class="form-control" name="dateHired" id="dateHired" close-text="Close" ng-model="employee.dateHired" ng-required="true" ng-click="datePickerOptions.openDateHired()" is-open="datePickerOptions.isOpenDateHired.opened"  alt-input-formats="datePickerOptions.altInputFormats"/>
+                                  <!--   <button type="button" class="btn btn-default" ><i class="fa fa-calendar"></i></button> -->
+                                    <span class="help-block" ng-if="(employeeForm.dateHired.$touched || employeeForm.$submitted) && employeeForm.dateHired.$error.required">Date Hired is required</span>
+                                    
+                                </div>
+                            </div>
+                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.dateRegularized.$touched || employeeForm.$submitted) && employeeForm.dateRegularized.$invalid }">
+                                <label for="">Date Regularized</label>
+                                <input type="text" uib-datepicker-popup="{{datePickerOptions.formatSelected}}" class="form-control" is-open="datePickerOptions.isOpenDateRegularized.opened" datepicker-options="datePickerOptions.dateRegularizedOptions" ng-click="datePickerOptions.openDateRegularized()" name="dateRegularized" id="dateRegularized" ng-model="employee.dateRegularized" ng-required="true" alt-input-formats="datePickerOptions.altInputFormats" />
+                                <span class="help-block" ng-if="(employeeForm.dateRegularized.$touched || employeeForm.$submitted) && employeeForm.dateRegularized.$error.required">Date Regularized is required</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$invalid }">
+                                <label for="">Department Assigned</label>
+
+                                <select class="form-control" ng-options="department.id as department.departmentName for department in departmentList" ng-model="employee.departmentAssigned"></select>
+                                <span class="help-block" ng-if="(employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$error.required">Department Assigned is required</span>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </uib-tab>                    
+
+                    <uib-tab index="1">
+                        <uib-tab-heading>
+                            <i class="fa fa-hourglass-start"></i> Accounting
+                        </uib-tab-heading>
+                        <div class="col-md-4">                            
                             <div class="form-group">
                                 <label for="">Paid Leave Limit</label>
                                 <input type="text" class="form-control" name="paidLeaveLimit" id="paidLeaveLimit" ng-model="employee.paidLeaveLimit" />
@@ -36,7 +69,7 @@
                                 <input type="text" class="form-control" name="unPaidLeaveLimit" id="unPaidLeaveLimit" ng-model="employee.unpaidLeaveLimit" />
                             </div>   
                         </div>
-                        <div class="col-md-3">                            
+                        <div class="col-md-4">                            
                             <div class="form-group">
                                 <label for="">No./Hours of Absences</label>
                                 <input type="text" class="form-control" name="noOfAbsences" id="noOfAbsences" ng-model="employee.noOfAbsences" />                             
@@ -58,18 +91,10 @@
                                 <span class="help-block" ng-if="(employeeForm.recordStatus.$touched || employeeForm.$submitted) && employeeForm.recordStatus.$error.required">Record Status is required</span>
                             </div>                        
                         </div> 
-                        <div class="col-md-4">
-                            <div class="form-group" ng-class="{ 'has-error': (employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$invalid }">
-                                <label for="">Department Assigned</label>
-
-                                <select class="form-control" ng-options="department.id as department.departmentName for department in departmentList" ng-model="employee.departmentAssigned"></select>
-                                <span class="help-block" ng-if="(employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$error.required">Department Assigned is required</span>
-                            </div>
-                        </div>
                         <div class="clearfix"></div>
-                    </uib-tab>    
+                    </uib-tab>
 
-                    <uib-tab index="1">
+                    <uib-tab index="2">
                         <uib-tab-heading>
                             <i class="fa fa-user"></i> Basic
                         </uib-tab-heading>
@@ -107,7 +132,8 @@
                             </div>        
                         </div>                           
                         <div class="clearfix"></div>                        
-                    </uib-tab>
+                    </uib-tab> 
+
                 </uib-tabset> 
             </div>
         </form>        

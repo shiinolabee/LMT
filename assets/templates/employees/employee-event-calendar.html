@@ -1,0 +1,33 @@
+<div class="col-md-12">
+
+  <h2 class="text-center">{{ calendarTitle }}</h2>
+  
+  <calendar-controls viewdate="employeeEventCalendarCtrl.viewDate" calendarview="employeeEventCalendarCtrl.calendarView"></calendar-controls>
+
+  <mwl-calendar
+    events="employeeEventCalendarCtrl.events"
+    view="employeeEventCalendarCtrl.calendarView"
+    view-date="employeeEventCalendarCtrl.viewDate"
+    view-title="calendarTitle"
+    cell-is-open="employeeEventCalendarCtrl.isCellOpen"
+    on-event-times-changed="employeeEventCalendarCtrl.eventDropped(calendarEvent, calendarNewEventStart, calendarNewEventEnd)">
+  </mwl-calendar>
+  <br><br>
+</div>
+
+<div class="col-md-10">
+  <div class="well">
+    <ul>
+      <li
+        ng-repeat="event in employeeEventCalendarCtrl.externalEvents track by $index"
+        mwl-draggable="true"
+        drop-data="{event: event}">
+        <a
+          href="javascript:;"
+          ng-class="'text-' + event.type">
+          {{ event.title }}
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

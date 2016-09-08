@@ -1,7 +1,7 @@
 'use strict';
 
 
-var cereliApp = angular.module('cereliApp', [ 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router', 'ngFileUpload', 'cereliDirectives' ]);
+var cereliApp = angular.module('cereliApp', [ 'cereliDirectives', 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router' ]);
 
 
 cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
@@ -60,12 +60,16 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
         })
 
         .state('admin.employees', {               
-            url : 'employees/time_records',
+            url : 'employee/time_records',
             views : {
                 'child-content' : {
-                    templateUrl : 'templates/employees/list.html',                    
-                    controller : 'employeeController',
-                    controllerAs : 'employeeCtrl'
+                    templateUrl : 'templates/employees/list.html',    
+                    resolve : {
+                        getDepartmentList : function( activeRecordService ){
+                            return activeRecordService.getActiveRecordList('departments/getDepartmentList');
+                        }
+                    },            
+                    controller : 'employeeController',                    
                 }
             },
             data : {

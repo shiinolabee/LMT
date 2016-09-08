@@ -1,0 +1,102 @@
+<h2 class="text-center">{{ calendarTitle }}</h2>
+
+<calendar-controls viewdate="employeeDailyTimeRecordCalendarCtrl.viewDate" calendarview="employeeDailyTimeRecordCalendarCtrl.calendarView"></calendar-controls>
+
+<mwl-calendar
+    view="employeeDailyTimeRecordCalendarCtrl.calendarView"
+    view-date="employeeDailyTimeRecordCalendarCtrl.viewDate"
+    events="employeeDailyTimeRecordCalendarCtrl.events"
+    view-title="calendarTitle"
+    on-event-click="employeeDailyTimeRecordCalendarCtrl.eventClicked(calendarEvent)"
+    on-event-times-changed="employeeDailyTimeRecordCalendarCtrl.eventTimesChanged(calendarEvent); calendarEvent.startsAt = calendarNewEventStart; calendarEvent.endsAt = calendarNewEventEnd"
+    cell-is-open="employeeDailyTimeRecordCalendarCtrl.isCellOpen"
+    day-view-start="06:00"
+    day-view-end="22:59"
+    day-view-split="30"
+    cell-modifier="employeeDailyTimeRecordCalendarCtrl.modifyCell(calendarCell)"    
+    >
+</mwl-calendar>		
+
+<br><br><br>			
+
+<h3 id="event-editor">
+    <button
+      class="btn btn-primary pull-right"
+      ng-click="employeeDailyTimeRecordCalendarCtrl.addTimeRecord();">
+      Add New Time Record
+    </button>
+    <div class="clearfix"></div>
+  </h3>
+
+    
+<div ng-show="employeeDailyTimeRecordCalendarCtrl.timeRecordSelected"> 
+	<h4>Edit Time Record of {{ employeeDailyTimeRecordCalendarCtrl.time_record.calendarEvent.startsAt | date }}</h4>
+	<table class="table table-bordered" >
+
+		<thead>
+		  <tr>
+		    <th colspan="2">Title</th>
+		    <th colspan="3">Remarks</th>	    
+		    <th>Date Attended</th>	    
+		    <th colspan="2">Time(clock-in/out)</th>	    
+		    <th colspan="2">Actions</th>
+		  </tr>
+		</thead>
+
+		<tbody>
+		  <tr>
+		    <td colspan="2">
+		      <input
+		        type="text"
+		        class="form-control"
+		        ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.calendarEvent.title">
+		    </td>
+		    <td colspan="3">
+		      <textarea class="form-control" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.remarks" rows="3" placeholder="Enter remarks..."></textarea>
+		    </td>	
+		    <td>
+		      <p class="input-group" style="max-width: 350px">
+		        <input
+		          type="text"
+		          readonly
+		          class="form-control"	          
+		          uib-datepicker-popup="dd MMMM yyyy"
+		          ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.dateAttended"
+		          is-open="employeeDailyTimeRecordCalendarCtrl.time_record.startOpen"
+		          close-text="Close" >
+		        <span class="input-group-btn">
+		          <button
+		            type="button"
+		            class="btn btn-default"
+		            ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'startOpen', employeeDailyTimeRecordCalendarCtrl.time_record.calendarEvent)">
+		            <i class="glyphicon glyphicon-calendar"></i>
+		          </button>
+		        </span>
+		      </p>	     
+		    </td>
+		    <td colspan="2">	      
+		      <div
+		        uib-timepicker
+		        ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.calendarEvent.endsAt"
+		        hour-step="1"
+		        minute-step="15"
+		        show-meridian="true">
+		      </div>
+		    </td>
+		    <td colspan="2">		    
+          	  	<button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
+			        class="btn btn-danger btn-sm"
+			        ng-click="employeeDailyTimeRecordCalendarCtrl.removeTimeRecord()">
+			        Delete
+			    </button><br>
+			    <button
+			        class="btn btn-primary btn-sm"
+			        ng-click="employeeDailyTimeRecordCalendarCtrl.saveTimeRecord();">
+			        Save
+			    </button>
+		    </td>
+		  </tr>
+		</tbody>
+
+	</table>
+</div>

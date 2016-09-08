@@ -1,0 +1,63 @@
+<uib-accordion close-others="true">
+
+  <div uib-accordion-group class="panel box box-secondary" heading="Import Time Records" is-open="employeeToolsOptionsCtrl.accordionSettings.status.isFirstOpen" is-disabled="employeeToolsOptionsCtrl.accordionSettings.status.isFirstDisabled">
+       <!-- Upload/Import Time Record Form -->
+
+      <form name="importRecordForm" ng-model="importRecordForm">         
+          <div class="form-group">                  
+              Select csv files to read/import : 
+              <!-- ngf-accept="'csv/*'" ngf-pattern="'csv/*'" -->
+              <input type="file" ngf-select="employeeToolsOptionsCtrl.upload(importFile)" name="file" ng-model="importFile"/>
+          </div>        
+
+          <div class="form-group">              
+              <div ngf-src="importFile" ngf-background="importFile" 
+              ngf-no-object-url="true"></div>
+              <!-- ng-disabled="!importRecordForm.$valid" -->
+              <!-- <button type="submit" class="btn btn-primary" ng-click="employeeToolsOptionsCtrl.submitUpload();"> Submit </button> -->
+          </div>   
+          <uib-progressbar ng-show="filePercentage > 0" class="progress-striped" ng-class="{ active : filePercentage > 0 }" value="filePercentage">{{ importMessage }}</uib-progressbar>
+
+          <div ng-show="employeeToolsOptionsCtrl.message.length > 0" uib-alert ng-class="'alert-' + ( 'success')" type="success" close="Close" dismiss-on-timeout="4000">{{ employeeToolsOptionsCtrl.message }}</div>
+
+      </form>   
+
+
+      <!-- !Upload/Import Time Record Form -->
+  </div>
+
+  <div uib-accordion-group class="panel box box-secondary" heading="Export Time Records">
+       <!-- Export Time Record Form -->
+       <div uib-alert ng-class="'callout-' + (alert.type || 'info')" class="callout">
+          <h4><i class="icon fa fa-info"></i> Note : </h4>
+          {{ employeeToolsOptionsCtrl.toolsOptions.typeChosen.message }}          
+       </div>
+     
+      <form method="post" name="exportRecordForm" ng-model="exportRecordForm" novalidate> 
+          <div class="form-group">
+            <label>Choose Export Type</label>
+            <select class="form-control" ng-change="employeeToolsOptionsCtrl.toggleChangeExportType(exportRecordVars.exportType)" ng-model="exportRecordVars.exportType" ng-options="type.code as type.typeName for type in employeeToolsOptionsCtrl.toolsOptions.exportTypes">             
+            </select>
+          </div>       
+          <div class="form-group">
+            <label>Date range:</label>
+
+            <div class="input-group">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
+              <input
+                type="text"
+                class="form-control pull-right"               
+                uib-datepicker-popup="dd MMMM yyyy"
+                ng-model="exportRecordVars.exportDate"
+                is-open="false"
+                close-text="Close"/>              
+            </div>
+            <!-- /.input group -->
+          </div>
+      </form>   
+      <!-- !Export Time Record Form -->
+  </div>
+
+</uib-accordion>   

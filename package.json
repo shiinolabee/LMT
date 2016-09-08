@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "angular-chart.js": "^1.0.2",
     "bcrypt": "^0.8.7",
     "ejs": "2.3.4",
     "grunt": "0.4.5",
@@ -27,7 +28,8 @@
     "sails-disk": "~0.10.9",
     "sails-generate-auth": "^0.3.1",
     "sails-hook-validation": "^0.4.6",
-    "sails-mysql": "^0.11.5"
+    "sails-mysql": "^0.11.5",
+    "skipper-csv": "0.0.1"
   },
   "scripts": {
     "debug": "node debug app.js",
@@ -41,6 +43,7 @@
   "author": "clouduser110",
   "license": "",
   "devDependencies": {
+    "highcharts": "^4.2.6",
     "satellizer": "^0.15.3"
   }
 }

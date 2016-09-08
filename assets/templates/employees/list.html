@@ -7,6 +7,13 @@
 
         <button class="btn btn-primary margin-bottom" ng-click="saveTimeRecord()"><i class="fa fa-calendar" aria-hidden="true"></i> <b>New Time Record</b></button>
     </div> 
+
+    <!-- /.col -->
+    <div class="col-md-3">
+      <!--  Tools/Options -->
+      <employee-tools-options></employee-tools-options>
+    </div>
+    <!-- /.col -->  
    
     <div class="col-md-9">
       <div class="box box-primary">
@@ -24,33 +31,33 @@
         <!-- /.box-header -->
         <div class="box-body">
           <div class="table-responsive employee-list-content">
-            <table class="table table-hover table-striped table-bordered dataTable">
+            <table class="table table-hover table-striped no-padding dataTable">
               <thead>
                 <tr>
-                  <th><input type="checkbox"></th>                
+                  <th><input type="checkbox" ng-model="selectedAll" ng-click="selectAllEmployees()"></th>                
                   <th>Employee ID</th>
                   <th>Full Name</th>
                   <th>Department Assigned</th>
                   <th>Position</th>
                   <!-- <th>Email Address</th> -->
-                  <th>Date Updated</th>
+                  <th>Date Hired</th>
                   <th colspan="4">Actions</th>
                 </tr>
               </thead>
               <tbody>
               <tr ng-repeat="employee in employeeList | filter:searchString" class="animate-repeat">
-                <td><input type="checkbox" value="{{ employee.id }}"></td>                
+                <td><input type="checkbox" value="{{ employee.id }}" ng-model="employee.selected"></td>                
                 <td>{{ employee.empId }}</td>
                 <td>{{ employee.fullName }} </td>
                 <td><show-subdetails-employee index="$index" id="{{employee.departmentAssigned}}" type="
                   departmentAssigned"></show-subdetails></td>
                 <td>{{ employee.position | contentIsEmpty }}</td>
                 <!-- <td>{{ employee.emailAddress }}</td> -->
-                <td>{{ employee.updatedAt | date : short }}</td>
+                <td>{{ employee.dateHired | date : shortDate | contentIsEmpty }}</td>
                 <td colspan="4">
-                  <button class="btn btn-primary btn-sm" ng-click="viewEmployeeDetails($index);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
-                  <button class="btn btn-primary btn-sm" ng-click="saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-cog"></i></button>
-                  <button class="btn btn-primary btn-sm" ng-click="removeEmployee(employee.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
+                  <button class="btn btn-default btn-xs" ng-click="viewEmployeeDetails($index, employee.empId);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
+                  <button class="btn btn-default btn-xs" ng-click="saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-pencil"></i></button>
+                  <button class="btn btn-default btn-xs" ng-click="removeEmployee(employee.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
                 </td>
               </tr>                                   
               </tbody>
@@ -92,32 +99,10 @@
       </div>
       <!-- /. box -->
     </div>
-    <!-- /.col -->
-     <div class="col-md-3">
+    
 
-      <div class="box box-solid">
-        <div class="box-header with-border">
-          <h3 class="box-title">Tools</h3>
 
-          <div class="box-tools">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-            </button>
-          </div>
-        </div>
-        <div class="box-body no-padding">
-          <ul class="nav nav-pills nav-stacked">
-            <li ><a href="javascript:void(0);" ng-click="importTimeRecords();"><i class="fa fa-cloud-download" aria-hidden="true"></i> Import Time Records</a></li>              
-            <li ><a href="javascript:void(0);" ng-click="exportRecords();"><i class="fa fa-cloud-upload" aria-hidden="true"></i> Export Time Records</a></li>              
-          <!--   <li class="active"><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
-            <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
-            <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a>
-            </li>
-            <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li> -->
-          </ul>
-        </div>        
-      </div>
-    </div>
-    <!-- /.col -->   
+ 
     <div class="clearfix"></div>
 
 </div>

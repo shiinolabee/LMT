@@ -1,0 +1,353 @@
+{
+  "data": {
+    "todo": [],
+    "user": [
+      {
+        "createdAt": "2016-07-22T13:10:07.911Z",
+        "updatedAt": "2016-07-22T13:10:07.911Z",
+        "id": 1
+      },
+      {
+        "email": "aldrin@cloudemployee.co.uk",
+        "password": "123456",
+        "createdAt": "2016-07-22T13:10:41.844Z",
+        "updatedAt": "2016-07-22T13:10:41.844Z",
+        "id": 2
+      }
+    ],
+    "passport": [],
+    "company_details": [],
+    "departments": [],
+    "employee_activities": [],
+    "employee_time_record_settings": [],
+    "employee_time_records": [],
+    "employees": [
+      {
+        "id": 5,
+        "empId": 4958663,
+        "position": "IT Specialist",
+        "paidLeaveLimit": "1",
+        "unpaidLeaveLimit": "1.5",
+        "noOfAbsences": "2",
+        "noOfLates": "2",
+        "totalOvertime": "15.5",
+        "recordStatus": 1,
+        "firstName": "Aldrin Joshua",
+        "lastName": "Pernito",
+        "contactNumber": "09234583946",
+        "emailAddress": "shiinolabee@yahoo.com",
+        "createdAt": "2016-08-09T10:25:15.260Z",
+        "updatedAt": "2016-08-09T10:25:15.260Z"
+      },
+      {
+        "id": 7,
+        "empId": 94586325,
+        "position": "General Manager",
+        "paidLeaveLimit": "2",
+        "unpaidLeaveLimit": "3.5",
+        "noOfAbsences": "1",
+        "noOfLates": "1.2",
+        "totalOvertime": "1.6",
+        "recordStatus": 1,
+        "firstName": "Shybie Catherine",
+        "lastName": "Pernito",
+        "contactNumber": "09224952305",
+        "emailAddress": "shybie_catherine@yahoo.com",
+        "createdAt": "2016-08-09T10:36:03.823Z",
+        "updatedAt": "2016-08-09T10:36:03.823Z"
+      }
+    ]
+  },
+  "schema": {
+    "todo": {
+      "value": {
+        "type": "text"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "user": {
+      "username": {
+        "type": "string",
+        "unique": true,
+        "index": true,
+        "notNull": true
+      },
+      "email": {
+        "type": "string",
+        "unique": true,
+        "index": true
+      },
+      "encryptedPassword": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "passport": {
+      "protocol": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "provider": {
+        "type": "string"
+      },
+      "identifier": {
+        "type": "string"
+      },
+      "tokens": {
+        "type": "json"
+      },
+      "user": {
+        "type": "integer",
+        "model": "user",
+        "foreignKey": true,
+        "alias": "user"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "company_details": {
+      "id": {
+        "type": "integer",
+        "unique": true,
+        "primaryKey": true
+      },
+      "companyName": {
+        "type": "text"
+      },
+      "companyAddress": {
+        "type": "text"
+      },
+      "contactNo": {
+        "type": "string"
+      },
+      "systemBuildVersion": {
+        "type": "float"
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "departments": {
+      "id": {
+        "type": "integer",
+        "unique": true,
+        "primaryKey": true
+      },
+      "departmentName": {
+        "type": "text"
+      },
+      "departmentCode": {
+        "type": "string",
+        "defaultsTo": "0000"
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "employee_activities": {
+      "id": {
+        "type": "integer",
+        "unique": true,
+        "primaryKey": true
+      },
+      "type": {
+        "type": "text"
+      },
+      "dateCommitted": {
+        "type": "datetime"
+      },
+      "remarks": {
+        "type": "text"
+      },
+      "status": {
+        "type": "integer",
+        "defaultsTo": 0
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "employee_time_record_settings": {
+      "id": {
+        "type": "integer",
+        "unique": true,
+        "primaryKey": true
+      },
+      "startShiftTime": {
+        "type": "string"
+      },
+      "endShiftTime": {
+        "type": "string"
+      },
+      "departmentAssigned": {
+        "type": "integer",
+        "model": "departments",
+        "foreignKey": true,
+        "alias": "departmentAssigned",
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "employee_time_records": {
+      "id": {
+        "type": "integer",
+        "unique": true,
+        "primaryKey": true
+      },
+      "employeeId": {
+        "type": "integer",
+        "model": "employees",
+        "foreignKey": true,
+        "alias": "employeeId",
+        "unique": true
+      },
+      "remarks": {
+        "type": "text"
+      },
+      "dateAttended": {
+        "type": "date"
+      },
+      "time1": {
+        "type": "datetime"
+      },
+      "time2": {
+        "type": "datetime"
+      },
+      "time3": {
+        "type": "datetime"
+      },
+      "time4": {
+        "type": "datetime"
+      },
+      "time5": {
+        "type": "datetime"
+      },
+      "time6": {
+        "type": "datetime"
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "employees": {
+      "empId": {
+        "type": "integer",
+        "unique": true
+      },
+      "firstName": {
+        "type": "string",
+        "defaultsTo": ""
+      },
+      "lastName": {
+        "type": "string",
+        "defaultsTo": ""
+      },
+      "position": {
+        "type": "string"
+      },
+      "contactNumber": {
+        "type": "string"
+      },
+      "emailAddress": {
+        "type": "string"
+      },
+      "paidLeaveLimit": {
+        "type": "text"
+      },
+      "unpaidLeaveLimit": {
+        "type": "text"
+      },
+      "noOfAbsences": {
+        "type": "text"
+      },
+      "noOfLates": {
+        "type": "text"
+      },
+      "totalOvertime": {
+        "type": "text"
+      },
+      "recordStatus": {
+        "type": "integer",
+        "defaultsTo": 0
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    }
+  },
+  "counters": {
+    "user": {
+      "id": 2
+    },
+    "todo": {},
+    "passport": {},
+    "company_details": {},
+    "departments": {},
+    "employee_activities": {},
+    "employee_time_record_settings": {},
+    "employee_time_records": {},
+    "employees": {
+      "id": 7
+    }
+  }
+}

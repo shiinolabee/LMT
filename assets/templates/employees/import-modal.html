@@ -5,9 +5,7 @@
     <form method="post" name="importRecordForm" ng-model="importRecordForm" novalidate> 
         <div class="form-group">
             <label>Select File to Import :</label>
-            <div class="button" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'"
-                ngf-accept="'image/*'" ngf-max-size="20MB" ngf-min-height="100" 
-                ngf-resize="{width: 100, height: 100}">Select</div>
+            <div class="button" ngf-select="upload($file)" ng-model="fileSelect">Select</div>
         </div>           
     </form>        
 </div>
