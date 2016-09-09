@@ -2,7 +2,11 @@
     <h4>{{modalOptions.headerText}}</h4>
 </div>
 <div class="modal-body">  
-    <div class="row">        
+    <div class="row">  
+        <div class="ajax-loader" ng-show="childShowloader">
+            <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </div>      
         <form method="post" name="employeeForm" ng-model="employeeForm" novalidate>
 
             <div class="nav-tabs-custom">
@@ -136,6 +140,8 @@
 
                 </uib-tabset> 
             </div>
+
+            <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="employeeCtrl.closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
         </form>        
     </div> 
 </div>

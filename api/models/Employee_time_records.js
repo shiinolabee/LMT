@@ -40,6 +40,11 @@ module.exports = {
             columnName : 'time'
         }, 
 
+        timeRecordType : {
+            type : 'integer',
+            defaultsTo : 1
+        },
+
         createdAt : {
             type : 'datetime',            
         },

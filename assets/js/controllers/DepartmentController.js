@@ -71,6 +71,7 @@ cereliApp
         	var modalInstance = $uibModal.open({
         		animation : true,
         		keyboard : false,
+                backdrop : false,
         		resolve : {
         			departmentInitialValues : function(){
         				return $scope.initDepartmentValues($scope.editMode, $scope.index);

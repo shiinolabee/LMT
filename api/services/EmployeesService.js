@@ -7,53 +7,53 @@
 
 module.exports = {
     
-    getEmployeeList : function( next ) {
+    getEmployeeList : function( callback ) {
 
         // Employees.find().paginate({ page : pageValue , limit : limitValue}).exec(function( err, employees ) {
         Employees.find().exec(function( err, employees ) {
 
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employees);
+            callback(employees);
         });
 
     },
     
-    getEmployee : function( criteria, next ) {
+    getEmployee : function( criteria, callback ) {
 
         Employees.find({ where : { fullName : criteria, emailAddress : criteria, empId : criteria } }).exec(function( err, employees ) {
 
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employees);
+            callback(employees);
         });
 
     },
 
-    saveEmployee : function ( data, next ) {
+    saveEmployee : function ( data, callback ) {
 
         Employees.create( data ).exec(function( err, employee ){
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employee);
+            callback(employee);
         });
     },
 
-    editEmployee : function ( data, id, next ) {
+    editEmployee : function ( data, id, callback ) {
 
         Employees.update( { id : id }, data ).exec(function( err, employee ){
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employee);
+            callback(employee);
         });
     },
 
-    removeEmployee : function( id, next) {
+    removeEmployee : function( id, callback) {
 
         Employees.destroy( { id : id } ).exec(function( err, employee ){
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employee);
+            callback(employee);
         });
     }
 };

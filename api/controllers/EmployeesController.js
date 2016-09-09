@@ -9,6 +9,8 @@ module.exports = {
 
     uploadTimeRecord : function( req, res ){
 
+        var responseDataList = [];
+
         req.file('file').upload({            
             maxBytes: 10000000, // don't allow the total upload size to exceed ~10MB
             dirname: require('path').resolve(sails.config.appPath, 'assets/uploads'),
@@ -16,11 +18,12 @@ module.exports = {
             csvOptions: {delimiter: ',', columns: true},
             rowHandler: function(row, fd){    
 
-                var tempTimeRecord = {
-                    id : 0,
+                var tempTimeRecord = {                    
                     empId : 0,                                        
                     dateAttended : '',
-                    time : ''
+                    time : '',
+                    remarks : '',
+                    timeRecordType : 1                    
                 };
 
                 var tempArray = [];                
@@ -41,17 +44,21 @@ module.exports = {
                     }                    
                 });
 
-                // console.log(tempArray);
+                console.log(tempArray);
 
-                if ( tempArray.length ) {                    
+                if ( tempArray.length > 0) { 
                     tempTimeRecord.empId = parseInt(tempArray[0]);
-                    tempTimeRecord.dateAttended = tempArray[1].replace(new RegExp('/', 'g'),'-');
-                    tempTimeRecord.time = tempArray[2].length <=5 ? tempArray[2] + ':00' : tempArray[2];                                    
+                    tempTimeRecord.dateAttended = tempArray.length >= 2 ? tempArray[1].replace(new RegExp('/', 'g'),'-') : new Date().now();
+                    tempTimeRecord.time = tempArray.length >= 3 ? tempArray[2] + ':00' : '00:00:00';                                    
     
                     console.log(tempTimeRecord);
 
                     EmployeesTimeRecordService.saveEmployeeTimeRecord(tempTimeRecord, function( response ){
-                        // res.json(repsonse);                  
+
+                        var isSuccess = !response.status ? true : false;
+                        var responseData = { success : isSuccess , data : response  };                                          
+
+                        responseDataList.push(responseData);                 
                     })
                 }
                 
@@ -67,19 +74,37 @@ module.exports = {
             return res.json({
                 success : true,
                 message : 'Uploaded ' + uploadedFiles.length + ' CSV files!',
-                files : uploadedFiles
+                files : uploadedFiles,
+                data : responseDataList
             });
 
         });
 
     },
 
+    getEmployeeStatisticsReport : function( req, res ){
+
+        if ( req.param('id') ) {
+
+            EmployeesTimeRecordService.getEmployeeTimeRecord(req.param('id'),function( response ){
+
+               var isSuccess = !response.status ? true : false;
+               
+               res.json( { success : isSuccess , data : response  });                    
+                
+            });
+
+        }
+
+    },
+
     getEmployeeTimeRecord : function( req, res ){
 
-        EmployeesTimeRecordService.getEmployeeTimeRecord(req.param('id'),function( employeeTimeRecords ){
-            if ( employeeTimeRecords ) {
-                res.json({ success : true, data : employeeTimeRecords});                
-            }
+        EmployeesTimeRecordService.getEmployeeTimeRecord(req.param('id'),function( response ){
+
+            var isSuccess = !response.status ? true : false;
+           
+            res.json( { success : isSuccess , data : response  });      
         });
     },
 
@@ -93,17 +118,18 @@ module.exports = {
         
         var criteria = (req.param('criteria')) ? req.param('criteria') : undefined;       
 
-        EmployeesService.getEmployee(criteria, function( employee ){
-            res.json(employee);
+        EmployeesService.getEmployee(criteria, function( response ){
+            res.json(response);
         });
     },
 
     getEmployeeList : function( req, res ){         
 
-        EmployeesService.getEmployeeList(function( employees ){
-            if ( employees ) {
-                res.json({ success : true, data : employees});                
-            }
+        EmployeesService.getEmployeeList(function( response ){
+
+            var isSuccess = !response.status ? true : false;
+           
+            res.json( { success : isSuccess , data : response  });      
         });
     },
 
@@ -111,20 +137,18 @@ module.exports = {
 
         if ( req.param('id') ) {
 
-            EmployeesService.editEmployee(req.param('activeRecord'), req.param('id'), function(success) {
-                if ( success ) {
-                    res.json( { success : true , data : success  });                
-                }
-            }, function( xhr, errMsg ){
-                res.json( { success : false , data : success  });                            
+            EmployeesService.editEmployee(req.param('activeRecord'), req.param('id'), function(response) {                
+
+                var isSuccess = !response.status ? true : false;
+               
+                res.json( { success : isSuccess , data : response  });      
             }); 
         } else {           
-            EmployeesService.saveEmployee(req.param('activeRecord'), function(success) {
-                if ( success ) {
-                    res.json( { success : true , data : success  });                
-                }
-            }, function( xhr, errMsg ){
-                res.json( { success : false , data : success  });                            
+            EmployeesService.saveEmployee(req.param('activeRecord'), function(response) {
+
+                var isSuccess = !response.status ? true : false;
+               
+                res.json( { success : isSuccess , data : response  });      
             });
         }
 
@@ -134,8 +158,10 @@ module.exports = {
         
         var employeeVal = ( req.param('id') )  ? req.param('id') : undefined;
 
-        EmployeesService.removeEmployee(employeeVal, function(success) {
-            res.json( { success : true , data : success.id  });
+        EmployeesService.removeEmployee(employeeVal, function(response) {
+
+            var isSuccess = !response.status ? true : false;               
+            res.json( { success : isSuccess , data : response  });      
         });
     }
 	

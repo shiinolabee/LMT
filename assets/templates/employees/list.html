@@ -1,7 +1,7 @@
 <div ng-show="isAuthenticated">
 
     <div class="col-md-12">
-        <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="employeeCtrl.closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+        <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
 
         <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveEmployee(0, false)"><i class="fa fa-user"></i> <b>New Employee</b></button>
 
@@ -37,7 +37,7 @@
             <table class="table table-hover table-striped no-padding dataTable">
               <thead>
                 <tr>
-                  <th><input type="checkbox" ng-model="selectedAll" ng-click="selectAllEmployees()"></th>                
+                  <th><input type="checkbox" ng-model="employeeCtrl.selectedAll" ng-click="employeeCtrl.selectAllEmployees()"></th>                
                   <th>Employee ID</th>
                   <th>Full Name</th>
                   <th>Department Assigned</th>

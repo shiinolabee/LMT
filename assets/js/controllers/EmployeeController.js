@@ -25,11 +25,11 @@ cereliApp
 
         _self.pager = {};        
 
-        _self.addAlert = function(type, options) {
+        $scope.addAlert = function(type, options) {
             _self[type].push(options);
         };
 
-        _self.closeAlert = function(type, index) {
+        $scope.closeAlert = function(type, index) {
             _self[type].splice(index, 1);
         };
 
@@ -37,7 +37,7 @@ cereliApp
 
             if ( !isEditMode && index == 0 ) {
                 var employee = {
-                    id : '',
+                    id : 0,
                     empId : '',
                     position : '',
                     departmentAssigned : '',
@@ -48,11 +48,9 @@ cereliApp
                     noOfAbsences : 0,
                     noOfLates: 0,
                     totalOvertime : 0,
-                    recordStatus : 1,                    
-                    firstName : '',
-                    lastName : '',
+                    recordStatus : 1,                                      
                     contactNumber : '',
-                    gender : '',
+                    gender : 0,
                     homeAddress : '',
                     emailAddress : '',
                     createdAt : '',
@@ -124,9 +122,6 @@ cereliApp
                         return false;
                     },
                     getEmployeeTimeRecord : function( activeRecordService ){
-
-                        $scope.childShowLoader = true;
-
                         return activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord');
                     }
                 },
@@ -155,7 +150,19 @@ cereliApp
                         close : function(){                                                    
                             modalInstance.close();                            
                         }                        
-                    };                   
+                    };    
+
+                    _self.getStatisticsReport = function(){
+                        $scope.childShowLoader = true;
+
+                        activeRecordService.getActiveRecord({ id : $scope.employee.empId }, 'employees/getEmployeeStatisticsReport').then(function( response ){
+                            if ( response.success ) {
+
+                                var employeeTimeRecords = response.data;
+                                $scope.childShowLoader = false;                                
+                            } 
+                        })
+                    };               
                    
                 },
 
@@ -172,7 +179,7 @@ cereliApp
         _self.saveEmployee = function( index, isEditMode ) {
 
             $scope.editMode = isEditMode;
-            $scope.index = index;
+            $scope.index = index;            
 
             if ( $scope.editMode ) $scope.parentShowLoader = true;            
 
@@ -200,7 +207,6 @@ cereliApp
                 windowTemplateUrl : 'templates/common/ui-modal.html',                
                 size: 'lg',
                 controller: function( $scope, employeeInitialValues, isEditMode, getRecordStatusArr, getDepartmentList, getGenderArr ) {
-
 
                     $scope.employee = employeeInitialValues;
                     $scope.editMode = isEditMode;   
@@ -260,23 +266,23 @@ cereliApp
                         // execute when saving form
                         ok : function( result ) {
 
+                            $scope.childShowLoader = true;
+
                             var responseData, id;                                                   
 
                             activeRecordService.saveActiveRecord($scope.employee, $scope.editMode, 'employees/saveEmployee').then(function( response ) {
+                                responseData = response;
 
-                                if ( response.success ) {
-                                    responseData = response;                                                                        
+                                if ( responseData.success ) {
+                                    modalInstance.close(responseData);                                    
+                                } else {
+
+                                    $scope.addAlert('employeeListAlerts', {
+                                        type: 'danger',
+                                        msg: 'Employee Details Successfully Deleted'
+                                    });     
+
                                 }
-
-                            }, function(xhr, errMsg){
-
-                                responseData = {
-                                    success: false,
-                                    errors: ['Unknown error occured while deleting client note']
-                                };
-
-                            }).finally(function(){                                
-                                modalInstance.close(responseData);
                             });
                         },
 
@@ -298,7 +304,7 @@ cereliApp
 
                     _self.getEmployeeList();        
 
-                    _self.addAlert('employeeListAlerts', {
+                    $scope.addAlert('employeeListAlerts', {
                         type: 'success',
                         msg: 'Employee Details Successfully ' + ( isEditMode ? 'Updated' : 'Added' )
                     });                                                              
@@ -352,17 +358,8 @@ cereliApp
 
                         var responseData;
 
-                        activeRecordService.removeActiveRecord(employeeDetails.id, 'employees/removeEmployee').then(function(response) {
-
-                            if ( response.success ) {
-                                responseData = response;                                    
-                            }
-                        }, function() {
-                            responseData = {
-                                success: false,
-                                errors: ['Unknown error occured while deleting client note']
-                            };
-
+                        activeRecordService.removeActiveRecord(employeeDetails.id, 'employees/removeEmployee').then(function(response) {                            
+                                responseData = response;                                                                
                         }).finally(function(){
                             modalInstance.close(responseData);                                
                         });                      
@@ -387,7 +384,7 @@ cereliApp
 
                     _self.employeeList.splice(index, 1);                    
 
-                    _self.addAlert('employeeListAlerts', {
+                    $scope.addAlert('employeeListAlerts', {
                         type: 'success',
                         msg: 'Employee Details Successfully Deleted'
                     });                    

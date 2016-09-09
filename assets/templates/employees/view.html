@@ -66,12 +66,14 @@
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
-	    		<uib-tab index="3">
+	    		<uib-tab index="3" select="viewEmployeeDetailsCtrl.getStatisticsReport();">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-filter"></i> Statistics & Report   				
 	    			</uib-tab-heading>
 
-	    			<employee-statistics-report timeRecords="employeeTimeRecords"></employee-statistics-report>
+	    			<div ng-show="!childShowLoader">
+	    				<employee-statistics-report timeRecords="employeeTimeRecords"></employee-statistics-report>	    				
+	    			</div>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 	    	</uib-tabset>			
