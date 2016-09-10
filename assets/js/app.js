@@ -4,7 +4,7 @@
 var cereliApp = angular.module('cereliApp', [ 'cereliDirectives', 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router' ]);
 
 
-cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
+cereliApp.config([ '$rootScope' '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $rootScope, $stateProvider, $locationProvider, 
         $urlRouterProvider, AccessLevels ){
 
     $urlRouterProvider            
@@ -67,6 +67,9 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                     templateUrl : 'templates/employees/list.html',    
                     resolve : {
                         getDepartmentList : function( activeRecordService ){
+
+                            $rootScope.showLoader = true;
+                            
                             return activeRecordService.getActiveRecordList('departments/getDepartmentList');
                         }
                     },            
@@ -155,11 +158,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
 
 cereliApp
     .config(function(calendarConfig) {
-
-        // console.log(calendarConfig); //view all available config
-
-        // calendarConfig.templates.calendarMonthView = 'path/to/custom/template.html'; //change the month view template globally to a custom template
-
+     
         calendarConfig.dateFormatter = 'moment'; //use either moment or angular to format dates on the calendar. Default angular. Setting this will override any date formats you have already set.
 
         calendarConfig.allDateFormats.moment.date.hour = 'HH:mm'; //this will configure times on the day view to display in 24 hour format rather than the default of 12 hour
@@ -172,6 +171,7 @@ cereliApp
 
         calendarConfig.showTimesOnWeekView = true; //Make the week view more like the day view, with the caveat that event end times are ignored.
 
+        console.log('Loaded Calendar Config : ', calendarConfig);
     });
 
 cereliApp

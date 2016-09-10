@@ -15,6 +15,23 @@
 			}
 			return value;
 		}
+	});
+
+	cereliDirectives.directive('ajaxLoader', function(){
+
+		return {
+			
+			restrict : 'E',
+
+			transclude : true,
+
+			templateUrl : 'templates/common/ajax-loader.html',
+
+			scope : {
+				showloader : '=',
+			}
+		};
+
 	})
 
 	cereliDirectives.directive('showSubdetailsEmployee', function(){
@@ -152,12 +169,20 @@
 
 				var _self = this;						
 
-				_self.events = [];		
+				_self.employeeTimeRecordAlerts = [];					
                 _self.isCellOpen = true;  
 				_self.timeRecordSelected = false;
                 _self.isEditMode = false;
                 _self.employeeDetails = $scope.employee;
 
+		        $scope.addAlert = function(type, options) {
+		            _self[type].push(options);
+		        };
+
+		        $scope.closeAlert = function(type, index) {
+		            _self[type].splice(index, 1);
+		        };
+		      
                 //Daily Time Record 
                 _self.calendarView = 'year';           
                 _self.viewDate = moment().startOf('year').toDate();
@@ -176,13 +201,12 @@
                 		id : args.calendarEvent.id,
                 		empId : args.calendarEvent.empId,
                 		remarks : args.calendarEvent.remarks,
-                		dateAttended : args.calendarEvent.dateAttended,
-                		time : args.calendarEvent.time
+                		startsAt : args.calendarEvent.startsAt,
+                		endsAt : args.calendarEvent.endsAt,
+                		timeRecordType : args.calendarEvent.timeRecordType
                 	};
 
-                	_self.time_record.calendarEvent = args.calendarEvent;                   
-
-                	_self.time_record.dateAttended = new Date(_self.time_record.dateAttended);                	
+                	_self.time_record.calendarEvent = args.calendarEvent;
 
                   }
                 }, 
@@ -194,12 +218,26 @@
                     	if ( response.success ) {
                     		console.info('Deleted Record : ', args.calendarEvent);
                     		_self.events.splice(_self.events.indexOf(args.calendarEvent), 1);                    		
+                    		
+                    		$scope.addAlert('employeeTimeRecordAlerts', {
+                                type: 'info',
+                                msg: 'Time Record Details \'' + args.calendarEvent.startsAt.toUTCString() + '\' Successfully Deleted'
+                            }); 
+
                     	}
                     });
 
                   }
 
-                }];			                   
+                }];	
+
+                _self.recordTypes = [
+                	{ text : 'Select Record Type', value : 0 },
+                	{ text : 'Attended', value : 1 },
+                	{ text : 'Absent', value : 2 },
+                	{ text : 'Leave(Paid)', value : 3 },
+                	{ text : 'Leave(Unpaid)', value : 4 }
+                ];		                   
 
                 _self.eventTempObj = {
                 	title : 'Time clock-in/out' ,
@@ -210,6 +248,8 @@
                     resizable: false,
                     actions: actions
                 };
+
+                _self.time_record_datePicker = {};
 
                 _self.mergeObjects = function( obj1, obj2 ){
                 	var obj3 = {};
@@ -227,7 +267,17 @@
 
 			    };
 
-			    _self.addTimeRecord = function(){                	
+			    _self.refreshDTRCalendar = function(){
+
+			    	activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function(response){
+			    		$scope.employeeTimeRecords = response.data;	
+
+			    		_self.initializeCalendar();
+			    	});
+
+			    };
+
+			    _self.addTimeRecord = function(){            	
                 	
                 	_self.timeRecordSelected = true;
                 	_self.isEditMode = false;
@@ -235,9 +285,10 @@
                 	_self.time_record = {
                 		id : 0,
                 		empId : _self.employeeDetails.empId,
-                		remarks : '',
-                		dateAttended : '',
-                		time : ''
+                		remarks : '',                	
+                		startsAt : '',
+                		endsAt : '',
+                		timeRecordType : 0
                 	};
 
                 	_self.time_record.calendarEvent = {
@@ -250,7 +301,50 @@
 	                    actions: actions
 	                };                          
 
-                };       
+                };    
+
+                _self.getTimeRecordColor = function( selectedType ) {
+
+                	if ( selectedType == 1 ) {
+            			return calendarConfig.colorTypes.info;
+            		} else if ( selectedType == 2 ) {
+            			return calendarConfig.colorTypes.warning;
+            		} else if ( selectedType == 3 || selectedType == 4) {
+            			return calendarConfig.colorTypes.special;
+            		} else {
+            			return calendarConfig.colorTypes.important;
+            		}                	
+                };   
+
+                _self.saveTimeRecord = function(){
+
+                	console.log('Is Edit Mode?', _self.isEditMode);
+
+                	var calendarEvent = _self.time_record.calendarEvent;
+
+            		delete _self.time_record.calendarEvent;
+
+                	var newCalendarEvent = _self.mergeObjects(calendarEvent,_self.time_record);
+
+                	newCalendarEvent.title = _self.time_record.remarks;
+                	newCalendarEvent.color = _self.getTimeRecordColor(_self.time_record.timeRecordType);
+
+            		console.log('Saving Time Record : ',_self.time_record);  
+
+	           	  	activeRecordService.saveActiveRecord(_self.time_record, _self.isEditMode, 'employee_time_records/saveEmployeeTimeRecord').then(function( response ){
+                    	if ( response.success ) {
+
+                    		if ( !_self.isEditMode ) _self.events.push(newCalendarEvent);                    		
+		                 	
+		                 	_self.timeRecordSelected = false;		                	
+                    		
+                    		$scope.addAlert('employeeTimeRecordAlerts', {
+                                type: 'success',
+                                msg: 'Time Record Details \'' + newCalendarEvent.startsAt.toUTCString() + '\' Successfully Saved'
+                            }); 
+                    	}
+                    });
+                };  
 
                 _self.removeTimeRecord = function(){
 
@@ -262,6 +356,11 @@
 		                 	
 		                 	_self.timeRecordSelected = false;
 		                	_self.isEditMode = false;
+                    		
+                    		$scope.addAlert('employeeTimeRecordAlerts', {
+                                type: 'info',
+                                msg: 'Time Record Details \'' + _self.time_record.calendarEvent.startsAt.toUTCString() + '\' Successfully Deleted'
+                            }); 
                     	}
                     });
                 };                 
@@ -276,13 +375,19 @@
 	                		id : event.id,
 	                		empId : event.empId,
 	                		remarks : event.remarks,
-	                		dateAttended : event.startsAt,
-	                		time : event.time
+	                		startsAt : event.startsAt,
+	                		endsAt : event.endsAt,
+	                		timeRecordType : event.timeRecordType
 	                	};
 
 	                  	activeRecordService.saveActiveRecord(_self.time_record, true, 'employee_time_records/saveEmployeeTimeRecord').then(function( response ){
 	                    	if ( response.success ) {
-	                    		console.log('Updated Record : ',event);                    		              				                 	
+	                    		console.log('Updated Record : ',event);  
+
+	                    		$scope.addAlert('employeeTimeRecordAlerts', {
+	                                type: 'info',
+	                                msg: 'Time Record Details \'' + event.startsAt.toUTCString() + '\' Successfully Moved.'
+	                            });                   		              				                 	
 	                    	}
 	                    });
 
@@ -290,25 +395,44 @@
 
                 }; 
 
-                for (var key in $scope.employeeTimeRecords) {				  	
+                _self.toggle = function($event, field, event) {
+				      $event.preventDefault();
+				      $event.stopPropagation();
+				      event[field] = !event[field];
+				};                
 
-                	var employeeTimeRecord = _self.mergeObjects(_self.eventTempObj, $scope.employeeTimeRecords[key] );
+				_self.initializeCalendar = function(){
 
-                	var splitTime = employeeTimeRecord.time.split(':');
-                	var dateAttended = new Date(employeeTimeRecord.dateAttended);
-                	
-                	// employeeTimeRecord.startsAt = new Date(dateAttended.getFullYear(), dateAttended.getMonth(), dateAttended.getDate(),splitTime[0],splitTime[1],splitTime[2]);
-                	employeeTimeRecord.startsAt = moment().year(dateAttended.getFullYear()).month(dateAttended.getMonth()).date(dateAttended.getDate()).hours(splitTime[0]).minutes(splitTime[1]).toDate();
-                	employeeTimeRecord.endsAt = moment().year(dateAttended.getFullYear()).month(dateAttended.getMonth()).date(dateAttended.getDate()).hours(splitTime[0]).minutes(splitTime[1]).add(1,'hours').toDate();
-                	// employeeTimeRecord.endsAt = new Date(dateAttended.getFullYear(), dateAttended.getMonth(), dateAttended.getDate(),splitTime[0],splitTime[1],splitTime[2]);                	                	
-                	_self.events.push(employeeTimeRecord);
+					_self.events = [];	
 
-				}     
+					for (var key in $scope.employeeTimeRecords) {				  	
+
+	                	var employeeTimeRecord = _self.mergeObjects(_self.eventTempObj, $scope.employeeTimeRecords[key] );
+
+	                	if ( employeeTimeRecord.remarks.length > 0 ) employeeTimeRecord.title = employeeTimeRecord.remarks;
+	                	
+	               		employeeTimeRecord.startsAt = moment($scope.employeeTimeRecords[key].startsAt).toDate();
+	                	
+	                	if ( $scope.employeeTimeRecords[key].endsAt.length > 0 ) {
+	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].endsAt).toDate();
+	                	} else {
+	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].startsAt).add(1,'hours').toDate();
+	                	}
+
+	                	employeeTimeRecord.color = _self.getTimeRecordColor(employeeTimeRecord.timeRecordType);
+	                	
+	                	_self.events.push(employeeTimeRecord);
+
+					}  
+
+				};
+
+				_self.initializeCalendar();
+
+				console.log(_self.events);   
 
 			},
-
 			controllerAs : 'employeeDailyTimeRecordCalendarCtrl'
-
 		}
 	});
 

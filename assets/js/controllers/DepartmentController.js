@@ -137,19 +137,7 @@ cereliApp
         	});
 
         };
-
-        $scope.getEmployeeList = function( department ){
-
-        	activeRecordService.getActiveRecordList('employees/getEmployeeList').then(function( response ){
-
-                if ( response.success ) {
-                    $scope.employeeList = response.data;                    
-                    $scope.dummyEmployeeList = response.data;                    
-                    $scope.setPage(1);
-                }
-            });
-        };
-
+   
         /**
         * Removes/Deletes department by id        
         **/
@@ -211,7 +199,7 @@ cereliApp
 
                 if ( responseData.success ) {
 
-                    $scope.employeeList.splice(index, 1);
+                    $scope.departmentList.splice(index, 1);
                     $scope.getDepartmentList();
 
                     $scope.addAlert('departmentListAlerts', {

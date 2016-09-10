@@ -18,11 +18,12 @@ module.exports = {
             csvOptions: {delimiter: ',', columns: true},
             rowHandler: function(row, fd){    
 
-                var tempTimeRecord = {                    
-                    empId : 0,                                        
-                    dateAttended : '',
-                    time : '',
+                var tempTimeRecord = {        
+                    id : 0,            
+                    empId : 0,   
                     remarks : '',
+                    startsAt : '',
+                    endsAt : '',
                     timeRecordType : 1                    
                 };
 
@@ -47,20 +48,40 @@ module.exports = {
                 console.log(tempArray);
 
                 if ( tempArray.length > 0) { 
+
+                    var startsAtDate = new Date();          
+                    var dateAttended = tempArray.length >= 2 ? new Date(tempArray[1].replace(new RegExp('/', 'g'),'-')) : new Date();
+
                     tempTimeRecord.empId = parseInt(tempArray[0]);
-                    tempTimeRecord.dateAttended = tempArray.length >= 2 ? tempArray[1].replace(new RegExp('/', 'g'),'-') : new Date().now();
-                    tempTimeRecord.time = tempArray.length >= 3 ? tempArray[2] + ':00' : '00:00:00';                                    
-    
+                    
+                    startsAtDate.setFullYear(dateAttended.getFullYear());
+                    startsAtDate.setMonth(dateAttended.getMonth());
+                    startsAtDate.setDate(dateAttended.getDate());
+                    
+                    if ( tempArray.length >= 3 ) {
+                        
+                        var concatTimeString = tempArray[2].split(':');
+                        startsAtDate.setHours(concatTimeString[0]);
+                        startsAtDate.setMinutes(concatTimeString[1]);                        
+
+                        if ( concatTimeString.length > 2 ) startsAtDate.setSeconds(concatTimeString[2]);
+
+                    } else {
+                        startsAtDate.setHours(0);
+                        startsAtDate.setMinutes(0);
+                        startsAtDate.setSeconds(0);  
+                    }
+                    
+                    tempTimeRecord.startsAt = startsAtDate;       
+                    tempTimeRecord.endsAt = startsAtDate;       
+
                     console.log(tempTimeRecord);
-
+                  
                     EmployeesTimeRecordService.saveEmployeeTimeRecord(tempTimeRecord, function( response ){
-
-                        var isSuccess = !response.status ? true : false;
-                        var responseData = { success : isSuccess , data : response  };                                          
-
-                        responseDataList.push(responseData);                 
-                    })
+                        // responseDataList.push(res.json({ response : response }));                 
+                    });
                 }
+
                 
 
             },

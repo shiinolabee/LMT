@@ -7,55 +7,53 @@
 
 module.exports = {
     
-    getEmployeeTimeRecordList : function( next ) {
+    getEmployeeTimeRecordList : function( callback ) {
 
         // Employees.find().paginate({ page : pageValue , limit : limitValue}).exec(function( err, employees ) {
         Employee_time_records.find().exec(function( err, employees ) {
 
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employees);
+            callback(employees);
         });
 
     },
     
-    getEmployeeTimeRecord : function( id, next ) {
+    getEmployeeTimeRecord : function( id, callback ) {
 
         Employee_time_records.find({ where : { empId : id } }  ).exec(function( err, employees ) {
 
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employees);
+            callback(employees);
         });
 
     },
 
-    saveEmployeeTimeRecord : function ( data, next ) {
-
-        console.log(data);
+    saveEmployeeTimeRecord : function ( data, callback ) {       
 
         Employee_time_records.create( data ).exec(function( err, employee ){
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employee);
+            callback(employee);
         });
     },
 
-    editEmployeeTimeRecord : function ( data, id, next ) {
+    editEmployeeTimeRecord : function ( data, id, callback ) {
 
         Employee_time_records.update( { id : id }, data ).exec(function( err, employee ){
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employee);
+            callback(employee);
         });
     },
 
-    removeEmployeeTimeRecord : function( id, next) {
+    removeEmployeeTimeRecord : function( id, callback) {
 
         Employee_time_records.destroy( { id : id } ).exec(function( err, employee ){
-            if( err ) throw err;
+            if( err ) callback(err);
 
-            next(employee);
+            callback(employee);
         });
     }
 };

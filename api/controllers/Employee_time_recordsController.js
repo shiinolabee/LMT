@@ -11,20 +11,18 @@ module.exports = {
 
         if ( req.param('id') ) {
 
-            EmployeesTimeRecordService.editEmployeeTimeRecord(req.param('activeRecord'), req.param('id'), function(success) {
-                if ( success ) {
-                    res.json( { success : true , data : success  });                
-                }
-            }, function( xhr, errMsg ){
-                res.json( { success : false , data : success  });                            
+            EmployeesTimeRecordService.editEmployeeTimeRecord(req.param('activeRecord'), req.param('id'), function(response) {
+                
+                var isSuccess = !response.status ? true : false;
+           
+                res.json( { success : isSuccess , data : response  });   
             }); 
         } else {           
-            EmployeesTimeRecordService.saveEmployeeTimeRecord(req.param('activeRecord'), function(success) {
-                if ( success ) {
-                    res.json( { success : true , data : success  });                
-                }
-            }, function( xhr, errMsg ){
-                res.json( { success : false , data : success  });                            
+            EmployeesTimeRecordService.saveEmployeeTimeRecord(req.param('activeRecord'), function(response) {
+                
+                var isSuccess = !response.status ? true : false;
+           
+                res.json( { success : isSuccess , data : response  }); 
             });
         }
 
@@ -34,8 +32,8 @@ module.exports = {
         
         var employeeVal = req.param('id') ? req.param('id') : undefined;
 
-        EmployeesTimeRecordService.removeEmployeeTimeRecord(employeeVal, function(success) {
-            res.json( { success : true , data : success.id  });
+        EmployeesTimeRecordService.removeEmployeeTimeRecord(employeeVal, function(response) {
+            res.json( { success : true , data : employeeVal  });
         });
     }
 };

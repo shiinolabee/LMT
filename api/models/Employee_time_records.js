@@ -25,20 +25,15 @@ module.exports = {
 
         remarks : {            
             type : 'text'
+        },     
+
+        startsAt : {
+            type : 'datetime'
         },
 
-        dateAttended : {
-            type : 'date',
-            required : true,
+        endsAt : {
+            type : 'datetime'
         },
-
-        time: {            
-            type : 'string',
-            size : 20,
-            unique : true,
-            required : true,
-            columnName : 'time'
-        }, 
 
         timeRecordType : {
             type : 'integer',
@@ -46,11 +41,11 @@ module.exports = {
         },
 
         createdAt : {
-            type : 'datetime',            
+            type : 'datetime'            
         },
 
         updatedAt : {
-            type : 'datetime',            
+            type : 'datetime'            
         }
     }
 };
