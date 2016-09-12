@@ -32,7 +32,53 @@
 			}
 		};
 
-	})
+	});
+
+	cereliDirectives.directive('selectEmployee', function(activeRecordService, $timeout){
+
+		return {
+			
+			scope: {
+				selectEmployee : '=',
+			},
+
+			link : function( scope, element, attrs) {
+
+				// element.val(scope.selectEmployee);
+
+				// scope.watch('selectEmployee', function( newVal, oldVal ){
+				// 	if ( newVal !== oldVal ) {
+				// 		element.val(scope.selectEmployee);
+				// 	}	
+				// });
+
+				var timeout;
+
+				element.on('keyup paste search', function( item ){
+
+					clearTimeout(timeout);
+
+					timeout = $timeout(function(){
+
+						scope.selectEmployee = element[0].value;
+
+						activeRecordService.getActiveRecord({ criteria : scope.selectEmployee }, 'employees/getEmployee')
+							.then(function( response ){
+								if ( response.success ) {
+									
+									scope.searchEmployeeEntries.push(response.data);
+									scope.$apply();
+								}
+						})
+
+					}, attrs.delay || 250);
+
+				});
+
+			}
+		};
+
+	});
 
 	cereliDirectives.directive('showSubdetailsEmployee', function(){
 
@@ -59,7 +105,7 @@
 			template : '{{ selectedDepartment }}',
 		};
 
-	})
+	});
 
 	cereliDirectives.directive('employeeStatisticsReport', function(){
 
@@ -336,7 +382,9 @@
 
                     		if ( !_self.isEditMode ) _self.events.push(newCalendarEvent);                    		
 		                 	
-		                 	_self.timeRecordSelected = false;		                	
+		                 	_self.timeRecordSelected = false;	
+
+		                 	_self.refreshDTRCalendar();	                	
                     		
                     		$scope.addAlert('employeeTimeRecordAlerts', {
                                 type: 'success',
@@ -435,7 +483,6 @@
 			controllerAs : 'employeeDailyTimeRecordCalendarCtrl'
 		}
 	});
-
 	
 	/**
 	* Employee's Event Calendar	
@@ -633,7 +680,7 @@
 			}
 		};
 
-	})
+	});
 	
     cereliDirectives.directive('hcPieChart', function () {
 

@@ -4,6 +4,8 @@
         <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
 
         <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveEmployee(0, false)"><i class="fa fa-user"></i> <b>New Employee</b></button>
+        
+        <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveTimeRecord()"><i class="fa fa-user"></i> <b>New Employee Time Record</b></button>
 
     </div> 
 

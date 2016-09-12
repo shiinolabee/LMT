@@ -324,6 +324,54 @@ cereliApp
         };
 
         /**
+        * Add New Employee Time Record
+        **/
+        _self.saveTimeRecord = function(){
+
+             var modalInstance = $uibModal.open({
+                animation: true,
+                keyboard: false,
+                backdrop: 'static',                    
+                templateUrl: 'templates/employees/time-record-form.html',                
+                size: 'md',
+                controller: function($scope, activeRecordService) {                       
+
+                    $scope.modalOptions = {
+                        closeButtonText: 'Cancel',
+                        headerText: 'Add New Time Record',
+                        actionButtonText: 'Save'                        
+                    };
+
+                    $scope.modalOptions.ok = function (result) {
+
+                        var responseData;
+
+                        activeRecordService.saveActiveRecord($scope.time_record, false, 'employee_time_records/saveEmployeeTimeRecord').then(function(response) {                            
+                            responseData = response;                                                                
+                        }).finally(function(){
+                            modalInstance.close(responseData);                                
+                        });                      
+                    };
+
+                    $scope.modalOptions.close = function (result) {                        
+                        modalInstance.dismiss('cancel');
+                    };
+
+                }
+            });
+
+            modalInstance.result.then(function( response ){
+                if ( response.success ) {
+                    $scope.addAlert('employeeListAlerts', {
+                        type: 'success',
+                        msg: 'Employee Time Record Details Successfully Saved.'
+                    });                    
+                    
+                }
+            })
+        };
+
+        /**
         * Removes/Deletes employee by id        
         **/
         _self.removeEmployee = function( id, index ) {

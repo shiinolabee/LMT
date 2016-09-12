@@ -2,17 +2,30 @@
     <h4>{{modalOptions.headerText}}</h4>
 </div>
 <div class="modal-body">        
-    <form method="post" name="timeRecordForm" novalidate>                    
+    <form method="post" name="timeRecordForm" novalidate>
+
         <div class="form-group">
-          <label>Title</label>
-          <input type="text" ng-model="title" class="form-control">
-        </div>          
+          <label>Assign to what employee?</label>
+          <input type="text" name="empId" data-delay="300" select-employee="time_record.empId" ng-model="time_record.empId"/>
+          <div class="entry" ng-repeat="entry in searchEmployeeEntries | filter:searchText">
+              <span>{{entry.content}}</span>
+          </div>
+        </div>  
         <div class="form-group">
-          <label>Remarks</label>
+          <label>Remarks/Title</label>
           <textarea class="form-control" ng-model="time_record.remarks" rows="3" placeholder="Enter remarks..."></textarea>
         </div>
         <div class="form-group">
-          <label>Date Attended</label>
+          <label>Record Type</label>
+          <select class="form-control" ng-model="time_record.timeRecordType" ng-options="recordType.value as recordType.text for recordType in recordTypes" ng-init="time_record.timeRecordType=recordTypes[0]"></select>
+        </div>  
+        <div class="form-group">
+          <label>Starts At</label>
+          <input type="text" uib-datepicker-popup="'dd-MMMM-yyyy'" close-text="Close" ng-model="time_record.dateAttended" class="form-control">
+        </div>  
+
+        <div class="form-group">
+          <label>Ends At</label>
           <input type="text" uib-datepicker-popup="'dd-MMMM-yyyy'" close-text="Close" ng-model="time_record.dateAttended" class="form-control">
         </div>     
     </form>            

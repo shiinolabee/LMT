@@ -4,7 +4,7 @@
 var cereliApp = angular.module('cereliApp', [ 'cereliDirectives', 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router' ]);
 
 
-cereliApp.config([ '$rootScope' '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $rootScope, $stateProvider, $locationProvider, 
+cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
         $urlRouterProvider, AccessLevels ){
 
     $urlRouterProvider            
@@ -67,9 +67,6 @@ cereliApp.config([ '$rootScope' '$stateProvider', '$locationProvider', '$urlRout
                     templateUrl : 'templates/employees/list.html',    
                     resolve : {
                         getDepartmentList : function( activeRecordService ){
-
-                            $rootScope.showLoader = true;
-                            
                             return activeRecordService.getActiveRecordList('departments/getDepartmentList');
                         }
                     },            
