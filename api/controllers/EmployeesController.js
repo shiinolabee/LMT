@@ -23,6 +23,7 @@ module.exports = {
                     empId : 0,   
                     remarks : '',
                     startsAt : '',
+                    date : '',
                     endsAt : '',
                     timeRecordType : 1                    
                 };
@@ -52,11 +53,14 @@ module.exports = {
                     var startsAtDate = new Date();          
                     var dateAttended = tempArray.length >= 2 ? new Date(tempArray[1].replace(new RegExp('/', 'g'),'-')) : new Date();
 
+
                     tempTimeRecord.empId = parseInt(tempArray[0]);
                     
                     startsAtDate.setFullYear(dateAttended.getFullYear());
                     startsAtDate.setMonth(dateAttended.getMonth());
                     startsAtDate.setDate(dateAttended.getDate());
+
+                    tempTimeRecord.date = startsAtDate;
                     
                     if ( tempArray.length >= 3 ) {
                         
@@ -72,8 +76,13 @@ module.exports = {
                         startsAtDate.setSeconds(0);  
                     }
                     
-                    tempTimeRecord.startsAt = startsAtDate;       
-                    tempTimeRecord.endsAt = startsAtDate;       
+                    tempTimeRecord.startsAt = startsAtDate;  
+
+                    var endsAtDate = new Date(startsAtDate);
+
+                    endsAtDate.setHours(startsAtDate.getHours() + 1);                  
+
+                    tempTimeRecord.endsAt = endsAtDate;       
 
                     console.log(tempTimeRecord);
                   
@@ -107,13 +116,12 @@ module.exports = {
 
         if ( req.param('id') ) {
 
-            EmployeesTimeRecordService.getEmployeeTimeRecord(req.param('id'),function( response ){
+            var id = req.param('id');
 
-               var isSuccess = !response.status ? true : false;
-               
-               res.json( { success : isSuccess , data : response  });                    
-                
-            });
+            Employee_time_records.find({ where : { empId : id } }, { sum : 'recordValue' }).groupBy('date').max('startsAt')
+                .then(function( result ){
+                res.json({ success : true, data : result });
+            });                  
 
         }
 

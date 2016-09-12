@@ -5,7 +5,7 @@
 
 	cereliDirectives.controller('DashboardController' , [ '$scope' ,function( $scope ){
 
-	}])
+	}]);
 
 	cereliDirectives.filter('contentIsEmpty', function(){
 
@@ -34,6 +34,42 @@
 
 	});
 
+	cereliDirectives.directive('checkInputContentExists', function( activeRecordService, $timeout ){ 
+
+		return {
+
+			require : 'ngModel',
+
+			scope : {
+				checkInputContentExists : '='			
+			},
+
+			link : function( scope, element, attrs ){						
+
+				var timeout;			
+
+				// element.on('keyup paste', function(){
+
+				// 	clearTimeout(timeout);
+
+				// 	timeout = $timeout(function(){
+
+				// 		activeRecordService.getActiveRecord( { criteria : scope.checkInputContentExists }, attrs.model + '/' + attrs.checkUrl ).then(function( response ){
+				// 			if (  response.success && response.data.length > 0 ) {
+				// 				element.$setValidity('exists', true);							
+				// 			}
+				// 		});
+
+				// 	}, 350);
+
+				// });				
+
+			}
+
+		}
+
+	});
+
 	cereliDirectives.directive('selectEmployee', function(activeRecordService, $timeout){
 
 		return {
@@ -42,15 +78,7 @@
 				selectEmployee : '=',
 			},
 
-			link : function( scope, element, attrs) {
-
-				// element.val(scope.selectEmployee);
-
-				// scope.watch('selectEmployee', function( newVal, oldVal ){
-				// 	if ( newVal !== oldVal ) {
-				// 		element.val(scope.selectEmployee);
-				// 	}	
-				// });
+			link : function( scope, element, attrs) {			
 
 				var timeout;
 
@@ -115,9 +143,22 @@
 
 			transclude : true,
 
+			scope : {
+				statisticsRecordResult : '='
+			},
+
 			templateUrl : 'templates/employees/employee-statistics-report.html',
 
 			controller : function( $scope ){
+
+				$scope.timeRecordTypes = [
+					{ name : 'Attended', value : 1 },
+					{ name : 'Absent', value : 2 },
+					{ name : 'Leave(Paid)', value : 3 },
+					{ name : 'Leave(Unpaid)', value : 4 }
+				];
+
+				console.log($scope.statisticsRecordResult);
 
 			 	$scope.chartOptions = {
 			 		 chart: {
@@ -154,7 +195,7 @@
 			        },
 			        series: [{
 			            name: 'Absents',
-			            data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+			            data: [$scope.statisticsRecordResult[0].recordValue, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
 
 			        }, {
 			            name: 'Attended',
@@ -201,7 +242,8 @@
 	/**
 	* Employee's Details and Time Record Details with Calendar View	
 	**/
-	cereliDirectives.directive('employeeDailyTimeRecordCalendar', function( calendarConfig, activeRecordService, $timeout, moment ){
+	cereliDirectives.directive('employeeDailyTimeRecordCalendar', [ '$location', '$anchorScroll', 'calendarConfig', 'activeRecordService', '$timeout', 'moment',
+		function( $location, $anchorScroll, calendarConfig, activeRecordService, $timeout, moment ){
 
 		return {
 
@@ -213,10 +255,17 @@
 
 			controller : function( $scope ){
 
-				var _self = this;						
+				var _self = this;		
+
+				calendarConfig.templates.calendarMonthCell = 'groupedMonthEvents.html';
+
+			    $scope.$on('$destroy', function() {
+			      calendarConfig.templates.calendarMonthCell = 'mwl/calendarMonthCell.html';
+			    });
+				
 
 				_self.employeeTimeRecordAlerts = [];					
-                _self.isCellOpen = true;  
+                _self.isCellOpen = false;  
 				_self.timeRecordSelected = false;
                 _self.isEditMode = false;
                 _self.employeeDetails = $scope.employee;
@@ -240,19 +289,23 @@
 
                     console.log('Editing Record : ', args.calendarEvent); 
 
+                	$location.hash('timeRecordEditor');
+                	$anchorScroll();
+
                     _self.timeRecordSelected = true;
                 	_self.isEditMode = true;
 
                 	_self.time_record = {
                 		id : args.calendarEvent.id,
                 		empId : args.calendarEvent.empId,
-                		remarks : args.calendarEvent.remarks,
+                		remarks : ( args.calendarEvent.remarks.length ? args.calendarEvent.remarks : args.calendarEvent.title ),
                 		startsAt : args.calendarEvent.startsAt,
                 		endsAt : args.calendarEvent.endsAt,
                 		timeRecordType : args.calendarEvent.timeRecordType
                 	};
 
                 	_self.time_record.calendarEvent = args.calendarEvent;
+
 
                   }
                 }, 
@@ -288,9 +341,11 @@
                 _self.eventTempObj = {
                 	title : 'Time clock-in/out' ,
                 	color : calendarConfig.colorTypes.info,
+                	type : 'info',
                 	startsAt : '',
                 	endsAt : '',
             	 	draggable: true,
+            	 	incrementsBadgeTotal: true,
                     resizable: false,
                     actions: actions
                 };
@@ -306,7 +361,6 @@
 
              	_self.toggle = function($event, field, event) {
 
-             		console.log($event)
 			      	$event.preventDefault();
 			      	$event.stopPropagation();
 			      	event[field] = !event[field];
@@ -323,10 +377,32 @@
 
 			    };
 
+			    _self.checkIfWeekend = function(cell) {
+
+		     	 	if (cell.isWeekend ) {
+			        	cell.cssClass = 'weekend-cell';
+			      	}		
+
+			      	cell.groups = {};
+			      	cell.events.forEach(function(event) {
+			      		// console.log(event);
+				        cell.groups[event.type] = cell.groups[event.type] || [];
+				        cell.groups[event.type].push(event);
+			     	 });	      	
+			    };
+
+			    _self.cancelEditTimeRecord = function(){
+			    	_self.timeRecordSelected = false;
+                	_self.isEditMode = false;
+			    };
+
 			    _self.addTimeRecord = function(){            	
                 	
                 	_self.timeRecordSelected = true;
                 	_self.isEditMode = false;
+
+                	$location.hash('timeRecordEditor');
+                	$anchorScroll();
 
                 	_self.time_record = {
                 		id : 0,
@@ -334,7 +410,7 @@
                 		remarks : '',                	
                 		startsAt : '',
                 		endsAt : '',
-                		timeRecordType : 0
+                		timeRecordType : ''
                 	};
 
                 	_self.time_record.calendarEvent = {
@@ -342,6 +418,7 @@
 	                	color : calendarConfig.colorTypes.info,
 	                	startsAt : '',
 	                	endsAt : '',
+	                	type : 'info',
 	            	 	draggable: true,
 	                    resizable: true,
 	                    actions: actions
@@ -349,16 +426,18 @@
 
                 };    
 
-                _self.getTimeRecordColor = function( selectedType ) {
+                _self.getTimeRecordType = function( selectedType ) {
 
                 	if ( selectedType == 1 ) {
-            			return calendarConfig.colorTypes.info;
+            			return { color : calendarConfig.colorTypes.info, type : 'info' };
             		} else if ( selectedType == 2 ) {
-            			return calendarConfig.colorTypes.warning;
+            			return { color : calendarConfig.colorTypes.warning, type : 'warning' };
+            			
             		} else if ( selectedType == 3 || selectedType == 4) {
-            			return calendarConfig.colorTypes.special;
+            			return { color : calendarConfig.colorTypes.special, type : 'special' };
+            			
             		} else {
-            			return calendarConfig.colorTypes.important;
+            			return { color : calendarConfig.colorTypes.important, type : 'important' };            			
             		}                	
                 };   
 
@@ -368,12 +447,17 @@
 
                 	var calendarEvent = _self.time_record.calendarEvent;
 
+                	var oldCalendarEvent = calendarEvent;
+
             		delete _self.time_record.calendarEvent;
 
                 	var newCalendarEvent = _self.mergeObjects(calendarEvent,_self.time_record);
 
+                	var recordType = _self.getTimeRecordType(_self.time_record.timeRecordType);
+
                 	newCalendarEvent.title = _self.time_record.remarks;
-                	newCalendarEvent.color = _self.getTimeRecordColor(_self.time_record.timeRecordType);
+                	newCalendarEvent.color = recordType.color;
+                	newCalendarEvent.type = recordType.type;
 
             		console.log('Saving Time Record : ',_self.time_record);  
 
@@ -384,7 +468,11 @@
 		                 	
 		                 	_self.timeRecordSelected = false;	
 
-		                 	_self.refreshDTRCalendar();	                	
+		                 	var eventIndex = _self.events.indexOf(oldCalendarEvent);
+
+		                 	_self.events[eventIndex] = newCalendarEvent;
+
+		                 	// _self.refreshDTRCalendar();	                	
                     		
                     		$scope.addAlert('employeeTimeRecordAlerts', {
                                 type: 'success',
@@ -467,7 +555,10 @@
 	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].startsAt).add(1,'hours').toDate();
 	                	}
 
-	                	employeeTimeRecord.color = _self.getTimeRecordColor(employeeTimeRecord.timeRecordType);
+	                	var recordType = _self.getTimeRecordType(employeeTimeRecord.timeRecordType);
+
+	                	employeeTimeRecord.type = recordType.type;
+	                	employeeTimeRecord.color = recordType.color;
 	                	
 	                	_self.events.push(employeeTimeRecord);
 
@@ -475,14 +566,14 @@
 
 				};
 
-				_self.initializeCalendar();
+				_self.initializeCalendar();		
 
-				console.log(_self.events);   
+				// console.log(_self.events);		   
 
 			},
 			controllerAs : 'employeeDailyTimeRecordCalendarCtrl'
 		}
-	});
+	}]);
 	
 	/**
 	* Employee's Event Calendar	

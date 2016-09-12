@@ -149,3 +149,7 @@ background-color: #eee;
     font-size: 30px;
     color: #555;
 }
+
+.weekend-cell {
+    background-color: #ffcccc !important;
+}

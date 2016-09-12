@@ -20,8 +20,9 @@
                         <div class="col-md-4">                            
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$invalid }">
                                 <label for="">Employee I.D</label>
-                                <input type="text" class="form-control" ng-model-options="{debounce: 1000}" ng-maxlength="9" ng-required="number" name="empId" id="empId" ng-model="employee.empId" required />
+                                <input type="text" check-input-content-exists="employee.empId" data-model="employees" check-url="getEmployee" data-field-type="empId" class="form-control" ng-model-options="{debounce: 1000}" ng-maxlength="9" ng-required="number" name="empId" id="empId" ng-model="employee.empId" required />
                                 <span class="help-block" ng-if="(employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$error.required">Employee ID is required</span>
+                                <span class="help-block" ng-if="(employeeForm.empId.$touched || employeeForm.$submitted) && employeeForm.empId.$error.exists">Employee ID already Exists</span>
                             </div>
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.position.$touched || employeeForm.$submitted) && employeeForm.position.$invalid }">
                                 <label for="">Position</label>
@@ -51,7 +52,7 @@
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$invalid }">
                                 <label for="">Department Assigned</label>
 
-                                <select class="form-control" ng-options="department.id as department.departmentName for department in departmentList" ng-model="employee.departmentAssigned"></select>
+                                <select class="form-control" ng-init="employee.departmentAssigned = departmentList[0]" ng-options="department.id as department.departmentName for department in departmentList" ng-model="employee.departmentAssigned"></select>
                                 <span class="help-block" ng-if="(employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$error.required">Department Assigned is required</span>
                             </div>
                         </div>

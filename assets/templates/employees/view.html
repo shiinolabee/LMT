@@ -40,20 +40,20 @@
 
 		<div class="nav-tabs-custom">
 	    	<uib-tabset active="active">	    	
-	    		<uib-tab index="0">
+	    		<uib-tab index="0" select="viewEmployeeDetailsCtrl.getDailyTimeRecordCalendar()">
 	    			<uib-tab-heading>
 	    				 <i class="fa fa-calendar"></i> Daily Time Record Calendar    	
 	    			</uib-tab-heading>    
-	    			<employee-daily-time-record-calendar></employee-daily-time-record-calendar>					
+	    			<employee-daily-time-record-calendar ng-if="employeeTimeRecords.length"></employee-daily-time-record-calendar>					
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
-	    		<uib-tab index="1">
+	    		<uib-tab index="1" select="viewEmployeeDetailsCtrl.getDailyTimeRecordCalendar()">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-calendar"></i> Event Calendar   				
 	    			</uib-tab-heading>
 
-	    			<employee-event-calendar></employee-event-calendar>
+	    			<employee-event-calendar ng-if="employeeEventCalendarRecords.length"></employee-event-calendar>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
@@ -66,13 +66,13 @@
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
-	    		<uib-tab index="3" select="viewEmployeeDetailsCtrl.getStatisticsReport();">
+	    		<uib-tab index="3" select="viewEmployeeDetailsCtrl.getStatisticsReport()">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-filter"></i> Statistics & Report   				
 	    			</uib-tab-heading>
 
 	    			<div ng-show="!childShowLoader">
-	    				<employee-statistics-report timeRecords="employeeTimeRecords"></employee-statistics-report>	    				
+	    				<employee-statistics-report ng-if="statisticsRecordResult.length" timeRecords="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
 	    			</div>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>

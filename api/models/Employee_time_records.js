@@ -27,6 +27,10 @@ module.exports = {
             type : 'text'
         },     
 
+        date : {
+            type : 'date'            
+        },
+
         startsAt : {
             type : 'datetime'
         },
@@ -36,6 +40,11 @@ module.exports = {
         },
 
         timeRecordType : {
+            type : 'integer',
+            defaultsTo : 1
+        },
+
+        recordValue : {
             type : 'integer',
             defaultsTo : 1
         },

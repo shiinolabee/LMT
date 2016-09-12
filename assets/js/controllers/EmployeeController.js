@@ -156,12 +156,33 @@ cereliApp
                         $scope.childShowLoader = true;
 
                         activeRecordService.getActiveRecord({ id : $scope.employee.empId }, 'employees/getEmployeeStatisticsReport').then(function( response ){
-                            if ( response.success ) {
-
-                                var employeeTimeRecords = response.data;
+                            if ( response.success ) {                                
+                                $scope.statisticsRecordResult = response.data;
                                 $scope.childShowLoader = false;                                
                             } 
-                        })
+                        });
+                    };   
+
+                    _self.getEmployeeEventCalendar = function(){
+                        $scope.childShowLoader = true;
+
+                        activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeEventCalendar').then(function( response ){
+                            if ( response.success ) {                                
+                                $scope.employeeEventCalendarRecords = response.data;
+                                $scope.childShowLoader = false;                                
+                            } 
+                        });
+                    };
+
+                    _self.getDailyTimeRecordCalendar = function(){
+                        $scope.childShowLoader = true;
+
+                        activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
+                            if ( response.success ) {                                
+                                $scope.employeeTimeRecords = response.data;
+                                $scope.childShowLoader = false;                                
+                            } 
+                        });
                     };               
                    
                 },
@@ -186,6 +207,7 @@ cereliApp
             var modalInstance = $uibModal.open({
                 animation: true,
                 keyboard : false,
+                backdrop : false,
                 resolve : {
                     employeeInitialValues : function() {
                         return _self.initEmployeeValues($scope.editMode, $scope.index);

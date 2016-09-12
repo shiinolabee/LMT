@@ -1,9 +1,35 @@
 
-<div uib-alert ng-repeat="alert in employeeDailyTimeRecordCalendarCtrl.employeeTimeRecordAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeTimeRecordAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+<div uib-alert ng-repeat="alert in employeeDailyTimeRecordCalendarCtrl.employeeTimeRecordAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeTimeRecordAlerts', $index)" dismiss-on-timeout="8000">{{alert.msg}}</div>
 
 <h2 class="text-center">{{ calendarTitle }}</h2>
 
 <calendar-controls sampleloader="employeeDailyTimeRecordCalendarCtrl.sampleloader" viewdate="employeeDailyTimeRecordCalendarCtrl.viewDate" calendarview="employeeDailyTimeRecordCalendarCtrl.calendarView"></calendar-controls>
+
+<script id="groupedMonthEvents.html" type="text/ng-template">
+  <div class="cal-month-day">
+
+    <span
+      class="pull-right"
+      data-cal-date
+      ng-click="vm.calendarCtrl.dateClicked(day.date)"
+      ng-bind="day.label">
+    </span>
+
+    <div style="position: relative; top: 35px; left: 5px">
+      <span ng-repeat="(type, events) in day.groups track by type">
+        <span class="label label-{{ type }}">
+          {{ events.length }}
+        </span>&nbsp;
+      </span>
+    </div>
+
+    <div class="cal-day-tick" ng-show="dayIndex === vm.openDayIndex && vm.view[vm.openDayIndex].events.length > 0 && !vm.slideBoxDisabled">
+      <i class="glyphicon glyphicon-chevron-up"></i>
+      <i class="fa fa-chevron-up"></i>
+    </div>
+
+  </div>
+</script>
 
 <mwl-calendar
     view="employeeDailyTimeRecordCalendarCtrl.calendarView"
@@ -16,7 +42,7 @@
     day-view-start="06:00"
     day-view-end="22:59"
     day-view-split="30"
-    cell-modifier="employeeDailyTimeRecordCalendarCtrl.modifyCell(calendarCell)"    
+    cell-modifier="employeeDailyTimeRecordCalendarCtrl.checkIfWeekend(calendarCell)"    
     >
 </mwl-calendar>		
 
@@ -26,13 +52,143 @@
     <button
       class="btn btn-primary pull-right"
       ng-click="employeeDailyTimeRecordCalendarCtrl.addTimeRecord();">
+      <i class="fa fa-clock-o"></i>
       Add New Time Record
     </button>
     <div class="clearfix"></div>
-  </h3>
+</h3>
+
+<div class="col-md-12" ng-show="employeeDailyTimeRecordCalendarCtrl.timeRecordSelected" id="timeRecordEditor">
+	<div class="box box-primary">
+	    <div class="box-header">
+	      	<h3 ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode">Edit Time Record of {{ employeeDailyTimeRecordCalendarCtrl.time_record.calendarEvent.startsAt | date }}</h3>
+			<h3 ng-if="!employeeDailyTimeRecordCalendarCtrl.isEditMode">New Time Record</h3>
+	    </div>
+	    <div class="box-body">
+
+			<form name="timeRecordForm" ng-model="timeRecordForm" novalidate>
+
+				<div class="col-md-6">					
+		      		<!-- Title/Remarks -->
+			      	<div class="form-group">
+			        	<label>Title/Remarks:</label>
+
+				       	<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.remarks.$touched || timeRecordForm.$submitted) && timeRecordForm.remarks.$invalid }">
+				      		<textarea class="form-control" name="remarks" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.remarks" rows="3" placeholder="Enter remarks..." ng-required="true"></textarea>
+				      		<span class="help-block" ng-if="(timeRecordForm.remarks.$touched || timeRecordForm.$submitted) && timeRecordForm.remarks.$error.required">Title/Remarks is required</span>			    		
+		    			</div>
+			      	</div>
+			      	<!-- /.form group -->
+
+			      	<!-- Record Type -->
+			      	<div class="form-group">
+			        	<label>Record Type:</label>
+
+				        <div class="form-group" ng-class="{ 'has-error': (timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$invalid }">
+				      		<select ng-init="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType=employeeDailyTimeRecordCalendarCtrl.recordTypes[0]" ng-options="recordType.value as recordType.text for recordType in employeeDailyTimeRecordCalendarCtrl.recordTypes" name="recordType" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType" ng-required="true"></select>  
+				      		<span class="help-block" ng-if="(timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$error.required">Time Record Type is required</span>
+				    	</div>
+			      	</div>
+			      	<!-- /.form group -->
+				</div>
+
+				<div class="col-md-6">
+
+					<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.startsAt.$invalid }">
+						<label>Starts At</label>
+			          	<div class="input-group" style="max-width: 250px">
+				            <input
+				              type="text"
+				              class="form-control"
+				              name="startsAt"
+				              readonly
+				              uib-datepicker-popup="dd MMMM yyyy"
+				              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
+				              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.startOpen"
+				              close-text="Close" ng-required="true">
+				            <span class="input-group-btn">
+				              <button				              
+				                type="button"
+				                class="btn btn-default"
+				                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'startOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
+				                <i class="glyphicon glyphicon-calendar"></i>
+				              </button>
+				            </span>
+			          	</div>
+			          	<span class="help-block" ng-if="(timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.startsAt.$error.required">Time Record Type is required</span>			    		
+			          	<div
+				            uib-timepicker
+				            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
+				            hour-step="1"
+				            minute-step="15"
+				            show-meridian="true" ng-required="true">
+			          	</div>	
+			    	</div>
+
+					
+			      	<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.endsAt.$invalid }">
+						<label>Ends At</label>
+
+			          	<div class="input-group" style="max-width: 250px">
+				            <input
+				              type="text"
+				              class="form-control"
+				              name="endsAt"
+				              readonly
+				              uib-datepicker-popup="dd MMMM yyyy"
+				              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
+				              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.endOpen"
+				              close-text="Close" ng-required="true">
+			            	<span class="input-group-btn">
+			              		<button
+					                type="button"
+					                class="btn btn-default"
+					                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'endOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
+					                <i class="glyphicon glyphicon-calendar"></i>
+				              	</button>
+			            	</span>
+			          	</div>	
+			          	<span class="help-block" ng-if="(timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.endsAt.$error.required">Time Record Type is required</span>			    			          		
+			          	<div
+				            uib-timepicker
+				            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
+				            hour-step="1"
+				            minute-step="15"
+				            show-meridian="true" ng-required="true">
+			          	</div>
+		          	</div>
+				</div>
+
+				<div uib-alert ng-repeat="alert in employeeDailyTimeRecordCalendarCtrl.employeeTimeRecordAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeTimeRecordAlerts', $index)" dismiss-on-timeout="8000">{{alert.msg}}</div>
+
+				<div class="pull-right">					
+					<button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
+				        class="btn btn-danger btn-sm" uib-tooltip="Delete Time Record"
+				        ng-click="employeeDailyTimeRecordCalendarCtrl.removeTimeRecord()">
+				        <i class="fa fa-trash-o"></i> Delete				        
+				    </button>
+				    <button
+				        class="btn btn-primary btn-sm" ng-disabled="timeRecordForm.$invalid"
+				        uib-tooltip="Save Time Record" ng-click="employeeDailyTimeRecordCalendarCtrl.saveTimeRecord();">
+				        <i class="fa fa-floppy-o"></i> Save			        
+				    </button>
+				    <button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
+				        class="btn btn-default btn-sm" uib-tooltip="Cancel Editing"
+				        ng-click="employeeDailyTimeRecordCalendarCtrl.cancelEditTimeRecord();">
+				        <i class="fa fa-ban"></i> Cancel			        
+				    </button>					
+				</div>		  
+
+	    	</form>
+
+	    	<div class="clearfix"></div>
+	    </div>
+	    <!-- /.box-body -->
+  	</div>
+</div>
 
     
-<div ng-show="employeeDailyTimeRecordCalendarCtrl.timeRecordSelected"> 
+<!-- <div ng-show="employeeDailyTimeRecordCalendarCtrl.timeRecordSelected"> 
 	<h4 ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode">Edit Time Record of {{ employeeDailyTimeRecordCalendarCtrl.time_record.calendarEvent.startsAt | date }}</h4>
 	<h4 ng-if="!employeeDailyTimeRecordCalendarCtrl.isEditMode">New Time Record</h4>
 
@@ -50,83 +206,98 @@
 			<tbody>
 			  <tr>		  
 			    <td colspan="3">
-			      <textarea class="form-control" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.remarks" rows="3" placeholder="Enter remarks..."></textarea>
+			    	<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.remarks.$touched || timeRecordForm.$submitted) && timeRecordForm.remarks.$invalid }">
+				      <textarea class="form-control" name="remarks" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.remarks" rows="3" placeholder="Enter remarks..." ng-required="true"></textarea>
+				      <span class="help-block" ng-if="(timeRecordForm.remarks.$touched || timeRecordForm.$submitted) && timeRecordForm.remarks.$error.required">Title/Remarks is required</span>			    		
+			    	</div>
 			    </td>	
 			    <td>
-			      <select ng-init="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType=employeeDailyTimeRecordCalendarCtrl.recordTypes[0]" ng-options="recordType.value as recordType.text for recordType in employeeDailyTimeRecordCalendarCtrl.recordTypes" name="recordType" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType"></select>  
-			    </td>
-			 <!--    <td ng-if="!employeeDailyTimeRecordCalendarCtrl.isEditMode">
-			    	<div class="input-group">
-	                    <input type="text" uib-datepicker-popup="{{datePickerOptions.formatSelected}}" datepicker-options="datePickerOptions.openDateAttendedOptions" class="form-control" name="dateAttended" close-text="Close" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.dateAttended" ng-required="true" ng-click="datePickerOptions.openDateAttended()" is-open="datePickerOptions.isOpenDateAttended.opened"  alt-input-formats="datePickerOptions.altInputFormats"/>
-	                </div>
-			    </td> -->
+			    	<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$invalid }">
+			      		<select ng-init="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType=employeeDailyTimeRecordCalendarCtrl.recordTypes[0]" ng-options="recordType.value as recordType.text for recordType in employeeDailyTimeRecordCalendarCtrl.recordTypes" name="recordType" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType" ng-required="true"></select>  
+			      		<span class="help-block" ng-if="(timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$error.required">Time Record Type is required</span>
+			    	</div>
+			    </td>	
 			    <td colspan="2">
-		          <p class="input-group" style="max-width: 250px">
-		            <input
-		              type="text"
-		              class="form-control"
-		              readonly
-		              uib-datepicker-popup="dd MMMM yyyy"
-		              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
-		              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.startOpen"
-		              close-text="Close" >
-		            <span class="input-group-btn">
-		              <button
-		                type="button"
-		                class="btn btn-default"
-		                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'startOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
-		                <i class="glyphicon glyphicon-calendar"></i>
-		              </button>
-		            </span>
-		          </p>
-		          <div
-		            uib-timepicker
-		            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
-		            hour-step="1"
-		            minute-step="15"
-		            show-meridian="true">
-		          </div>
+			    	<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.startsAt.$invalid }">
+			          	<div class="input-group" style="max-width: 250px">
+				            <input
+				              type="text"
+				              class="form-control"
+				              name="startsAt"
+				              readonly
+				              uib-datepicker-popup="dd MMMM yyyy"
+				              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
+				              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.startOpen"
+				              close-text="Close" ng-required="true">
+				            <span class="input-group-btn">
+				              <button				              
+				                type="button"
+				                class="btn btn-default"
+				                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'startOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
+				                <i class="glyphicon glyphicon-calendar"></i>
+				              </button>
+				            </span>
+			          	</div>
+			          	<span class="help-block" ng-if="(timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.startsAt.$error.required">Time Record Type is required</span>			    		
+			          	<div
+				            uib-timepicker
+				            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
+				            hour-step="1"
+				            minute-step="15"
+				            show-meridian="true" ng-required="true">
+			          	</div>	
+			    	</div>
 
-		          <p class="input-group" style="max-width: 250px">
-		            <input
-		              type="text"
-		              class="form-control"
-		              readonly
-		              uib-datepicker-popup="dd MMMM yyyy"
-		              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
-		              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.endOpen"
-		              close-text="Close">
-		            <span class="input-group-btn">
-		              <button
-		                type="button"
-		                class="btn btn-default"
-		                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'endOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
-		                <i class="glyphicon glyphicon-calendar"></i>
-		              </button>
-		            </span>
-		          </p>
-		          <div
-		            uib-timepicker
-		            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
-		            hour-step="1"
-		            minute-step="15"
-		            show-meridian="true">
-		          </div>
+		          	<div class="form-group" ng-class="{ 'has-error': (timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.endsAt.$invalid }">
+			          	<div class="input-group" style="max-width: 250px">
+				            <input
+				              type="text"
+				              class="form-control"
+				              name="endsAt"
+				              readonly
+				              uib-datepicker-popup="dd MMMM yyyy"
+				              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
+				              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.endOpen"
+				              close-text="Close" ng-required="true">
+			            	<span class="input-group-btn">
+			              		<button
+					                type="button"
+					                class="btn btn-default"
+					                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'endOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
+					                <i class="glyphicon glyphicon-calendar"></i>
+				              	</button>
+			            	</span>
+			          	</div>	
+			          	<span class="help-block" ng-if="(timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.endsAt.$error.required">Time Record Type is required</span>			    			          		
+			          	<div
+				            uib-timepicker
+				            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
+				            hour-step="1"
+				            minute-step="15"
+				            show-meridian="true" ng-required="true">
+			          	</div>
+		          	</div>
+
 		        </td>		    
 			    <td colspan="2">		    
 	          	  	<button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
-				        class="btn btn-danger btn-sm"
+				        class="btn btn-default btn-sm" uib-tooltip="Delete Time Record"
 				        ng-click="employeeDailyTimeRecordCalendarCtrl.removeTimeRecord()">
-				        Delete
+				        <i class="fa fa-trash-o"></i>				        
 				    </button><br>
 				    <button
-				        class="btn btn-primary btn-sm" ng-disabled="timeRecordForm.$invalid"
-				        ng-click="employeeDailyTimeRecordCalendarCtrl.saveTimeRecord();">
-				        Save
+				        class="btn btn-default btn-sm" ng-disabled="timeRecordForm.$invalid"
+				        uib-tooltip="Save Time Record" ng-click="employeeDailyTimeRecordCalendarCtrl.saveTimeRecord();">
+				        <i class="fa fa-floppy-o"></i>				        
+				    </button>
+				    <button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
+				        class="btn btn-default btn-sm" uib-tooltip="Cancel Editing"
+				        ng-click="employeeDailyTimeRecordCalendarCtrl.cancelEditTimeRecord();">
+				        <i class="fa fa-ban"></i>				        
 				    </button>
 			    </td>
 			  </tr>
 			</tbody>		
 		</table>
 	</form>
-</div>
+</div> -->
