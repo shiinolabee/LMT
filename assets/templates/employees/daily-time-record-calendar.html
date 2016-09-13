@@ -6,7 +6,15 @@
 <calendar-controls sampleloader="employeeDailyTimeRecordCalendarCtrl.sampleloader" viewdate="employeeDailyTimeRecordCalendarCtrl.viewDate" calendarview="employeeDailyTimeRecordCalendarCtrl.calendarView"></calendar-controls>
 
 <script id="groupedMonthEvents.html" type="text/ng-template">
-  <div class="cal-month-day">
+  <div class="cal-month-day" ng-class="{
+    'cal-day-outmonth': !day.inMonth,
+    'cal-day-inmonth': day.inMonth,
+    'cal-day-weekend': day.isWeekend,
+    'cal-day-past': day.isPast,
+    'cal-day-today': day.isToday,
+    'cal-day-future': day.isFuture,
+    'cal-day-selected': vm.dateRangeSelect && vm.dateRangeSelect.startDate <= day.date && day.date <= vm.dateRangeSelect.endDate
+  }">
 
     <span
       class="pull-right"
@@ -18,8 +26,9 @@
     <div style="position: relative; top: 35px; left: 5px">
       <span ng-repeat="(type, events) in day.groups track by type">
         <span class="label label-{{ type }}">
-          {{ events.length }}
+          {{ events.length }} {{ day.groups.length }}
         </span>&nbsp;
+      	<a ng-if="events.length" ng-click="calculateRenderedHours(events)" class="day-calculate-hours" href="javascript:void(0);" uib-tooltip="Calculate Rendered Hours"><i class="fa fa-calculator"></i></a>
       </span>
     </div>
 

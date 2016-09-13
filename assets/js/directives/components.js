@@ -377,18 +377,29 @@
 
 			    };
 
-			    _self.checkIfWeekend = function(cell) {
+			    _self.calculateRenderedHours = function( events ) {
 
-		     	 	if (cell.isWeekend ) {
-			        	cell.cssClass = 'weekend-cell';
-			      	}		
+			    	var totalEvents = events.length
+
+			    	if ( totalEvents ) {
+
+			    		console.log(events);
+
+			    		var totalHoursRendered = Math.abs(events[0].startsAt - events[totalEvents-1].startsAt) / 36e5;
+
+			    		console.log(totalHoursRendered);
+			    	}
+			    };
+
+			    _self.checkIfWeekend = function(cell) {
 
 			      	cell.groups = {};
 			      	cell.events.forEach(function(event) {
 			      		// console.log(event);
 				        cell.groups[event.type] = cell.groups[event.type] || [];
-				        cell.groups[event.type].push(event);
-			     	 });	      	
+					    cell.groups[event.type].push(event);
+		     	 	});	     	
+
 			    };
 
 			    _self.cancelEditTimeRecord = function(){
@@ -564,11 +575,20 @@
 
 					}  
 
+					_self.eventsGroup = [];					
+
+		     	 	_self.events.forEach(function(event) {
+			      		
+			      		var startsAtDate = event.startsAt.toDateString();
+		      		
+				        _self.eventsGroup[startsAtDate] = _self.eventsGroup[startsAtDate] || [];
+					   	_self.eventsGroup[startsAtDate].push(event);	    		     	 	
+				 	});
 				};
 
 				_self.initializeCalendar();		
 
-				// console.log(_self.events);		   
+				console.log(_self.eventsGroup);		   
 
 			},
 			controllerAs : 'employeeDailyTimeRecordCalendarCtrl'

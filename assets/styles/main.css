@@ -150,6 +150,9 @@ background-color: #eee;
     color: #555;
 }
 
-.weekend-cell {
+a.day-calculate-hours{
+  font-size: 12px;
+}
+.weekend-cell, .cal-day-weekend {
     background-color: #ffcccc !important;
 }
