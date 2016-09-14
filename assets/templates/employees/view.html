@@ -48,14 +48,14 @@
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
-	    		<uib-tab index="1" select="viewEmployeeDetailsCtrl.getDailyTimeRecordCalendar()">
+	    		<!-- <uib-tab index="1" select="viewEmployeeDetailsCtrl.getDailyTimeRecordCalendar()">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-calendar"></i> Event Calendar   				
 	    			</uib-tab-heading>
 
 	    			<employee-event-calendar ng-if="employeeEventCalendarRecords.length"></employee-event-calendar>
 	    			<div class="clearfix"></div>
-	    		</uib-tab>
+	    		</uib-tab> -->
 
     			<uib-tab index="2">
 	    			<uib-tab-heading>
@@ -72,7 +72,7 @@
 	    			</uib-tab-heading>
 
 	    			<div ng-show="!childShowLoader">
-	    				<employee-statistics-report ng-if="statisticsRecordResult.length" timeRecords="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
+	    				<employee-statistics-report ng-if="statisticsRecordResult.length" employee-time-records="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
 	    			</div>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>

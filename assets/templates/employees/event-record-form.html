@@ -1,0 +1,130 @@
+<div class="modal-header">
+    <h4>{{modalOptions.headerText}}</h4>
+</div>
+<div class="modal-body">  
+    <div class="row">  
+        <div class="ajax-loader" ng-show="childShowloader">
+            <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </div>      
+        <form method="post" name="eventForm" ng-model="eventForm" novalidate>
+
+            <div class="col-md-6">                  
+                <!-- Title/Remarks -->
+                <div class="form-group">
+                    <label>Title/Remarks:</label>
+
+                    <div class="form-group" ng-class="{ 'has-error': (timeRecordForm.remarks.$touched || timeRecordForm.$submitted) && timeRecordForm.remarks.$invalid }">
+                        <textarea class="form-control" name="remarks" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.remarks" rows="3" placeholder="Enter remarks..." ng-required="true"></textarea>
+                        <span class="help-block" ng-if="(timeRecordForm.remarks.$touched || timeRecordForm.$submitted) && timeRecordForm.remarks.$error.required">Title/Remarks is required</span>                      
+                    </div>
+                </div>
+                <!-- /.form group -->
+
+                <!-- Record Type -->
+                <div class="form-group">
+                    <label>Record Type:</label>
+
+                    <div class="form-group" ng-class="{ 'has-error': (timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$invalid }">
+                        <select ng-init="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType=employeeDailyTimeRecordCalendarCtrl.recordTypes[0]" ng-options="recordType.value as recordType.text for recordType in employeeDailyTimeRecordCalendarCtrl.recordTypes" name="recordType" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType" ng-required="true"></select>  
+                        <span class="help-block" ng-if="(timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$error.required">Time Record Type is required</span>
+                    </div>
+                </div>
+                <!-- /.form group -->
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="form-group" ng-class="{ 'has-error': (timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.startsAt.$invalid }">
+                    <label>Starts At</label>
+                    <div class="input-group" style="max-width: 250px">
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="startsAt"
+                          readonly
+                          uib-datepicker-popup="dd MMMM yyyy"
+                          ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
+                          is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.startOpen"
+                          close-text="Close" ng-required="true">
+                        <span class="input-group-btn">
+                          <button                             
+                            type="button"
+                            class="btn btn-default"
+                            ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'startOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                          </button>
+                        </span>
+                    </div>
+                    <span class="help-block" ng-if="(timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) &&  timeRecordForm.startsAt.$error.required">Time Record Type is required</span>                        
+                    <div
+                        uib-timepicker
+                        ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
+                        hour-step="1"
+                        minute-step="15"
+                        show-meridian="true" ng-required="true">
+                    </div>  
+                </div>
+
+                
+                <div class="form-group" ng-class="{ 'has-error': (timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.endsAt.$invalid }">
+                    <label>Ends At</label>
+
+                    <div class="input-group" style="max-width: 250px">
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="endsAt"
+                          readonly
+                          uib-datepicker-popup="dd MMMM yyyy"
+                          ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
+                          is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.endOpen"
+                          close-text="Close" ng-required="true">
+                        <span class="input-group-btn">
+                            <button
+                                type="button"
+                                class="btn btn-default"
+                                ng-click="employeeDailyTimeRecordCalendarCtrl.toggle($event, 'endOpen', employeeDailyTimeRecordCalendarCtrl.time_record_datePicker)">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
+                    </div>  
+                    <span class="help-block" ng-if="(timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) &&    timeRecordForm.endsAt.$error.required">Time Record Type is required</span>                                          
+                    <div
+                        uib-timepicker
+                        ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
+                        hour-step="1"
+                        minute-step="15"
+                        show-meridian="true" ng-required="true">
+                    </div>
+                </div>
+            </div>
+
+            <div uib-alert ng-repeat="alert in employeeDailyTimeRecordCalendarCtrl.employeeTimeRecordAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeTimeRecordAlerts', $index)" dismiss-on-timeout="8000">{{alert.msg}}</div>
+
+            <div class="pull-right">                    
+                <button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
+                    class="btn btn-danger btn-sm" uib-tooltip="Delete Time Record"
+                    ng-click="employeeDailyTimeRecordCalendarCtrl.removeTimeRecord()">
+                    <i class="fa fa-trash-o"></i> Delete                        
+                </button>
+                <button
+                    class="btn btn-primary btn-sm" ng-disabled="timeRecordForm.$invalid"
+                    uib-tooltip="Save Time Record" ng-click="employeeDailyTimeRecordCalendarCtrl.saveTimeRecord();">
+                    <i class="fa fa-floppy-o"></i> Save                 
+                </button>
+                <button ng-if="employeeDailyTimeRecordCalendarCtrl.isEditMode"
+                    class="btn btn-default btn-sm" uib-tooltip="Cancel Editing"
+                    ng-click="employeeDailyTimeRecordCalendarCtrl.cancelEditTimeRecord();">
+                    <i class="fa fa-ban"></i> Cancel                    
+                </button>                   
+            </div>                   
+
+            <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="employeeCtrl.closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+        </form>        
+    </div> 
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="eventForm.$invalid"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
+</div>

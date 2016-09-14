@@ -1,12 +1,12 @@
-// /**
-//  * Users.js
-//  *
-//  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
-//  * @docs        :: http://sailsjs.org/#!documentation/models
-//  */
+/**
+ * Users.js
+ *
+ * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
-// // We don't want to store password with out encryption
-// var bcrypt = require('bcrypt');
+// We don't want to store password with out encryption
+// var bcrypt = require('bcrypt-nodejs');
 
 // module.exports = {
   
@@ -20,7 +20,11 @@
 //       unique: true // Yes unique one
 //     },
 
-//     encryptedPassword: {
+//     fullName : {
+//     	type : 'string'
+//     },
+
+//     password: {
 //       type: 'string'
 //     },
 
@@ -35,7 +39,7 @@
 //     // We don't wan't to send back encrypted password either
 //     toJSON: function () {
 //       var obj = this.toObject();
-//       delete obj.encryptedPassword;
+//       delete obj.password;
 //       return obj;
 //     }
 //   },
@@ -45,7 +49,7 @@
 //       if(err) return next(err);
 //       bcrypt.hash(values.password, salt, function (err, hash) {
 //         if(err) return next(err);
-//         values.encryptedPassword = hash;
+//         values.password = hash;
 //         next();
 //       })
 //     })
@@ -53,7 +57,7 @@
 
 //   validPassword : function (password, user, cb) {
 
-//     bcrypt.compare(password, user.encryptedPassword, function (err, match) {
+//     bcrypt.compare(password, user.password, function (err, match) {
 
 //       if(err) cb(err);
       

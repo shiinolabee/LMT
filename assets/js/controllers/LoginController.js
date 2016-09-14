@@ -1,6 +1,6 @@
 
 cereliApp
-    .controller('LoginController', function($scope, $state, Auth) {
+    .controller('loginController', function($scope, $state, Auth) {
     
         $scope.errors = [];
 

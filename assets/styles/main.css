@@ -156,3 +156,8 @@ a.day-calculate-hours{
 .weekend-cell, .cal-day-weekend {
     background-color: #ffcccc !important;
 }
+
+.year-dropdown-wrapper {
+  display: inline-block;
+  margin-left: 10px;
+}

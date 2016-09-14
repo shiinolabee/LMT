@@ -10,23 +10,27 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
     $urlRouterProvider            
         .otherwise("/dashboard");
 
-    $stateProvider
-        .state('login.modal', {
-            url : '',
-            views : {             
-                'extra-content' : {
-                    templateUrl : 'templates/common/modal.html',                                                                                    
-                }
-            }
-        })
+    $stateProvider      
 
         .state('login', {
-            url : '/login',
+            url : 'login',
             views : {
                 'parent-content' : {
                     templateUrl : 'templates/auth/login.html',
-                    controller : 'LoginController'
+                    controller : 'loginController',
+                    controllerAs : 'loginCtrl'
                 }      
+            }          
+        })
+
+        .state('register', {
+            url : 'register',
+            views : {
+                'parent-content' : {
+                    templateUrl : 'templates/auth/register.html',
+                    controller : 'registerController',
+                    controllerAs : 'registerCtrl'
+                }
             }
         })
         
@@ -80,11 +84,13 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             }
         })  
 
-        .state('admin.settings', {               
-            url : 'time_records/settings',
+        .state('admin.calendar', {               
+            url : 'employee/calendar',
             views : {
                 'child-content' : {
-                    templateUrl : 'templates/employees/settings.html',                  
+                    templateUrl : 'templates/employees/employee-event-calendar.html',
+                    controller : 'employeeEventCalendarController',
+                    controllerAs : 'employeeEventCalendarCtrl'                  
                 }
             },
             data : {
@@ -176,9 +182,11 @@ cereliApp
 
         $rootScope.$state = $state;  
 
-        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {                                    
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {       
 
-            // if( toState.url != '/login' ) {
+            console.log(toState);                             
+
+            // if( toState.url != 'login' ) {
 
             //     if ( !Auth.authorize(toState.data.access)) {
             //         event.preventDefault();
@@ -186,9 +194,9 @@ cereliApp
             //         $state.go('login');
             //     }
               
-            // }                               
-            $rootScope.selectedMenu = toState.data.menuCode;
+            // }    
 
+            $rootScope.selectedMenu = toState.data.menuCode;
 
             $rootScope.isAuthenticated = true;
             $rootScope.currentState = toState.name.split('.')[1];                 

@@ -108,6 +108,34 @@
 
 	});
 
+    /** 
+    *for year selector dropdown
+    **/
+    cereliDirectives.directive('yearDropdown',function(){
+
+        var currentYear = new Date().getFullYear();
+
+        return {
+
+        	scope : {
+        		modelName : '@'
+        	},
+
+            link: function(scope, element, attrs){
+
+                scope.years = [];
+
+                for (var i = +attrs.offset; i < +attrs.range + 1; i++){
+                    scope.years.push(currentYear - i);
+                }
+
+                scope.selectedYear = currentYear;
+            },
+            template: '<select ng-model="modelName" ng-options="y for y in years" ng-init="modelName=years[0]"></select>'
+
+        }
+    });
+
 	cereliDirectives.directive('showSubdetailsEmployee', function(){
 
 		return {		
@@ -135,7 +163,7 @@
 
 	});
 
-	cereliDirectives.directive('employeeStatisticsReport', function(){
+	cereliDirectives.directive('employeeStatisticsReport', [ 'moment', function( moment ){
 
 		return {
 
@@ -144,12 +172,64 @@
 			transclude : true,
 
 			scope : {
-				statisticsRecordResult : '='
+				statisticsRecordResult : '=',
+				employeeTimeRecords : '='
 			},
 
 			templateUrl : 'templates/employees/employee-statistics-report.html',
 
 			controller : function( $scope ){
+
+				var _self = this;
+
+				_self.init = function(){
+
+					_self.employeeTimeRecordsList = [];	
+
+					for (var key in $scope.employeeTimeRecords) {				  	
+
+	                	var employeeTimeRecord = $scope.employeeTimeRecords[key];
+
+	                	if ( employeeTimeRecord.remarks.length > 0 ) employeeTimeRecord.title = employeeTimeRecord.remarks;
+	                	
+	               		employeeTimeRecord.startsAt = moment($scope.employeeTimeRecords[key].startsAt).toDate();
+	                	
+	                	if ( $scope.employeeTimeRecords[key].endsAt.length > 0 ) {
+	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].endsAt).toDate();
+	                	} else {
+	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].startsAt).add(1,'hours').toDate();
+	                	}	  
+	                	
+	                	_self.employeeTimeRecordsList.push(employeeTimeRecord);
+
+					}  
+
+					_self.eventsGroup = [];					
+
+		     	 	_self.employeeTimeRecordsList.forEach(function(event) {
+			      		
+			      		var startsAtDate = event.startsAt.toDateString();
+		      		
+				        _self.eventsGroup[startsAtDate] = _self.eventsGroup[startsAtDate] || [];
+					   	_self.eventsGroup[startsAtDate].push(event);	    		     	 	
+				 	});
+
+
+				 	Object.keys(_self.eventsGroup).forEach(function( event, i ){				 		
+
+				 		var item = _self.eventsGroup[event];
+				 		
+			 			var totalHoursRendered = Math.abs( item[0].startsAt - item[item.length-1].startsAt  ) / 36e5;
+			 			item.totalHoursRendered = totalHoursRendered;				 		
+
+				 	});
+
+					console.log(_self.eventsGroup);	
+				}
+
+				_self.init();
+			 	
+				console.log(_self.eventsGroup);		
 
 				$scope.timeRecordTypes = [
 					{ name : 'Attended', value : 1 },
@@ -237,7 +317,7 @@
 			}
 		};
 
-	});
+	}] );
 
 	/**
 	* Employee's Details and Time Record Details with Calendar View	
@@ -375,20 +455,6 @@
 			    		_self.initializeCalendar();
 			    	});
 
-			    };
-
-			    _self.calculateRenderedHours = function( events ) {
-
-			    	var totalEvents = events.length
-
-			    	if ( totalEvents ) {
-
-			    		console.log(events);
-
-			    		var totalHoursRendered = Math.abs(events[0].startsAt - events[totalEvents-1].startsAt) / 36e5;
-
-			    		console.log(totalHoursRendered);
-			    	}
 			    };
 
 			    _self.checkIfWeekend = function(cell) {
@@ -574,21 +640,11 @@
 	                	_self.events.push(employeeTimeRecord);
 
 					}  
-
-					_self.eventsGroup = [];					
-
-		     	 	_self.events.forEach(function(event) {
-			      		
-			      		var startsAtDate = event.startsAt.toDateString();
-		      		
-				        _self.eventsGroup[startsAtDate] = _self.eventsGroup[startsAtDate] || [];
-					   	_self.eventsGroup[startsAtDate].push(event);	    		     	 	
-				 	});
+					
 				};
 
 				_self.initializeCalendar();		
 
-				console.log(_self.eventsGroup);		   
 
 			},
 			controllerAs : 'employeeDailyTimeRecordCalendarCtrl'
