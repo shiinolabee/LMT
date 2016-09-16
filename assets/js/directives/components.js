@@ -17,6 +17,20 @@
 		}
 	});
 
+	cereliDirectives.filter('dayEventFilter', function(){
+
+		return function( value ) {
+
+			if ( value.length > 1 ) {
+				return value[value.length-1].startsAt;
+			} else if ( value.length == 1 ) {
+				return value[0].endsAt;
+			}
+
+		}
+
+	});
+
 	cereliDirectives.directive('ajaxLoader', function(){
 
 		return {
