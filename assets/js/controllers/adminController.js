@@ -21,27 +21,13 @@ var adminController = function( $scope, Auth, $state, $sce, $http, $timeout ){
         }            
         else {
             $scope.selectedMenu = selectedMenu;
-        }       
-        
+        }               
     };
 
     $scope.logout = function(){
         Auth.logout();         
         $state.go('login');   
-    };        
-
-    // $scope.rightAccountPopover = getRightAccountPopoverContent.data;
-
-    // get and compile right account popover template
-    // $scope.rightAccountPopover = $sce.trustAsHtml( $scope.rightAccountPopover );        
-    // $scope.rightAccountPopover = $sce.trustAsHtml( $http.get('templates/common/right-account-popover.html').data );        
-
-    // $http.get('templates/common/right-account-popover.html').then(function( response ){
-    //     $scope.rightAccountPopover = $sce.trustAsHtml( response.data );        
-    //     // $scope.rightAccountPopover = $sce.trustAsHtml( '<b>test</b>' );        
-    //     console.log($scope.rightAccountPopover);        
-    // });
-
+    };   
 
 };
 
