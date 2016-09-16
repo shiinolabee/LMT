@@ -12,25 +12,27 @@ module.exports = {
     var email = req.param('email');
     var password = req.param('password');   
 
-    // if (!email || !password) {
-    //   return res.json(401, {err: 'email and password required'});
-    // }
+    if (!email || !password) {
+      return res.json(401, {err: 'Email and password is required.'});
+    }
 
-    User.findOneByEmail(email, function(err, user) {
+    User.findOne({ where : { email : email } }).then(function(user) {      
 
       if (!user) {
-        return res.json(401, {err: 'invalid email or password'});
+        return res.json(401, {err: 'System didn\'t recognize your log-in details'});
 
-      } 
+      }       
 
-      User.validPassword(password, user, function(err, valid) {
+      console.log(password, user);
+
+      User.comparePasswordIfValid(password, user, function(err, valid) {
        
         if (err) {
-          return res.json(403, {err: 'Incorrect login details' });
+          return res.json(403, {err: 'Incorrect log-in details' });
         }
 
         if (!valid) {
-          return res.json(401, {err: 'invalid email or password'});
+          return res.json(401, {err: 'Invalid email/password.'});
         } else {
           res.json({user: user, token: jwToken.issue({id : user.id })});
         }
@@ -41,19 +43,20 @@ module.exports = {
 
   register: function(req, res) {
 
-    //TODO: Do some validation on the input
+    var data = req.param('data');
 
-    if (req.body.password !== req.body.confirmPassword) {
-      return res.json(401, {err: 'Password doesn\'t match'});
+    if (data.password !== data.confirmPassword) {
+      return res.json(401, { success : false, err: 'Password doesn\'t match'});
     }
 
-    User.create({email: req.body.email, password: req.body.password}).exec(function(err, user) {
-      if (err) {
-        res.json(err.status, {err: err});
-        return;
+    User.create(data).exec(function(err, user) {
+
+      if (err) {     
+        return res.json(err.status,{ success :false, err: "Error" });        
       }
+
       if (user) {
-        res.json({user: user, token: sailsTokenAuth.issueToken({sid: user.id})});
+        res.json(200,{ user: user, token: jwToken.issue({id: user.id}) });
       }
     });
 

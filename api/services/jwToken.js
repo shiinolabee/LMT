@@ -11,13 +11,15 @@ var
 
 // Generates a token from supplied payload
 module.exports.issue = function(payload) {
+
   return jwt.sign(
     payload,
     tokenSecret, // Token Secret that we sign it with
     {
-      expiresInMinutes : 180 // Token Expire time
+      expiresIn : 60*60*8 // Token Expire time
     }
   );
+  
 };
 
 // Verifies token on a request

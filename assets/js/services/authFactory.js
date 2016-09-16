@@ -26,7 +26,7 @@ cereliApp
         });
         
         login.success(function(result) {
-          LocalService.set('auth_token', JSON.stringify(result));
+            LocalService.set('auth_token', JSON.stringify(result));
         });
 
         return login;
@@ -42,10 +42,11 @@ cereliApp
 
         LocalService.unset('auth_token');
 
-        var register = $http.post('/auth/register', formData);
+        var register = $http.post('/auth/register', { data : formData });
 
         register.success(function(result) {
-          LocalService.set('auth_token', JSON.stringify(result));
+            console.info('Setting Auth_token to Local Storage...');
+            LocalService.set('auth_token', JSON.stringify(result));
         });
 
         return register;

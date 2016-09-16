@@ -1,25 +1,28 @@
 
-cereliApp
-    .controller('loginController', function($scope, $state, Auth) {
-    
-        $scope.errors = [];
+var loginController = function( $scope, $state, Auth ) {
 
-        $scope.login = function() {
+    var _self = this;
 
-          $scope.errors = [];
+    $scope.errors = [];
 
-          Auth.login($scope.user).success(function(result) {
+    $scope.login = function() {
 
-            $state.go('user.messages');
+      $scope.errors = [];
 
-          }).error(function(err, data) {
+      Auth.login($scope.user).success(function(result) {
 
-            $scope.errors.push(err);
+        $state.go('admin.dashboard');
 
-            console.log(data)
+      }).error(function(err, data) {
 
-          });
+        $scope.errors.push(err);            
 
-        }
+      });
 
-  });
+    }
+
+};
+
+cereliApp.controller('loginController', loginController);
+
+loginController.$inject = [ '$scope', '$state', 'Auth' ];

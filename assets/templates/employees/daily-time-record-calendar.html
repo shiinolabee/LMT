@@ -25,8 +25,8 @@
 
     <div style="position: relative; top: 35px; left: 5px">
       <span ng-repeat="(type, events) in day.groups track by type">
-        <span class="label label-{{ type }}">
-          {{ events.length }} {{ day.groups.length }}
+        <span class="label label-{{ type }}" uib-tooltip="{{ events[0].title }}, {{ events[0].startsAt | date:'mediumTime' }} to {{ events.length > 1 && events[events.length-1].startsAt | date:'mediumTime' || events.length == 1 && events[0].endsAt | date:'mediumTime' }}">
+          {{ events.length }}
         </span>&nbsp;
       	<!-- <a ng-if="events.length" ng-click="calculateRenderedHours(events)" class="day-calculate-hours" href="javascript:void(0);" uib-tooltip="Calculate Rendered Hours"><i class="fa fa-calculator"></i></a> -->
       </span>

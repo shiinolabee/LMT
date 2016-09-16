@@ -618,28 +618,31 @@
 
 					_self.events = [];	
 
-					for (var key in $scope.employeeTimeRecords) {				  	
+					if ( $scope.employeeTimeRecords.length ) {
 
-	                	var employeeTimeRecord = _self.mergeObjects(_self.eventTempObj, $scope.employeeTimeRecords[key] );
+						for (var key in $scope.employeeTimeRecords) {				  	
 
-	                	if ( employeeTimeRecord.remarks.length > 0 ) employeeTimeRecord.title = employeeTimeRecord.remarks;
-	                	
-	               		employeeTimeRecord.startsAt = moment($scope.employeeTimeRecords[key].startsAt).toDate();
-	                	
-	                	if ( $scope.employeeTimeRecords[key].endsAt.length > 0 ) {
-	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].endsAt).toDate();
-	                	} else {
-	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].startsAt).add(1,'hours').toDate();
-	                	}
+		                	var employeeTimeRecord = _self.mergeObjects(_self.eventTempObj, $scope.employeeTimeRecords[key] );
 
-	                	var recordType = _self.getTimeRecordType(employeeTimeRecord.timeRecordType);
+		                	if ( employeeTimeRecord.remarks.length > 0 ) employeeTimeRecord.title = employeeTimeRecord.remarks;
+		                	
+		               		employeeTimeRecord.startsAt = moment($scope.employeeTimeRecords[key].startsAt).toDate();
+		                	
+		                	if ( $scope.employeeTimeRecords[key].endsAt.length > 0 ) {
+		                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].endsAt).toDate();
+		                	} else {
+		                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].startsAt).add(1,'hours').toDate();
+		                	}
 
-	                	employeeTimeRecord.type = recordType.type;
-	                	employeeTimeRecord.color = recordType.color;
-	                	
-	                	_self.events.push(employeeTimeRecord);
+		                	var recordType = _self.getTimeRecordType(employeeTimeRecord.timeRecordType);
 
-					}  
+		                	employeeTimeRecord.type = recordType.type;
+		                	employeeTimeRecord.color = recordType.color;
+		                	
+		                	_self.events.push(employeeTimeRecord);
+
+						}  
+					}
 					
 				};
 

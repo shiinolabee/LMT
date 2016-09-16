@@ -6,66 +6,80 @@
  */
 
 // We don't want to store password with out encryption
-// var bcrypt = require('bcrypt-nodejs');
+var bcrypt = require('bcrypt-nodejs');
 
-// module.exports = {
+module.exports = {
   
-//   schema: true,
+  schema: true,
   
-//   attributes: {
+  attributes: {
 
-//     email: {
-//       type: 'email',
-//       required: 'true',
-//       unique: true // Yes unique one
-//     },
+    email: {
+      type: 'email',
+      required: 'true',
+      unique: true // Yes unique one
+    },
 
-//     fullName : {
-//     	type : 'string'
-//     },
+    fullName : {
+    	type : 'string'
+    },
 
-//     password: {
-//       type: 'string'
-//     },
+    password: {
+      type: 'string',
+      required : true
+    },
 
-//     //model validation messages definitions
-//     validationMessages: { //hand for i18n & l10n
-//         email: {
-//             required: 'Email is required',
-//             email: 'Provide valid email address',
-//             unique: 'Email address is already taken'
-//         }
-//     },
-//     // We don't wan't to send back encrypted password either
-//     toJSON: function () {
-//       var obj = this.toObject();
-//       delete obj.password;
-//       return obj;
-//     }
-//   },
-//   // Here we encrypt password before creating a User
-//   beforeCreate : function (values, next) {
-//     bcrypt.genSalt(10, function (err, salt) {
-//       if(err) return next(err);
-//       bcrypt.hash(values.password, salt, function (err, hash) {
-//         if(err) return next(err);
-//         values.password = hash;
-//         next();
-//       })
-//     })
-//   },
+    //model validation messages definitions
+    // validationMessages: { //hand for i18n & l10n
+    //     email: {
+    //         required: 'Email is required',
+    //         email: 'Provide valid email address',
+    //         unique: 'Email address is already taken'
+    //     }
+    // },
+    
+    // We don't wan't to send back encrypted password either
+    toJSON: function () {
+      var obj = this.toObject();
+      delete obj.password;
+      return obj;
+    }
+  },
 
-//   validPassword : function (password, user, cb) {
+  // Here we encrypt password before creating a User
+  beforeCreate : function (values, next) { 
+    
+    bcrypt.hash(values.password, null, null, function (err, hash) {
 
-//     bcrypt.compare(password, user.password, function (err, match) {
-
-//       if(err) cb(err);
+      if(err) return next(err);
       
-//       if(match) {
-//         cb(null, true);
-//       } 
+      values.password = hash;
 
-//     })
-//   }
-// };
+      next();
+
+    }); 
+
+  },
+
+  comparePasswordIfValid : function (password, user, cb) {
+
+    console.log("User password from DB : ", user.password)
+    console.log("User inputted password : ", password);
+
+    bcrypt.compare(password, user.password, function (err, match) {
+
+      if(err) cb(err);      
+
+      if(match) {
+        cb(null, true);
+      } else {
+        cb(null, false);
+      }
+
+    });
+
+
+
+  }
+};
 

@@ -161,3 +161,7 @@ a.day-calculate-hours{
   display: inline-block;
   margin-left: 10px;
 }
+
+.label-special{
+  background:rgb(128, 0, 128);
+}

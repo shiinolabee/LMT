@@ -1,7 +1,7 @@
 'use strict';
 
 
-var cereliApp = angular.module('cereliApp', [ 'cereliDirectives', 'mwl.calendar', 'ui.bootstrap', 'ngAnimate', 'ui.router' ]);
+var cereliApp = angular.module('cereliApp', [ 'cereliDirectives', 'mwl.calendar', 'ngAnimate','ui.bootstrap', 'ui.router' ]);
 
 
 cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
@@ -13,25 +13,31 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
     $stateProvider      
 
         .state('login', {
-            url : 'login',
+            url : '/login',
             views : {
                 'parent-content' : {
                     templateUrl : 'templates/auth/login.html',
                     controller : 'loginController',
                     controllerAs : 'loginCtrl'
                 }      
-            }          
+            },
+            data: {
+              access: AccessLevels.anon
+            }        
         })
 
         .state('register', {
-            url : 'register',
+            url : '/register',
             views : {
                 'parent-content' : {
                     templateUrl : 'templates/auth/register.html',
                     controller : 'registerController',
                     controllerAs : 'registerCtrl'
                 }
-            }
+            },
+            data: {
+              access: AccessLevels.anon
+            }  
         })
         
         .state('admin', {
@@ -41,6 +47,11 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 'parent-content' : {
                     templateUrl : 'templates/common/layout.html',
                     controller : 'adminController'
+                    // resolve : {
+                        // getRightAccountPopoverContent : function( $http ) {
+                        //     return $http.get('templates/common/right-account-popover.html');
+                        // }
+                    // },
                 }                  
             },
             data: {
@@ -53,8 +64,6 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             views : {
                 'child-content' : {
                     templateUrl : 'templates/admin/dashboard.html',
-                    controller : 'DashboardController',
-                    controllerAs : 'dashboard'
                 }
             },
             data: {
@@ -79,6 +88,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 }
             },
             data : {
+                access: AccessLevels.user,                
                 menuCode : 2,
                 isChild : false
             }
@@ -94,6 +104,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 }
             },
             data : {
+                access: AccessLevels.user,                
                 menuCode : 2.5,
                 isChild : false
             }
@@ -107,6 +118,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 }
             },
             data : {
+                access: AccessLevels.user,                
                 menuCode : 3,
                 isChild : false
             }
@@ -120,6 +132,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                 }
             },
             data : {
+                access: AccessLevels.user,                
                 menuCode : 4,
                 isChild : false
             }
@@ -134,14 +147,6 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             }
         })
 
-        .state('user', {            
-            abstract: true,
-            template: '<ui-view/>',
-            data: {
-              access: AccessLevels.user
-            }
-        })
-
         .state('admin.departments', {
             url : 'departments/list',
             views : {
@@ -149,8 +154,12 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
                     templateUrl : 'templates/departments/index.html',
                     controller : 'departmentController'
                 }
+            },
+            data : {
+                access: AccessLevels.user,                
+                menuCode : 5,
+                isChild : false
             }
-
         })
        
     ;
@@ -178,108 +187,31 @@ cereliApp
     });
 
 cereliApp
-    .run(function($rootScope, $state, Auth) {
+    .run(function($rootScope, $state, Auth, LocalService) {
 
         $rootScope.$state = $state;  
 
         $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {       
 
-            console.log(toState);                             
+            if( toState.url != '/login' || toState.url != '/logout' ) {
 
-            // if( toState.url != 'login' ) {
+                if ( !Auth.authorize(toState.data.access)) {
+                    
+                    $state.go('login');
 
-            //     if ( !Auth.authorize(toState.data.access)) {
-            //         event.preventDefault();
+                    event.preventDefault();
 
-            //         $state.go('login');
-            //     }
-              
-            // }    
+                } else {                   
 
-            $rootScope.selectedMenu = toState.data.menuCode;
+                    $rootScope.selectedMenu = toState.data.menuCode;
 
-            $rootScope.isAuthenticated = true;
-            $rootScope.currentState = toState.name.split('.')[1];                 
+                    $rootScope.isAuthenticated = true;
+                    $rootScope.authorizeUser = angular.fromJson(LocalService.get('auth_token'));
+
+                    console.log($rootScope.authorizeUser)
+                    $rootScope.currentState = toState.name.split('.')[1];                 
+                }              
+            }  
 
         });
     });
-
-
-// cereliApp.run([ '$rootScope', '$state', '$location', 'authService' ,function( $rootScope, $state, $location, authService ){
-
-//     $rootScope.$state = $state;    
-
-//     $rootScope.$on('$stateChangeStart', function( e, toState, toParams, fromState, fromParams ){
-
-//         $rootScope.currentState = toState.name.split('.')[1];     
-
-//         $rootScope.isAuthenticated = false;
-
-//         if(toState.url != '/login' && toState.url != '/logout') {
-
-//             authService.getAuthenticatedUser().then(function(response) {
-
-//                 // Stringify the returned data to prepare it
-//                 // to go into local storage
-//                 var user = JSON.stringify(response.data.user);
-
-//                 // Set the stringified user data into local storage
-//                 localStorage.setItem('user', user);
-
-//                 // The user's authenticated state gets flipped to
-//                 // true so we can now show parts of the UI that rely
-//                 // on the user being logged in
-//                 $rootScope.isAuthenticated = true;
-
-//                 // Putting the user's data on $rootScope allows
-//                 // us to access it anywhere across the app
-//                 $rootScope.currentUser = response.data.user;
-//             });
-
-//         }       
-
-//     }) 
-
-// }]);
-
-// cereliApp.controller('authCtrl', ['$scope', 'authService', '$state', '$rootScope', function($scope, authService, $state, $rootScope) {
-
-//     $scope.user = {
-//         username: '',
-//         password: ''
-//     };
-
-//     if($rootScope.isAuthenticated)
-//         $state.go('admin.dashboard');
-
-
-//     $scope.login = function() {
-//         var loginResponse = authService.login($scope.user).then(function(response) {
-//             return authService.getAuthenticatedUser();
-//         });
-
-//         loginResponse.then(function(response) {
-
-//             // Stringify the returned data to prepare it
-//             // to go into local storage
-//             var user = JSON.stringify(response.data.user);
-
-//             // Set the stringified user data into local storage
-//             localStorage.setItem('user', user);
-
-//             // The user's authenticated state gets flipped to
-//             // true so we can now show parts of the UI that rely
-//             // on the user being logged in
-//             $rootScope.isAuthenticated = true;
-
-//             // Putting the user's data on $rootScope allows
-//             // us to access it anywhere across the app
-//             $rootScope.currentUser = response.data.user;
-
-//             // Everything worked out so we can now redirect to
-//             // the users state to view the data
-//             $state.go('admin.dashboard');
-//         });
-//     }
-
-// }]);
