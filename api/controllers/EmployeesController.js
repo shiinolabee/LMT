@@ -5,11 +5,11 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var responseDataList = []; 
+
 module.exports = {
 
     uploadTimeRecord : function( req, res ){
-
-        var responseDataList = [];
 
         req.file('file').upload({            
             maxBytes: 10000000, // don't allow the total upload size to exceed ~10MB
@@ -87,7 +87,7 @@ module.exports = {
                     console.log(tempTimeRecord);
                   
                     EmployeesTimeRecordService.saveEmployeeTimeRecord(tempTimeRecord, function( response ){
-                        // responseDataList.push(res.json({ response : response }));                 
+                        responseDataList.push({ data : response });                 
                     });
                 }
 
@@ -103,7 +103,7 @@ module.exports = {
 
             return res.json({
                 success : true,
-                message : 'Uploaded ' + uploadedFiles.length + ' CSV files!',
+                message : 'Uploaded Time Record ' + uploadedFiles[0].filename + ' successfully imported.',
                 files : uploadedFiles,
                 data : responseDataList
             });
@@ -131,9 +131,12 @@ module.exports = {
 
         EmployeesTimeRecordService.getEmployeeTimeRecord(req.param('id'),function( response ){
 
-            var isSuccess = !response.status ? true : false;
+            if ( response ) {
+                res.json( { success : true , data : response  });    
+            } else {
+                res.json(response.status, { success : false , data : "Error"  });                
+            } 
            
-            res.json( { success : isSuccess , data : response  });      
         });
     },
 
@@ -156,9 +159,11 @@ module.exports = {
 
         EmployeesService.getEmployeeList(function( response ){
 
-            var isSuccess = !response.status ? true : false;
-           
-            res.json( { success : isSuccess , data : response  });      
+            if ( response ) {
+                res.json( { success : true , data : response  });    
+            } else {
+                res.json(response.status, { success : false , data : "Error"  });                
+            }  
         });
     },
 
@@ -168,16 +173,20 @@ module.exports = {
 
             EmployeesService.editEmployee(req.param('activeRecord'), req.param('id'), function(response) {                
 
-                var isSuccess = !response.status ? true : false;
-               
-                res.json( { success : isSuccess , data : response  });      
+                if ( response ) {
+                    res.json( { success : true , data : response  });    
+                } else {
+                    res.json(response.status, { success : false , data : "Error"  });                
+                }    
             }); 
         } else {           
             EmployeesService.saveEmployee(req.param('activeRecord'), function(response) {
 
-                var isSuccess = !response.status ? true : false;
-               
-                res.json( { success : isSuccess , data : response  });      
+                if ( response ) {
+                    res.json( { success : true , data : response  });    
+                } else {
+                    res.json(response.status, { success : false , data : "Error"  });                
+                }   
             });
         }
 
@@ -189,8 +198,11 @@ module.exports = {
 
         EmployeesService.removeEmployee(employeeVal, function(response) {
 
-            var isSuccess = !response.status ? true : false;               
-            res.json( { success : isSuccess , data : response  });      
+            if ( response ) {
+                res.json( { success : true , data : response  });    
+            } else {
+                res.json(response.status, { success : false , data : "Error"  });                
+            }  
         });
     }
 	

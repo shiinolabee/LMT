@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-controller="registerController as registerCtrl">
   <div class="center-block-container">
       <div class="register-box">
         <div class="register-logo">
@@ -38,7 +38,7 @@
               </div>
               <!-- /.col -->
               <div class="col-xs-4">
-                <button type="submit" ng-disabled="registerForm.$invalid" ng-click="register()" class="btn btn-primary btn-block btn-flat">Register</button>
+                <button type="submit" ng-disabled="registerForm.$invalid" ng-click="registerCtrl.register()" class="btn btn-primary btn-block btn-flat">Register</button>
               </div>
               <!-- /.col -->
             </div>

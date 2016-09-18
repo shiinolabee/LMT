@@ -44,14 +44,14 @@
 
             <div class="input-group">
               <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
+                <i class="fa fa-calendar" ng-click="employeeToolsOptionsCtrl.toggle($event, 'startOpen', employeeToolsOptionsCtrl.time_record_datePicker)"></i>
               </div>
               <input
                 type="text"
                 class="form-control pull-right"               
                 uib-datepicker-popup="dd MMMM yyyy"
                 ng-model="exportRecordVars.exportDate"
-                is-open="false"
+                is-open="employeeToolsOptionsCtrl.time_record_datePicker.startOpen"
                 close-text="Close"/>              
             </div>
             <!-- /.input group -->

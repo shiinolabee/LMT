@@ -7,6 +7,21 @@
 
 	}]);
 
+	cereliDirectives.filter('getRenderedHours', function(){
+
+		return function( value ) {
+
+			if ( value.length > 1 ) {
+				var totalHours = Math.abs( value[0].startsAt - value[value.length-1].startsAt  ) / 36e5;
+			} else if ( value.length == 1 ) {
+				var totalHours = Math.abs( value[0].startsAt - value[0].endsAt  ) / 36e5;
+			}
+
+			return totalHours.toFixed(2) + ' hour(s)';
+		}
+
+	})
+
 	cereliDirectives.filter('contentIsEmpty', function(){
 
 		return function( value ) {
@@ -767,7 +782,9 @@
 
 			templateUrl : 'templates/employees/tools-options.html',
 
-			controller : function( $scope ){
+			controllerAs : 'employeeToolsOptionsCtrl',
+
+			controller : [ '$scope', function( $scope ){
 
 				var _self = this;
 
@@ -778,7 +795,8 @@
 				$scope.importMessage = "Reading ...";
 
 				_self.message = '';
-
+				
+                _self.time_record_datePicker = {};
 
 				_self.accordionSettings = {
 					status : {
@@ -787,6 +805,13 @@
 			            isFirstDisabled: false
 		        	}
 		        }; 
+
+		        _self.toggle = function($event, field, event) {
+				      $event.preventDefault();
+				      $event.stopPropagation();
+				      event[field] = !event[field];
+				};                
+
 
 		        _self.toggleChangeExportType = function(value){
 		        	_self.toolsOptions.typeChosen = _self.toolsOptions.exportTypes[value];
@@ -811,8 +836,10 @@
 
 				_self.submitUpload = function(){
 
-					// $scope.importRecordForm.importFile.$valid &&
-		            if ( $scope.importFile ) {
+					console.info('Importing selected file...');
+					console.log($scope.importFile, $scope.file)
+		            
+		            if ( $scope.importRecordForm.importFile.$valid && _self.importFile ) {
 		                _self.upload($scope.importFile);
 		            } 
 		        };
@@ -821,29 +848,28 @@
 
 		        	console.info(file);	            
 
-		            Upload.upload({
-		                url : 'employees/uploadTimeRecord',
-		                data : { file: file }
-		            }).then(function( response ){
-		                if ( response.status == 200 ) {
-		                	$scope.filePercentage = 0;
-		                	_self.message = response.data.message;		                	
-		                }
-		            }, function( response ){
-		            	console.log('Error status: ' + response.status);
-		            }, function( evt ){		
+		        	if ( file ) {
 
-		            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-	            		$scope.filePercentage = progressPercentage;
-	            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+	        			Upload.upload({
+		                	url : 'employees/uploadTimeRecord',
+			                data : { file: file }
+			            }).then(function( response ){
+			                if ( response.status == 200 ) {
+			                	$scope.filePercentage = 0;
+			                	_self.message = response.data.message;		                	
+			                }
+			            }, function( response ){
+			            	console.log('Error status: ' + response.status);
+			            }, function( evt ){		
 
-					    // console.info( evt );            	
-		            	
-		            });
+			            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+		            		$scope.filePercentage = progressPercentage;
+		            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+
+			            });		        		
+		        	}
 		        };
-			},
-
-			controllerAs : 'employeeToolsOptionsCtrl'
+			}]
 		}
 	} ]);
 
