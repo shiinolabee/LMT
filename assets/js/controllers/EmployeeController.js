@@ -182,7 +182,20 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                             $scope.childShowLoader = false;                                
                         } 
                     });
-                };               
+                };       
+
+
+                _self.getTrackingActivities = function(){
+                    $scope.childShowLoader = true;
+
+                    activeRecordService.getActiveRecord({ id : empId }, 'employee_activities/getEmployeeActivities').then(function( response ){
+                        if ( response.success) {
+                            $scope.activities = response.data;
+                            $scope.childShowLoader = false;                                
+                        }
+                    });
+
+                };        
                
             },
 

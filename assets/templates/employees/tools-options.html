@@ -8,6 +8,7 @@
               Select csv files to read/import : 
               <!-- ngf-accept="'csv/*'" ngf-pattern="'csv/*'" -->
               <input type="file" ngf-select="employeeToolsOptionsCtrl.upload(importFile)" name="file" ng-model="importFile"/>
+              <input type="hidden" name="userId" value="authorizeUser.user.id"/>
           </div>        
 
           <div class="form-group">              

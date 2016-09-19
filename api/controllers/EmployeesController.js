@@ -101,7 +101,6 @@ module.exports = {
                         responseDataList.push({ data : response });                 
                     });
                 }
-
                 
 
             },
@@ -112,12 +111,22 @@ module.exports = {
                 return res.negotiate(err);   
             }
 
-            return res.json({
-                success : true,
-                message : 'Uploaded Time Record ' + uploadedFiles[0].filename + ' successfully imported.',
-                files : uploadedFiles,
-                data : responseDataList
+            var id = req.param('userId');
+            var description = "Uploaded Csv File " + uploadedFiles[0].filename;
+
+            EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+
+                if ( response ) {
+
+                    return res.json({
+                        success : true,
+                        message : 'Uploaded Time Record ' + uploadedFiles[0].filename + ' successfully imported.',
+                        files : uploadedFiles,
+                        data : responseDataList
+                    });
+                }
             });
+
 
         });
 

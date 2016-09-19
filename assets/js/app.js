@@ -203,7 +203,7 @@ cereliApp
                     $rootScope.isAuthenticated = true;
                     $rootScope.authorizeUser = angular.fromJson(LocalService.get('auth_token'));
 
-                    // console.log($rootScope.authorizeUser)
+                    console.log($rootScope.authorizeUser)
                     $rootScope.currentState = toState.name.split('.')[1];                 
                 }              
             }  

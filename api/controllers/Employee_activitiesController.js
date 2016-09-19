@@ -7,5 +7,21 @@
 
 module.exports = {	
 
+	getEmployeeActivities : function( req, res ){
+
+		if ( req.param('id') > 0 ) {
+			EmployeeActivitiesService.getEmployeeActivityList(req.param('id'), function( response ){
+
+				if ( response ) {
+					res.json({ success : true, data : response });
+				} else {
+					res.json(response.status,{ success : false, message : "Error" });
+				}
+
+			});
+		}
+
+	}
+
 };
 

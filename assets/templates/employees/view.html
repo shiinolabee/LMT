@@ -70,12 +70,12 @@
 	    			<div class="clearfix"></div>
 	    		</uib-tab>	   
 
-    			<uib-tab index="2">
+    			<uib-tab index="2" select="viewEmployeeDetailsCtrl.getTrackingActivities()">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-home"></i> Tracking Activities
 	    			</uib-tab-heading>
 
-	    			<div class="col-md-4"></div>
+	    			<employee-tracking-activities></employee-tracking-activities>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
@@ -89,7 +89,7 @@
 	    				<div ng-if="!statisticsRecordResult.length" uib-alert class="alert-warning">
     			  			<i class="icon fa fa-warning"></i> No Time Records yet uploaded.</div>  		
 
-	    				<employee-statistics-report  ng-if="statisticsRecordResult.length"employee-time-records="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
+	    				<employee-statistics-report ng-if="statisticsRecordResult.length" employee-time-records="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
 	    			</div>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>

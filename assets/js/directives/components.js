@@ -705,9 +705,9 @@
 	}]);
 	
 	/**
-	* Employee's Event Calendar	
+	* Employee's Tracking Activities
 	**/
-	cereliDirectives.directive('employeeEventCalendar', function( calendarConfig, moment ){
+	cereliDirectives.directive('employeeTrackingActivities', [ 'activeRecordService', function( activeRecordService ){
 
 		return {
 
@@ -715,58 +715,36 @@
 
 			transclude : true,
 
-			templateUrl : 'templates/employees/employee-event-calendar.html',
+			templateUrl : 'templates/employees/employee-tracking-activities.html',
 
-			controller : function( $scope ){
+			bindToController : true,
+
+			controller : [ '$scope', function( $scope ){
 
 				var _self = this;
 
-				_self.events = [];
+				_self.activities = $scope.activities;
 
-				_self.showLoader = false;
+				console.log($scope.activities);
 
-				_self.externalEvents = [
-			      {
-			        title: 'Event 1',
-			        type: 'warning',
-			        color: calendarConfig.colorTypes.warning,
-			        startsAt: moment().startOf('month').toDate(),
-			        draggable: true
-			      },
-			      {
-			        title: 'Event 2',
-			        type: 'danger',
-			        color: calendarConfig.colorTypes.important,
-			        startsAt: moment().startOf('month').toDate(),
-			        draggable: true
-			      }
-			    ];     
+				_self.getTrackingActivities = function(){
 
-			    _self.calendarView = 'month';
-			    _self.viewDate = moment().startOf('month').toDate();
-			    _self.isCellOpen = true;
+					activeRecordService.getActiveRecord('employee_activities/getEmployeeActivities', { id : $scope.employee.empId }).then(function(){
+						if ( response.success) {
+							_self.activities.push(response.data);
+						}
+					});
 
-			    _self.eventDropped = function(event, start, end) {
+				};
 
-			      	var externalIndex = _self.externalEvents.indexOf(event);
+			}],
 
-			      	if (externalIndex > -1) {
-			        	_self.externalEvents.splice(externalIndex, 1);
-			        	_self.events.push(event);
-			      	}
+			controllerAs : 'employeeTrackingActivitiesCtrl'
 
-			      	event.startsAt = start;
-				    if (end) {
-			      		event.endsAt = end;
-				    }
-			    };  
+		};
 
-			},
-
-			controllerAs : 'employeeEventCalendarCtrl'
-		}
-
-	});
+	}] );
+	
 
 	cereliDirectives.directive('calendarControls', function(){
 
@@ -807,7 +785,9 @@
 
 			controller : [ '$scope', function( $scope ){
 
-				var _self = this;
+				var _self = this;				
+
+				console.log($scope.user);
 
 				$scope.exportRecordVars = {				
 					exportType : 0,	
