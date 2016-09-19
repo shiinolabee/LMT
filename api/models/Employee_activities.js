@@ -20,27 +20,20 @@ module.exports = {
 
         //reference for employees collection
         empId : {            
-            model : 'employees',
-            unique : true
+            model : 'employees'            
         },
 
-        type : {
+        description : {
             type : 'text',
             required : false
+        },     
+
+        createdAt : {
+            type : 'datetime'         
         },
 
-        dateCommitted : {
-            type : 'datetime',
-            required : true
-        },
-
-        remarks : {
-            type : 'text'
-        },
-
-        status : {
-            type : 'integer',
-            defaultsTo : 0
+        updatedAt : {
+            type : 'datetime'            
         }
 
     }

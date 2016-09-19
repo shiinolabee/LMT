@@ -49,7 +49,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                 totalOvertime : 0,
                 recordStatus : 1,                                      
                 contactNumber : '',
-                gender : 0,
+                gender : '',
                 homeAddress : '',
                 emailAddress : '',
                 createdAt : '',

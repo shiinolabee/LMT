@@ -24,9 +24,10 @@
 
     <div style="position: relative; top: 35px; left: 5px">
       <span ng-repeat="(type, events) in day.groups track by type">
-        <span class="label label-{{ type }}" uib-tooltip="{{ events[0].title }}, {{ events[0].startsAt | date:'mediumTime' }} to {{ events | dayEventFilter | date:'mediumTime' }} - {{ events | getRenderedHours }}">
+        <span class="label label-{{ type }}" uib-tooltip="{{ events[0].title }}, {{ events[0].startsAt | date:'mediumTime' }} to {{ events | dayEventFilter | date:'mediumTime' }}">
           {{ events.length }}
         </span>&nbsp;
+        <label ng-if="type == 'info'"">{{ events | getRenderedHours }}</label>
       	<!-- <a ng-if="events.length" ng-click="calculateRenderedHours(events)" class="day-calculate-hours" href="javascript:void(0);" uib-tooltip="Calculate Rendered Hours"><i class="fa fa-calculator"></i></a> -->
       </span>
     </div>
@@ -123,7 +124,7 @@
 				              </button>
 				            </span>
 			          	</div>
-			          	<span class="help-block" ng-if="(timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.startsAt.$error.required">Time Record Type is required</span>			    		
+			          	<span class="help-block" ng-if="(timeRecordForm.startsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.startsAt.$error.required">Event Starts-At is required</span>			    		
 			          	<div
 				            uib-timepicker
 				            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
@@ -156,7 +157,7 @@
 				              	</button>
 			            	</span>
 			          	</div>	
-			          	<span class="help-block" ng-if="(timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && 	timeRecordForm.endsAt.$error.required">Time Record Type is required</span>			    			          		
+			          	<span class="help-block" ng-if="(timeRecordForm.endsAt.$touched || timeRecordForm.$submitted) && timeRecordForm.endsAt.$error.required">Event Ends-At is required</span>			    			          		
 			          	<div
 				            uib-timepicker
 				            ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"

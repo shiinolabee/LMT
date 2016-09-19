@@ -1,6 +1,6 @@
 <div class="col-md-12">
 
-   <button class="btn btn-primary margin-bottom" ng-click="employeeEventCalendarCtrl.createEvent()"><i class="fa fa-calendar-o"></i> <b>Add New Event</b></button>
+   <button class="btn btn-primary margin-bottom" ng-click="employeeEventCalendarCtrl.saveEvent(0, false)"><i class="fa fa-calendar-o"></i> <b>Add New Event</b></button>
 
   <h2 class="text-center">{{ calendarTitle }}</h2>
   
@@ -18,6 +18,7 @@
 </div>
 
 <div class="col-md-10">
+  <h2>Pre-Defined Events</h2>
   <div class="well">
     <ul>
       <li
@@ -33,3 +34,4 @@
     </ul>
   </div>
 </div>
+<div class="clearfix"></div>

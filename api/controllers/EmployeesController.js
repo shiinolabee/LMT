@@ -46,7 +46,18 @@ module.exports = {
                     }                    
                 });
 
-                console.log(tempArray);
+                console.log('Temp Array : ', tempArray);
+
+                if ( tempArray.length >= 4 ) {
+                    tempArray.forEach(function( item, index ){ 
+
+                        //remove pretenders :)
+                        if ( item.length == 5 ) {
+                            tempArray.splice(index, 1);
+                        }
+                    });                        
+                }
+
 
                 if ( tempArray.length > 0) { 
 

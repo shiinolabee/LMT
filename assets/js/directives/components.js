@@ -17,7 +17,7 @@
 				var totalHours = Math.abs( value[0].startsAt - value[0].endsAt  ) / 36e5;
 			}
 
-			return totalHours.toFixed(2) + ' hour(s)';
+			return totalHours.toFixed(2) + ' hr(s)';
 		}
 
 	})
@@ -265,9 +265,7 @@
 					{ name : 'Absent', value : 2 },
 					{ name : 'Leave(Paid)', value : 3 },
 					{ name : 'Leave(Unpaid)', value : 4 }
-				];
-
-				console.log($scope.statisticsRecordResult);
+				];				
 
 			 	$scope.chartOptions = {
 			 		 chart: {

@@ -43,7 +43,6 @@
   "author": "clouduser110",
   "license": "",
   "devDependencies": {
-    "highcharts": "^4.2.6",
-    "satellizer": "^0.15.3"
+    "highcharts": "^4.2.6"
   }
 }

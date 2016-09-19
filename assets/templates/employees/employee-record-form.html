@@ -52,7 +52,9 @@
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$invalid }">
                                 <label for="">Department Assigned</label>
 
-                                <select class="form-control" ng-init="employee.departmentAssigned = departmentList[0]" ng-options="department.id as department.departmentName for department in departmentList" ng-model="employee.departmentAssigned"></select>
+                                <select class="form-control" name="departmentAssigned" ng-options="department.id as department.departmentName for department in departmentList" ng-model="employee.departmentAssigned" ng-required="true" required>
+                                    <option value="">-- Select an option--</option>
+                                </select>
                                 <span class="help-block" ng-if="(employeeForm.departmentAssigned.$touched || employeeForm.$submitted) && employeeForm.departmentAssigned.$error.required">Department Assigned is required</span>
                             </div>
                         </div>
@@ -113,6 +115,7 @@
                             <div class="form-group" ng-class="{ 'has-error': (employeeForm.gender.$touched || employeeForm.$submitted) && employeeForm.gender.$invalid }">
                                 <label for="">Gender</label>
                                 <select class="form-control" name="gender" ng-model="employee.gender" ng-options="gender.value as gender.name for gender in genderArr">
+                                <option value="">-- Select an option--</option>
                                 </select>
                                 <span class="help-block" ng-if="(employeeForm.gender.$touched || employeeForm.$submitted) && employeeForm.gender.$error.required">Gender is required</span>
                             </div>              

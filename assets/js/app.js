@@ -46,12 +46,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             views :{
                 'parent-content' : {
                     templateUrl : 'templates/common/layout.html',
-                    controller : 'adminController'
-                    // resolve : {
-                        // getRightAccountPopoverContent : function( $http ) {
-                        //     return $http.get('templates/common/right-account-popover.html');
-                        // }
-                    // },
+                    controller : 'adminController'                   
                 }                  
             },
             data: {
@@ -173,7 +168,7 @@ cereliApp
      
         calendarConfig.dateFormatter = 'moment'; //use either moment or angular to format dates on the calendar. Default angular. Setting this will override any date formats you have already set.
 
-        calendarConfig.allDateFormats.moment.date.hour = 'HH:mm ga'; //this will configure times on the day view to display in 24 hour format rather than the default of 12 hour
+        calendarConfig.allDateFormats.moment.date.hour = 'HH:mm a'; //this will configure times on the day view to display in 24 hour format rather than the default of 12 hour
 
         calendarConfig.allDateFormats.moment.title.day = 'ddd D MMM'; //this will configure the day view title to be shorter
 
@@ -208,7 +203,7 @@ cereliApp
                     $rootScope.isAuthenticated = true;
                     $rootScope.authorizeUser = angular.fromJson(LocalService.get('auth_token'));
 
-                    console.log($rootScope.authorizeUser)
+                    // console.log($rootScope.authorizeUser)
                     $rootScope.currentState = toState.name.split('.')[1];                 
                 }              
             }  

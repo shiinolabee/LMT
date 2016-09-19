@@ -20,49 +20,48 @@ module.exports = {
 
         title : {
         	type : 'string',
+            length : 20,
         	defaulsTo : ''
         },
 
         description : {
         	type : 'text',
-        	required : false
+            defaulsTo : ''
         },
 
         type : {
         	type : 'integer',
-        	defaulsTo : 0,
-        	required : true
+        	defaulsTo : 0
         },
 
         startsAt : {
-        	type : 'datetime',
-        	required : true
+        	type : 'datetime'        	
         },
 
         endsAt : {
-        	type : 'datetime',
-        	required : true	
+        	type : 'datetime'        	
         },
 
-        isRecursive: {
-        	type : 'integer',
-        	required : true
+        recursOn: {
+        	type : 'text'        	
         },
 
         applysToAll : {
-        	type : 'integer'
+        	type : 'string',
+            length: 10,
+            defaulsTo : '1'
         },
 
-        applysTo : {
-        	type : 'json'
-        },
+        // applysTo : {
+        // 	type : 'json'
+        // },
 
         createdAt : {
-            type : 'datetime',            
+            type : 'datetime'         
         },
 
         updatedAt : {
-            type : 'datetime',            
+            type : 'datetime'            
         }
   	}
 };
