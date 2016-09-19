@@ -438,7 +438,7 @@
                 }];	
 
                 _self.recordTypes = [
-                	{ text : 'Select Record Type', value : 0 },
+                	// { text : 'Select Record Type', value : 0 },
                 	{ text : 'Attended', value : 1 },
                 	{ text : 'Absent', value : 2 },
                 	{ text : 'Leave(Paid)', value : 3 },
@@ -459,12 +459,35 @@
 
                 _self.time_record_datePicker = {};
 
+                _self.time_record_dp_options = {
+                	startsAt : {
+                		formatYear: 'yy',
+                    	startingDay: 1                    		
+                	},
+                	endsAt : {
+                		formatYear: 'yy',
+                        startingDay: 1    
+                	}
+                };
+
                 _self.mergeObjects = function( obj1, obj2 ){
                 	var obj3 = {};
 				    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
 				    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
 				    return obj3;
                 };
+
+               	_self.viewChangeClicked = function(date, nextView) {
+
+			      	// console.log(moment(date).format('MMM'), nextView);
+
+			      	_self.time_record_dp_options.startsAt.initDate = moment(date).toDate();		      	
+			      	_self.time_record_dp_options.endsAt.initDate = moment(date).toDate();		      				      	
+			    };
+
+			    _self.onChangeStartsAt = function(){			    	
+			    	_self.time_record_dp_options.endsAt.minDate = _self.time_record.startsAt;
+			    };
 
              	_self.toggle = function($event, field, event) {
 

@@ -45,6 +45,7 @@
     view-date="employeeDailyTimeRecordCalendarCtrl.viewDate"
     events="employeeDailyTimeRecordCalendarCtrl.events"
     view-title="calendarTitle"
+    on-view-change-click="employeeDailyTimeRecordCalendarCtrl.viewChangeClicked(calendarDate, calendarNextView)"
     on-event-click="employeeDailyTimeRecordCalendarCtrl.eventClicked(calendarEvent)"
     on-event-times-changed="employeeDailyTimeRecordCalendarCtrl.eventTimesChanged(calendarEvent); calendarEvent.startsAt = calendarNewEventStart; calendarEvent.endsAt = calendarNewEventEnd"
     cell-is-open="employeeDailyTimeRecordCalendarCtrl.isCellOpen"
@@ -94,7 +95,9 @@
 			        	<label>Record Type:</label>
 
 				        <div class="form-group" ng-class="{ 'has-error': (timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$invalid }">
-				      		<select ng-init="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType=employeeDailyTimeRecordCalendarCtrl.recordTypes[0]" ng-options="recordType.value as recordType.text for recordType in employeeDailyTimeRecordCalendarCtrl.recordTypes" name="recordType" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType" ng-required="true"></select>  
+				      		<select ng-options="recordType.value as recordType.text for recordType in employeeDailyTimeRecordCalendarCtrl.recordTypes track by recordType.value" name="recordType" ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.timeRecordType" ng-required="true">
+				      			<option value="">-- Select an option--</option>
+				      		</select>  
 				      		<span class="help-block" ng-if="(timeRecordForm.recordType.$touched || timeRecordForm.$submitted) && timeRecordForm.recordType.$error.required">Time Record Type is required</span>
 				    	</div>
 			      	</div>
@@ -110,7 +113,8 @@
 				              type="text"
 				              class="form-control"
 				              name="startsAt"
-				              readonly
+				              ng-change="employeeDailyTimeRecordCalendarCtrl.onChangeStartsAt();"
+				              readonly datepicker-options="employeeDailyTimeRecordCalendarCtrl.time_record_dp_options.startsAt"
 				              uib-datepicker-popup="dd MMMM yyyy"
 				              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.startsAt"
 				              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.startOpen"
@@ -144,6 +148,7 @@
 				              class="form-control"
 				              name="endsAt"
 				              readonly
+				              datepicker-options="employeeDailyTimeRecordCalendarCtrl.time_record_dp_options.endsAt"
 				              uib-datepicker-popup="dd MMMM yyyy"
 				              ng-model="employeeDailyTimeRecordCalendarCtrl.time_record.endsAt"
 				              is-open="employeeDailyTimeRecordCalendarCtrl.time_record_datePicker.endOpen"
