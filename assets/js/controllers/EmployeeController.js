@@ -5,10 +5,10 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
     var _self = this;
 
     _self.employeeListAlerts = [];
-    _self.employeeList = [];  
-    $scope.departmentList = getDepartmentList.data; // get department lists        
-
-    $scope.parentShowLoader = true;        
+    
+    $scope.mainDataList = [];  
+    $scope.activities = [];
+    $scope.departmentList = getDepartmentList.data; // get department lists            
 
     _self.recordStatusArr = [ 
         {  name : 'Active', value : 1 },
@@ -31,6 +31,14 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
     $scope.closeAlert = function(type, index) {
         _self[type].splice(index, 1);
     };
+
+    _self.tableHeaders = [
+        { name : 'empId', label : 'Employee ID' },
+        { name : 'fullName', label : 'Full Name' },
+        { name : 'departmentAssigned', label : 'Department Assigned' },
+        { name : 'position', label : 'Position' },
+        { name : 'dateHired', label : 'Date Hired' },
+    ];
 
     _self.initEmployeeValues = function( isEditMode, index){
 
@@ -57,7 +65,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
             };
             
         } else {                
-            var employee = angular.copy(_self.employeeList[index]);
+            var employee = angular.copy($scope.mainDataList[index]);
         }
 
         return employee;
@@ -73,7 +81,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
         _self.pager = pagerService.getPager(_self.dummyEmployeeList.length, page);
 
         // get current page of items
-        _self.employeeList = _self.dummyEmployeeList.slice(_self.pager.startIndex, _self.pager.endIndex + 1);
+        $scope.mainDataList = _self.dummyEmployeeList.slice(_self.pager.startIndex, _self.pager.endIndex + 1);
         
     };
 
@@ -82,7 +90,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
         
         _self.selectedAll = _self.selectedAll ? true : false;
 
-        angular.forEach(_self.employeeList, function( employee ){
+        angular.forEach($scope.mainDataList, function( employee ){
             employee.selected = _self.selectedAll;
         });
         
@@ -90,12 +98,18 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
 
     _self.getEmployeeList = function() {
 
+        $scope.parentShowLoader = true;
+
         activeRecordService.getActiveRecordList('employees/getEmployeeList').then(function( response ){
 
-            if ( response.success ) {
-                _self.employeeList = response.data;                    
+            if ( response.success ) {               
+
+                $scope.mainDataList = response.data;                    
+                
                 _self.dummyEmployeeList = response.data;                    
+
                 _self.setPage(1);
+
                 $scope.parentShowLoader = false;   
             }
         });
@@ -207,6 +221,19 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
         });
 
     };
+
+    _self.getAllEmployeeActivities = function(){
+        
+        $scope.childShowLoader = true;
+
+        activeRecordService.getActiveRecordList('employee_activities/getAllEmployeeActivities').then(function( response ){
+            if ( response.success) {
+                $scope.childShowLoader = false;                                
+                $scope.activities = response.data              
+            }
+        });
+    };
+
     
     
     _self.saveEmployee = function( index, isEditMode ) {
@@ -420,7 +447,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
             windowTemplateUrl : 'templates/common/ui-modal.html',
             resolve: {                       
                 employeeDetails: function() {
-                    return _self.employeeList[index];
+                    return $scope.mainDataList[index];
                 },
                 index: function() {
                     return index;
@@ -464,7 +491,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
 
             if ( responseData.success ) {
 
-                _self.employeeList.splice(index, 1);                    
+                $scope.mainDataList.splice(index, 1);                    
 
                 $scope.addAlert('employeeListAlerts', {
                     type: 'success',

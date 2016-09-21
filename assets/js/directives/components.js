@@ -57,7 +57,7 @@
 			templateUrl : 'templates/common/ajax-loader.html',
 
 			scope : {
-				showloader : '=',
+				showLoader : '=',
 			}
 		};
 
@@ -67,8 +67,6 @@
 
 		return {
 
-			require : 'ngModel',
-
 			scope : {
 				checkInputContentExists : '='			
 			},
@@ -77,21 +75,21 @@
 
 				var timeout;			
 
-				// element.on('keyup paste', function(){
+				element.on('blur', function(){
 
-				// 	clearTimeout(timeout);
+					clearTimeout(timeout);
 
-				// 	timeout = $timeout(function(){
+					timeout = $timeout(function(){
 
-				// 		activeRecordService.getActiveRecord( { criteria : scope.checkInputContentExists }, attrs.model + '/' + attrs.checkUrl ).then(function( response ){
-				// 			if (  response.success && response.data.length > 0 ) {
-				// 				element.$setValidity('exists', true);							
-				// 			}
-				// 		});
+						activeRecordService.getActiveRecord( { criteria : scope.checkInputContentExists }, attrs.model + '/' + attrs.checkUrl ).then(function( response ){
+							if (  response.success && response.data.length > 0 ) {
+								element.$setValidity('exists', true);							
+							}
+						});
 
-				// 	}, 350);
+					}, 350);
 
-				// });				
+				});				
 
 			}
 
@@ -597,9 +595,7 @@
 
 		                 	var eventIndex = _self.events.indexOf(oldCalendarEvent);
 
-		                 	_self.events[eventIndex] = newCalendarEvent;
-
-		                 	// _self.refreshDTRCalendar();	                	
+		                 	_self.events[eventIndex] = newCalendarEvent;		                 	               	
                     		
                     		$scope.addAlert('employeeTimeRecordAlerts', {
                                 type: 'success',
@@ -717,30 +713,38 @@
 
 			templateUrl : 'templates/employees/employee-tracking-activities.html',
 
-			bindToController : true,
+			scope : true,
 
-			controller : [ '$scope', function( $scope ){
+			bindToController : {
+				empId : '@',
+				activities : '=',
+				showLoader : '='
+			},
 
-				var _self = this;
+			controller : function(){
 
-				_self.activities = $scope.activities;
+				var _self = this;	
 
-				console.log($scope.activities);
+				// console.log(_self)			
 
-				_self.getTrackingActivities = function(){
+				// _self.getTrackingActivities = function(){
 
-					activeRecordService.getActiveRecord('employee_activities/getEmployeeActivities', { id : $scope.employee.empId }).then(function(){
-						if ( response.success) {
-							_self.activities.push(response.data);
-						}
-					});
+				// 	activeRecordService.getActiveRecordList('employee_activities/getAllEmployeeActivities').then(function( response ){
+				// 		if ( response.success) {
+				// 			_self.activities.push(response.data);
+				// 			console.log
+				// 		}
+				// 	});
 
-				};
+				// };
 
-			}],
+				// if ( _self.empId == 0 ) {
+				// 	_self.getTrackingActivities();
+				// }
+
+			},
 
 			controllerAs : 'employeeTrackingActivitiesCtrl'
-
 		};
 
 	}] );
@@ -785,9 +789,7 @@
 
 			controller : [ '$scope', function( $scope ){
 
-				var _self = this;				
-
-				console.log($scope.user);
+				var _self = this;								
 
 				$scope.exportRecordVars = {				
 					exportType : 0,	
@@ -837,23 +839,20 @@
 
 				_self.submitUpload = function(){
 
-					console.info('Importing selected file...');
-					console.log($scope.importFile, $scope.file)
+					console.info('Importing selected file...');					
 		            
 		            if ( $scope.importRecordForm.importFile.$valid && _self.importFile ) {
 		                _self.upload($scope.importFile);
 		            } 
 		        };
 
-		        _self.upload = function( file ){    	
-
-		        	console.info(file);	            
+		        _self.upload = function( file ){    			        	            
 
 		        	if ( file ) {
 
 	        			Upload.upload({
 		                	url : 'employees/uploadTimeRecord',
-			                data : { file: file }
+			                data : { file: file, userId : $scope.authorizeUser.user.id }
 			            }).then(function( response ){
 			                if ( response.status == 200 ) {
 			                	$scope.filePercentage = 0;
@@ -873,6 +872,54 @@
 			}]
 		}
 	} ]);
+
+	cereliDirectives.directive('sortDataList', [ 'activeRecordService', function( activeRecordService ){
+
+		return {
+
+			restrict : 'E',		
+
+			scope : true,			
+
+			bindToController : {
+				options : '=',
+				orderBy : '=',				
+				title : '='							
+			},
+
+			template : '<a uib-tooltip="{{vm.title}} - {{vm.orderType}} " ng-click="vm.sort();" ng-class="{\'sorting_asc\' : (vm.orderType == \'ASC\'), \'sorting_desc\' : (vm.orderType == \'DESC\')}">{{ vm.title }} </a>',
+
+			controller : function( $scope ){					
+
+				var _self = this;
+
+				_self.orderType = 'DESC';				
+				
+				_self.sort = function(){
+
+					console.info('Sorting by ' + _self.orderBy + '...');
+					activeRecordService.getActiveRecord({ data : { orderType : _self.orderType, orderBy : _self.orderBy } }, _self.options.type + '/sortBy').then(function( response ){
+						if (  response  ) {		
+
+							$scope.$parent.$parent.mainDataList = response.data;
+
+							if ( _self.orderType == 'ASC' ) {
+								_self.orderType = 'DESC';
+							} else {
+								_self.orderType = 'ASC';
+							}
+						}
+
+					});				
+
+				};
+
+			},
+
+			controllerAs : 'vm'
+		};
+
+	}] );
 
 	cereliDirectives.directive('hcCustomGraph', function(){
 

@@ -6,6 +6,16 @@
  */
 
 module.exports = {
+
+    getSortingList : function( sortData, callback ){
+
+        Employees.find({ sort : sortData.orderBy + ' ' + sortData.orderType }).exec(function( err, employees ) {        
+
+            if( err ) callback(err);
+
+            callback(employees);
+        });
+    },
     
     getEmployeeList : function( callback ) {
 

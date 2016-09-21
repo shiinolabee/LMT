@@ -21,6 +21,20 @@ module.exports = {
 			});
 		}
 
+	},
+
+	getAllEmployeeActivities : function( req, res ){
+	
+		EmployeeActivitiesService.getAllEmployeeActivities(function( response ){
+
+			if ( response ) {
+				res.json({ success : true, data : response });
+			} else {
+				res.json(response.status,{ success : false, message : "Error" });
+			}
+
+		});	
+
 	}
 
 };

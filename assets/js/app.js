@@ -1,7 +1,7 @@
 'use strict';
 
 
-var cereliApp = angular.module('cereliApp', [ 'cereliDirectives', 'mwl.calendar', 'ngAnimate','ui.bootstrap', 'ui.router' ]);
+var cereliApp = angular.module('cereliApp', [ 'angular.filter', 'angularMoment', 'cereliDirectives', 'mwl.calendar', 'ngAnimate','ui.bootstrap', 'ui.router' ]);
 
 
 cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
@@ -143,11 +143,12 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
         })
 
         .state('admin.departments', {
-            url : 'departments/list',
+            url : 'department',
             views : {
                 'child-content' : {
                     templateUrl : 'templates/departments/index.html',
-                    controller : 'departmentController'
+                    controller : 'departmentController',
+                    controllerAs : 'departmentCtrl'
                 }
             },
             data : {
@@ -178,7 +179,7 @@ cereliApp
 
         calendarConfig.showTimesOnWeekView = true; //Make the week view more like the day view, with the caveat that event end times are ignored.
 
-        console.log('Loaded Calendar Config : ', calendarConfig);
+        console.log('Loaded Calendar Config Successful');
     });
 
 cereliApp
@@ -203,7 +204,7 @@ cereliApp
                     $rootScope.isAuthenticated = true;
                     $rootScope.authorizeUser = angular.fromJson(LocalService.get('auth_token'));
 
-                    console.log($rootScope.authorizeUser)
+                    // console.log($rootScope.authorizeUser)
                     $rootScope.currentState = toState.name.split('.')[1];                 
                 }              
             }  

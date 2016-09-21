@@ -165,3 +165,14 @@ a.day-calculate-hours{
 .label-special{
   background:rgb(128, 0, 128);
 }
+
+table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTable thead .sorting_desc, table.dataTable thead .sorting_asc_disabled, table.dataTable thead .sorting_desc_disabled {
+    cursor: pointer;
+    position: relative;
+}
+
+td, th {
+    padding: 10px !important;
+    position: relative;
+    outline: 0;
+}

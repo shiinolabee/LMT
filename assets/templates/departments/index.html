@@ -1,9 +1,9 @@
 <div ng-show="isAuthenticated">
 
 	<div class="col-md-12">		
-	  	<div uib-alert ng-repeat="alert in departmentListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('departmentListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+	  	<div uib-alert ng-repeat="alert in mainDataListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('mainDataListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
 
-     	<button class="btn btn-primary margin-bottom" ng-click="saveDepartmentRecord(0, false)"><i class="fa fa-building"></i> <b>New Department</b></button>
+     	<button class="btn btn-primary margin-bottom" ng-click="departmentCtrl.saveDepartmentRecord(0, false)"><i class="fa fa-building"></i> <b>New Department</b></button>
 
 	</div>	
 
@@ -24,30 +24,27 @@
 				<div class="table-responsive department-list-content">
 					
 					<!-- Show if no records saved. -->
-					<div ng-if="!departmentList.length" ng-class="'alert-info'" uib-alert type="info">No records yet saved.</div>
+					<div ng-if="!mainDataList.length" ng-class="'alert-info'" uib-alert type="info">No records yet saved.</div>
 
 					<!-- Records list table -->
-					<table class="table table-hover table-striped table-bordered" ng-if="departmentList.length">
+					<table class="table table-hover table-striped dataTable table-bordered" ng-if="mainDataList.length">
 						<thead>
-						  	<th><input type="checkbox"></th>  
-							<th>ID</th>
-							<th>Department Code</th>
-							<th>Department Name</th>
-							<th>Location ID</th>							
-							<th>Date Updated</th>
+						  	<th><input type="checkbox"></th>  							
+							<th ng-repeat="header in departmentCtrl.tableHeaders">
+								<sort-data-list options="{ type : 'departments', label : header.label}" order-by="header.name" title="header.label"></sort-data-list>
+							</th>														
 							<th colspan="4">Actions</th>
 						</thead>
 						<tbody>
-							<tr ng-repeat="deparment in departmentList | filter:searchStringDepartments">
-							  	<td><input type="checkbox" value="{{ deparment.id }}"></td>                
-				                <td>{{ deparment.id }}</td>
+							<tr ng-repeat="deparment in mainDataList | filter:searchStringDepartments">
+							  	<td><input type="checkbox" value="{{ deparment.id }}"></td>                				                
 				                <td>{{ deparment.departmentCode }} </td>
 				                <td>{{ deparment.departmentName }}</td>
 				                <td>{{ deparment.locationId }}</td>
 				                <td>{{ deparment.updatedAt | date }}</td>
 				                <td colspan="4">
-				                  <button class="btn btn-default btn-sm" ng-click="saveDepartmentRecord($index, true)" uib-tooltip="Edit deparment Details"><i class="fa fa-cog"></i></button>
-				                  <button class="btn btn-default btn-sm" ng-click="removeDepartment(deparment.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
+				                  <button class="btn btn-default btn-xs" ng-click="departmentCtrl.saveDepartmentRecord($index, true)" uib-tooltip="Edit Details"><i class="fa fa-cog"></i></button>
+				                  <button class="btn btn-default btn-xs" ng-click="departmentCtrl.removeDepartment(deparment.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
 				                </td>
 							</tr>
 						</tbody>

@@ -98,7 +98,7 @@ module.exports = {
                     console.log(tempTimeRecord);
                   
                     EmployeesTimeRecordService.saveEmployeeTimeRecord(tempTimeRecord, function( response ){
-                        responseDataList.push({ data : response });                 
+                        responseDataList.push(response);                 
                     });
                 }
                 
@@ -112,7 +112,7 @@ module.exports = {
             }
 
             var id = req.param('userId');
-            var description = "Uploaded Csv File " + uploadedFiles[0].filename;
+            var description = "Uploaded Csv File " + uploadedFiles[0].filename + ' and registered ' + responseDataList.length + ' records';
 
             EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
 
@@ -120,7 +120,7 @@ module.exports = {
 
                     return res.json({
                         success : true,
-                        message : 'Uploaded Time Record ' + uploadedFiles[0].filename + ' successfully imported.',
+                        message : 'Uploaded Time Record ' + uploadedFiles[0].filename + ' and successfully imported '+ responseDataList.length +' records.',
                         files : uploadedFiles,
                         data : responseDataList
                     });
@@ -175,6 +175,18 @@ module.exports = {
         });
     },
 
+    sortBy : function( req, res ){
+
+        var data = req.param('data');
+
+        EmployeesService.getSortingList(data, function( response ){
+            if ( response ) {
+                res.json({ success :true, data : response });
+            }
+        });
+
+    },
+
     getEmployeeList : function( req, res ){         
 
         EmployeesService.getEmployeeList(function( response ){
@@ -194,7 +206,18 @@ module.exports = {
             EmployeesService.editEmployee(req.param('activeRecord'), req.param('id'), function(response) {                
 
                 if ( response ) {
-                    res.json( { success : true , data : response  });    
+
+                    var responseData = response;
+                    var id = req.param('id');
+                    var description = "Updating Employee Details of " + req.param('activeRecord').fullName;
+
+                    EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+
+                        if ( response ) {
+                            return res.json( { success : true , data : responseData  });    
+                        }
+                    });
+
                 } else {
                     res.json(response.status, { success : false , data : "Error"  });                
                 }    
@@ -203,7 +226,16 @@ module.exports = {
             EmployeesService.saveEmployee(req.param('activeRecord'), function(response) {
 
                 if ( response ) {
-                    res.json( { success : true , data : response  });    
+                    var responseData = response;
+                    var id = response.data.id;
+                    var description = "Registered New Employee Details of " + req.param('activeRecord').fullName;
+
+                    EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+
+                        if ( response ) {
+                            return res.json( { success : true , data : responseData  });    
+                        }
+                    });                    
                 } else {
                     res.json(response.status, { success : false , data : "Error"  });                
                 }   
@@ -219,7 +251,16 @@ module.exports = {
         EmployeesService.removeEmployee(employeeVal, function(response) {
 
             if ( response ) {
-                res.json( { success : true , data : response  });    
+                var responseData = response;
+                var id = req.param('id');
+                var description = "Deleting Details of Employee ";
+
+                EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+
+                    if ( response ) {
+                        return res.json( { success : true , data : responseData  });    
+                    }
+                });                 
             } else {
                 res.json(response.status, { success : false , data : "Error"  });                
             }  

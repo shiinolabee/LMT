@@ -8,8 +8,7 @@
 module.exports = {
     
     getDepartmentList : function( next ) {
-
-        // departments.find().paginate({ page : pageValue , limit : limitValue}).exec(function( err, departments ) {
+        
         Departments.find().exec(function( err, departments ) {
 
             if( err ) throw err;
@@ -17,6 +16,16 @@ module.exports = {
             next(departments);
         });
 
+    },
+
+    getSortingList : function( sortData, callback ){
+
+        Departments.find({ sort : sortData.orderBy + ' ' + sortData.orderType }).exec(function( err, departments ) {        
+
+            if( err ) callback(err);
+
+            callback(departments);
+        });
     },
     
     getDepartment : function( criteria, next ) {

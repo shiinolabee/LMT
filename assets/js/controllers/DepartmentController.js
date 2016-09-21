@@ -1,13 +1,15 @@
 cereliApp
 	.controller('departmentController', [ '$scope', '$uibModal', 'pagerService', 'activeRecordService', function( $scope, $uibModal, pagerService, activeRecordService ){
 
-		$scope.departmentList = [];
-        $scope.departmentListAlerts = [];
+        var _self = this;        
 
-		$scope.dummyDepartmentList = [];
-		$scope.pager = {};
+		$scope.mainDataList = [];
+        $scope.mainDataListAlerts = [];
 
-		$scope.recordStatusArr = [ 
+		_self.dummyMainDataList = [];
+		_self.pager = {};
+
+		_self.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
             {  name : 'Inactive', value : 0}
         ];
@@ -20,18 +22,25 @@ cereliApp
             $scope[type].splice(index, 1);
         };
 
-        $scope.setPage = function( page ){
+        _self.setPage = function( page ){
 
-        	if ( page < 1 || page > $scope.pager.totalPages ) {
+        	if ( page < 1 || page > _self.pager.totalPages ) {
         		return;
         	}
 
-        	$scope.pager = pagerService.getPager($scope.dummyDepartmentList.length, page);
+        	_self.pager = pagerService.getPager(_self.dummyMainDataList.length, page);
 
-        	$scope.departmentList = $scope.dummyDepartmentList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+        	$scope.mainDataList = _self.dummyMainDataList.slice(_self.pager.startIndex, _self.pager.endIndex + 1);
         };
 
-        $scope.initDepartmentValues = function( isEditMode, index ){
+        _self.tableHeaders = [
+            { name : 'departmentCode', label : 'Department Code' },
+            { name : 'departmentName', label : 'Department Name' },
+            { name : 'locationId', label : 'Location ID' },           
+            { name : 'updatedAt', label : 'Date Updated' }           
+        ];
+
+        _self.initDepartmentValues = function( isEditMode, index ){
 
         	if ( !isEditMode && index == 0 ) {
         		var department = {
@@ -44,26 +53,26 @@ cereliApp
         			recordStatus : 1        				
         		}
         	} else {
-        		var department = angular.copy($scope.departmentList[index]);
+        		var department = angular.copy($scope.mainDataList[index]);
         	}
 
         	return department;
         }
 
-        $scope.getDepartmentList = function(){
+        _self.getDepartmentList = function(){
 
     	   activeRecordService.getActiveRecordList('departments/getDepartmentList').then(function( response ){
 
                 if ( response.success ) {
-                    $scope.departmentList = response.data;                    
-                    $scope.dummyDepartmentList = response.data;                    
-                    $scope.setPage(1);
+                    $scope.mainDataList = response.data;                    
+                    _self.dummyMainDataList = response.data;                    
+                    _self.setPage(1);
                 }
             });
 
         }
 
-        $scope.saveDepartmentRecord = function( index, isEditMode ){
+        _self.saveDepartmentRecord = function( index, isEditMode ){
 
         	$scope.editMode = isEditMode;
         	$scope.index = index;
@@ -74,13 +83,13 @@ cereliApp
                 backdrop : false,
         		resolve : {
         			departmentInitialValues : function(){
-        				return $scope.initDepartmentValues($scope.editMode, $scope.index);
+        				return _self.initDepartmentValues($scope.editMode, $scope.index);
         			},
         			isEditMode : function(){
         				return $scope.editMode;
         			},
         			getRecordStatusArr : function(){
-                        return $scope.recordStatusArr;
+                        return _self.recordStatusArr;
                     }
         		},
         		templateUrl : 'templates/departments/form.html',
@@ -127,9 +136,9 @@ cereliApp
         	modalInstance.result.then(function( responseData ){
 
         		if ( responseData.success ) {
-        			$scope.getDepartmentList();
+        			_self.getDepartmentList();
 
-        			$scope.addAlert('departmentListAlerts', {
+        			$scope.addAlert('mainDataListAlerts', {
         				type : 'success',
         				msg : 'Department details successfully ' + ( isEditMode ? 'updated.' : 'added.') 
         			});
@@ -141,7 +150,7 @@ cereliApp
         /**
         * Removes/Deletes department by id        
         **/
-        $scope.removeDepartment = function( id, index ) {
+        _self.removeDepartment = function( id, index ) {
 
             var modalInstance = $uibModal.open({
                 animation: true,
@@ -151,7 +160,7 @@ cereliApp
                 windowTemplateUrl : 'templates/common/ui-modal.html',
                 resolve: {                       
                     departmentDetails: function() {
-                        return $scope.departmentList[index];
+                        return $scope.mainDataList[index];
                     },
                     index: function() {
                         return index;
@@ -199,10 +208,10 @@ cereliApp
 
                 if ( responseData.success ) {
 
-                    $scope.departmentList.splice(index, 1);
-                    $scope.getDepartmentList();
+                    $scope.mainDataList.splice(index, 1);
+                    _self.getDepartmentList();
 
-                    $scope.addAlert('departmentListAlerts', {
+                    $scope.addAlert('mainDataListAlerts', {
                         type: 'success',
                         msg: 'Department Details Successfully Deleted'
                     });                    
@@ -213,6 +222,6 @@ cereliApp
         };
 
 
-        $scope.getDepartmentList();
+        _self.getDepartmentList();
 
 	}])

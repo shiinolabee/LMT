@@ -16,6 +16,18 @@ module.exports = {
         });	    
 	},
 
+    sortBy : function( req, res ){
+
+        var data = req.param('data');
+
+        DepartmentService.getSortingList(data, function( response ){
+            if ( response ) {
+                res.json({ success :true, data : response });
+            }
+        });
+
+    },
+
 	getDepartmentList : function( req, res ){  
 
         DepartmentService.getDepartmentList(function( departments ){

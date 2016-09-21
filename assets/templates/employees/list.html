@@ -17,97 +17,113 @@
     <!-- /.col -->  
    
     <div class="col-md-9">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title">List of Employees</h3>
 
-          <div class="box-tools pull-right">
-            <div class="has-feedback">
-              <input type="text" class="form-control input-sm" placeholder="Search Employee" ng-model="employeeCtrl.searchString" uib-typeahead="employee for searchList in searchEmployee($viewValue)" typeahead-min-length="3" typeahead-no-results="noResults">
-              <span class="glyphicon glyphicon-search form-control-feedback"></span>
-            </div>
-          </div>
-          <!-- /.box-tools -->
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-          <div class="ajax-loader" ng-show="parentShowLoader">
-              <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
-              <span class="sr-only">Loading...</span>
-          </div>
-          <div class="table-responsive employee-list-content">
-            <table class="table table-hover table-striped no-padding dataTable">
-              <thead>
-                <tr>
-                  <th><input type="checkbox" ng-model="employeeCtrl.selectedAll" ng-click="employeeCtrl.selectAllEmployees()"></th>                
-                  <th>Employee ID</th>
-                  <th>Full Name</th>
-                  <th>Department Assigned</th>
-                  <th>Position</th>
-                  <!-- <th>Email Address</th> -->
-                  <th>Date Hired</th>
-                  <th colspan="4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="employee in employeeCtrl.employeeList | filter:employeeCtrl.searchString" class="animate-repeat">               
-                <td><input type="checkbox" value="{{ employee.id }}" ng-model="employee.selected"></td>                
-                <td>{{ employee.empId }}</td>
-                <td>{{ employee.fullName }} </td>
-                <td><show-subdetails-employee index="$index" id="{{employee.departmentAssigned}}" type="
-                  departmentAssigned"></show-subdetails></td>
-                <td>{{ employee.position | contentIsEmpty }}</td>
-                <!-- <td>{{ employee.emailAddress }}</td> -->
-                <td>{{ employee.dateHired | date : shortDate | contentIsEmpty }}</td>
-                <td colspan="4">
-                  <button class="btn btn-default btn-xs" ng-click="employeeCtrl.viewEmployeeDetails($index, employee.empId);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
-                  <button class="btn btn-default btn-xs" ng-click="employeeCtrl.saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-pencil"></i></button>
-                  <button class="btn btn-default btn-xs" ng-click="employeeCtrl.removeEmployee(employee.id, $index)" uib-tooltip="Delete Details"><i class="fa fa-trash"></i></button>                  
-                </td>
-              </tr>                                   
-              </tbody>
-            </table>
-            <!-- /.table -->
-          </div>
-          <!-- /.mail-box-messages -->
+      <div class="nav-tabs-custom">
 
-          <div class="row">
-              <div class="col-sm-5">
-                <div class="dataTables_info">
-                  Showing {{ employeeCtrl.pager.startIndex + 1}} to {{ employeeCtrl.pager.endIndex + 1 }} of {{ employeeCtrl.pager.totalItems }} records
+        <uib-tabset active="active">
+            <!-- Employee Timeline -->
+            <uib-tab index="0" select="employeeCtrl.getAllEmployeeActivities();">
+              <uib-tab-heading>
+                <i class="fa fa-tasks"></i> Timeline                
+              </uib-tab-heading>
+
+              <!-- <div ng-if="!childShowLoader"> -->
+                <div ng-if="activities.length==0" uib-alert class="alert-warning">
+                  <i class="icon fa fa-warning"></i> No Activity recorded.</div>    
+              <!-- </div> -->
+              <employee-tracking-activities ng-if="activities.length" emp-id="0" activities="activities" show-loader="childShowLoader"></employee-tracking-activities>
+
+            </uib-tab>
+            <!-- !Employee Timeline -->
+            <!-- Employees Tab -->
+            <uib-tab index="1" select="employeeCtrl.getEmployeeList();">
+              <uib-tab-heading>
+                    <i class="fa fa-th-list"></i> List of Employees
+              </uib-tab-heading>
+
+         
+              <ajax-loader show-loader="parentShowLoader"></ajax-loader>
+              
+              <div class="pull-left">
+                <h4 class="lead">There are {{ mainDataList.length }} employee(s) registered in the system. </h4>
+              </div>
+              <div class="pull-right">
+                <div class="has-feedback">
+                  <input type="text" class="form-control input-sm" placeholder="Search Employee" ng-model="employeeCtrl.searchString" uib-typeahead="employee for searchList in searchEmployee($viewValue)" typeahead-min-length="3" typeahead-no-results="noResults">
+                  <span class="glyphicon glyphicon-search form-control-feedback"></span>
                 </div>
               </div>
-              <div class="col-sm-7">
-                <div class="dataTables_paginate paging_simple_numbers">                  
-                  <ul ng-if="employeeCtrl.pager.pages.length" class="pagination">
-                      <li ng-class="{disabled:employeeCtrl.pager.currentPage === 1}">
-                          <a ng-click="employeeCtrl.setPage(1)">First</a>
-                      </li>
-                      <li ng-class="{disabled:employeeCtrl.pager.currentPage === 1}">
-                          <a ng-click="employeeCtrl.setPage(employeeCtrl.pager.currentPage - 1)">Previous</a>
-                      </li>
-                      <li ng-repeat="page in employeeCtrl.pager.pages" ng-class="{active:employeeCtrl.pager.currentPage === page}">
-                          <a ng-click="employeeCtrl.setPage(page)">{{page}}</a>
-                      </li>                
-                      <li ng-class="{disabled:employeeCtrl.pager.currentPage === employeeCtrl.pager.totalPages}">
-                          <a ng-click="employeeCtrl.setPage(employeeCtrl.pager.currentPage + 1)">Next</a>
-                      </li>
-                      <li ng-class="{disabled:employeeCtrl.pager.currentPage === employeeCtrl.pager.totalPages}">
-                          <a ng-click="employeeCtrl.setPage(employeeCtrl.pager.totalPages)">Last</a>
-                      </li>
-                  </ul>
-                </div>
+
+              <div class="clearfix"></div><br>
+              <div class="table-responsive employee-list-content">
+                <table class="table table-hover table-striped table-bordered no-padding dataTable">
+                  <thead>
+                    <tr>
+                      <th><input type="checkbox" ng-model="employeeCtrl.selectedAll" ng-click="employeeCtrl.selectAllEmployees()"></th>  
+                      <th ng-repeat="header in employeeCtrl.tableHeaders">
+                        <sort-data-list options="{ type : 'employees', label : header.label}" order-by="header.name" title="header.label"></sort-data-list>
+                      </th>                              
+                      <th colspan="4">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tr ng-repeat="employee in mainDataList | filter:employeeCtrl.searchString" class="animate-repeat">               
+                    <td><input type="checkbox" value="{{ employee.id }}" ng-model="employee.selected"></td>                
+                    <td>{{ employee.empId }}</td>
+                    <td>{{ employee.fullName }} </td>
+                    <td><show-subdetails-employee index="$index" id="{{employee.departmentAssigned}}" type="
+                      departmentAssigned"></show-subdetails></td>
+                    <td>{{ employee.position | contentIsEmpty }}</td>
+                    <!-- <td>{{ employee.emailAddress }}</td> -->
+                    <td>{{ employee.dateHired | date : shortDate | contentIsEmpty }}</td>
+                    <td colspan="4">
+                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.viewEmployeeDetails($index, employee.empId);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
+                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-pencil"></i></button>
+                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.removeEmployee(employee.id, $index)" uib-tooltip="Delete Employee Details"><i class="fa fa-trash"></i></button>                  
+                    </td>
+                  </tr>                                   
+                  </tbody>
+                </table>
+                <!-- /.table -->
               </div>
-          </div>
-        </div>
-        <!-- /.box-body -->       
+              <!-- /.mail-box-messages -->
+
+              <div class="row">
+                  <div class="col-sm-5">
+                    <div class="dataTables_info">
+                      Showing {{ employeeCtrl.pager.startIndex + 1}} to {{ employeeCtrl.pager.endIndex + 1 }} of {{ employeeCtrl.pager.totalItems }} records
+                    </div>
+                  </div>
+                  <div class="col-sm-7">
+                    <div class="dataTables_paginate paging_simple_numbers">                  
+                      <ul ng-if="employeeCtrl.pager.pages.length" class="pagination">
+                          <li ng-class="{disabled:employeeCtrl.pager.currentPage === 1}">
+                              <a ng-click="employeeCtrl.setPage(1)">First</a>
+                          </li>
+                          <li ng-class="{disabled:employeeCtrl.pager.currentPage === 1}">
+                              <a ng-click="employeeCtrl.setPage(employeeCtrl.pager.currentPage - 1)">Previous</a>
+                          </li>
+                          <li ng-repeat="page in employeeCtrl.pager.pages" ng-class="{active:employeeCtrl.pager.currentPage === page}">
+                              <a ng-click="employeeCtrl.setPage(page)">{{page}}</a>
+                          </li>                
+                          <li ng-class="{disabled:employeeCtrl.pager.currentPage === employeeCtrl.pager.totalPages}">
+                              <a ng-click="employeeCtrl.setPage(employeeCtrl.pager.currentPage + 1)">Next</a>
+                          </li>
+                          <li ng-class="{disabled:employeeCtrl.pager.currentPage === employeeCtrl.pager.totalPages}">
+                              <a ng-click="employeeCtrl.setPage(employeeCtrl.pager.totalPages)">Last</a>
+                          </li>
+                      </ul>
+                    </div>
+                  </div>
+              </div>              
+            </uib-tab> 
+            <!-- !Employees Tab -->
+            
+
+        </uib-tabset>
+
       </div>
-      <!-- /. box -->
-    </div>
-    
-
-
- 
+      
+    </div> 
     <div class="clearfix"></div>
-
 </div>

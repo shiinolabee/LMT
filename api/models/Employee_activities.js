@@ -23,6 +23,10 @@ module.exports = {
             model : 'employees'            
         },
 
+        userId : {
+            model : 'user'
+        },
+
         description : {
             type : 'text',
             required : false

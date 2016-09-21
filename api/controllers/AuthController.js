@@ -23,7 +23,7 @@ module.exports = {
 
       }       
 
-      console.log(password, user);
+      // console.log(password, user);
 
       User.comparePasswordIfValid(password, user, function(err, valid) {
        
