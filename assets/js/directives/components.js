@@ -418,7 +418,7 @@
                   label: '<i class=\'glyphicon glyphicon-remove\'></i>',
                   onClick: function(args) {                   
 
-                    activeRecordService.removeActiveRecord(args.calendarEvent.id, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
+                    activeRecordService.removeActiveRecord( { id : args.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
                     	if ( response.success ) {
                     		console.info('Deleted Record : ', args.calendarEvent);
                     		_self.events.splice(_self.events.indexOf(args.calendarEvent), 1);                    		
@@ -607,7 +607,7 @@
 
                 _self.removeTimeRecord = function(){
 
-	           	  	activeRecordService.removeActiveRecord(_self.time_record.calendarEvent.id, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
+	           	  	activeRecordService.removeActiveRecord( { id : _self.time_record.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
                     	if ( response.success ) {
                     		console.log('Deleted Record : ' + _self.time_record.calendarEvent);
 

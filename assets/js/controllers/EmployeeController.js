@@ -229,7 +229,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
         activeRecordService.getActiveRecordList('employee_activities/getAllEmployeeActivities').then(function( response ){
             if ( response.success) {
                 $scope.childShowLoader = false;                                
-                $scope.activities = response.data              
+                $scope.activities = response.data;              
             }
         });
     };
@@ -460,14 +460,14 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                     closeButtonText: 'Cancel',
                     headerText: 'Delete ' + (employeeDetails.fullName) + '?',
                     actionButtonText: 'Delete Employee details',
-                    bodyText: 'Are you sure you want to delete employ ' + (employeeDetails.fullName)  + '\'s details?'
+                    bodyText: 'Are you sure you want to delete ' + (employeeDetails.fullName)  + '\'s details?'
                 };
 
                 $scope.modalOptions.ok = function (result) {
 
                     var responseData;
 
-                    activeRecordService.removeActiveRecord(employeeDetails.id, 'employees/removeEmployee').then(function(response) {                            
+                    activeRecordService.removeActiveRecord( { id : employeeDetails.id, fullName : employeeDetails.fullName, empId : employeeDetails.empId }, 'employees/removeEmployee').then(function(response) {                            
                             responseData = response;                                                                
                     }).finally(function(){
                         modalInstance.close(responseData);                                

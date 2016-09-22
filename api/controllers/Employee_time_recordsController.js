@@ -16,9 +16,10 @@ module.exports = {
                 if ( response ) {
                     var responseData = response;
                     var id = req.param('id');
-                    var description = "Updating Time Record " + new Date(req.param('activeRecord').startsAt).toLocalString();
+                    var title = "Time Records";
+                    var description = "Time Record \"" + new Date(req.param('activeRecord').startsAt).toLocaleString() + "\" of Employee ID " + req.param('activeRecord').empId + " has been updated.";
 
-                    EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+                    EmployeeActivitiesService.saveEmployeeActivity({ type: 2.1, empId : id, description : description, title : title }, function( response ){
 
                         if ( response ) {
                             return res.json( { success : true , data : responseData  });    
@@ -34,9 +35,10 @@ module.exports = {
                 if ( response ) {
                     var responseData = response;
                     var id = req.param('activeRecord').id;
-                    var description = "Registered New Time Record " + new Date(req.param('activeRecord').startsAt).toLocalString() + " of Employee";
+                    var title = "Time Records";
+                    var description = "New Time Record \"" + new Date(req.param('activeRecord').startsAt).toLocaleString() + "\" of Employee ID " + responseData.empId + " has been registered.";
 
-                    EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+                    EmployeeActivitiesService.saveEmployeeActivity({ type: 2, empId : id, description : description, title : title }, function( response ){
 
                         if ( response ) {
                             return res.json( { success : true , data : responseData  });    
@@ -55,12 +57,13 @@ module.exports = {
         var employeeVal = req.param('id') ? req.param('id') : undefined;
 
         EmployeesTimeRecordService.removeEmployeeTimeRecord(employeeVal, function(response) {
-             if ( response ) {
+            if ( response ) {
                 var responseData = response;
                 var id = req.param('id');
-                var description = "Deleting Time Record " + new Date(req.param('activeRecord').startsAt).toLocalString() + " of Employee";
+                var title = "Time Record of " + req.param('fullName') + " - " + req.param('empId');
+                var description = "Time Record \"" + new Date(req.param('activeRecord').startsAt).toLocaleString() + "\" has been removed from his/her record.";
 
-                EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+                EmployeeActivitiesService.saveEmployeeActivity({ type: 2.2, empId : id, description : description, title : title }, function( response ){
 
                     if ( response ) {
                         return res.json( { success : true , data : responseData  });    

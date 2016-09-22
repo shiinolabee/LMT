@@ -112,15 +112,16 @@ module.exports = {
             }
 
             var id = req.param('userId');
-            var description = "Uploaded Csv File " + uploadedFiles[0].filename + ' and registered ' + responseDataList.length + ' records';
+            var title = "Time Records";
+            var description = "File " + uploadedFiles[0].filename + " has been successfully imported.";
 
-            EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+            EmployeeActivitiesService.saveEmployeeActivity({ type : 0, empId : id, description : description, title : title }, function( response ){
 
                 if ( response ) {
 
                     return res.json({
                         success : true,
-                        message : 'Uploaded Time Record ' + uploadedFiles[0].filename + ' and successfully imported '+ responseDataList.length +' records.',
+                        message : 'Time record file ' + uploadedFiles[0].filename + ' successfully imported '+ responseDataList.length +' records.',
                         files : uploadedFiles,
                         data : responseDataList
                     });
@@ -209,9 +210,10 @@ module.exports = {
 
                     var responseData = response;
                     var id = req.param('id');
-                    var description = "Updating Employee Details of " + req.param('activeRecord').fullName;
+                    var title = "Employee ID " + req.param('activeRecord').empId;
+                    var description = req.param('activeRecord').fullName + "\'s Details has been updated.";
 
-                    EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+                    EmployeeActivitiesService.saveEmployeeActivity({ type : 1.1, empId : id, description : description, title : title }, function( response ){
 
                         if ( response ) {
                             return res.json( { success : true , data : responseData  });    
@@ -228,9 +230,10 @@ module.exports = {
                 if ( response ) {
                     var responseData = response;
                     var id = response.data.id;
-                    var description = "Registered New Employee Details of " + req.param('activeRecord').fullName;
+                    var title = "New Employee";
+                    var description = req.param('activeRecord').fullName + "'s details has been registered.";
 
-                    EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+                    EmployeeActivitiesService.saveEmployeeActivity({ type : 1, empId : id, description : description, title : title }, function( response ){
 
                         if ( response ) {
                             return res.json( { success : true , data : responseData  });    
@@ -253,9 +256,10 @@ module.exports = {
             if ( response ) {
                 var responseData = response;
                 var id = req.param('id');
-                var description = "Deleting Details of Employee ";
-
-                EmployeeActivitiesService.saveEmployeeActivity({ empId : id, description : description }, function( response ){
+                var title = "Remove Employee";
+                var description = req.param('fullName') + "'s details has been removed from the system.";
+ 
+                EmployeeActivitiesService.saveEmployeeActivity({ type : 1.2, empId : id, description : description, title : title }, function( response ){
 
                     if ( response ) {
                         return res.json( { success : true , data : responseData  });    

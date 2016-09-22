@@ -31,13 +31,16 @@ module.exports = {
 
 	saveEmployeeActivity: function(data, callback) {   
 
-		var record = {
-			id : 0,
+		var record = {			
+			userId : data.userId,
 			empId : data.empId,
-			description : data.description
+			title : data.title,
+			description : data.description,
+			type : data.type,
+			dateCommitted : new Date()
 		};
            
-        Employee_activities.create(data).exec( function(err, result) {
+        Employee_activities.create(record).exec( function(err, result) {
             if ( err ) callback(err);
 
             callback(result);

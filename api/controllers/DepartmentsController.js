@@ -41,20 +41,40 @@ module.exports = {
 
 	 	if ( req.param('id') ) {
 
-            DepartmentService.updateDepartment(req.param('activeRecord'), req.param('id'), function(success) {
-                if ( success ) {
-                    res.json( { success : true , data : success  });                
-                }
-            }, function( xhr, errMsg ){
-                res.json( { success : false , data : success  });                            
+            DepartmentService.updateDepartment(req.param('activeRecord'), req.param('id'), function( response ) {
+                if ( response ) {
+                    var responseData = response;
+                    var id = req.param('userId');
+                    var title =  "Department Record";
+                    var description = "\"" + req.param('activeRecord').departmentName + "\" department has been updated/changed.";
+
+                    EmployeeActivitiesService.saveEmployeeActivity({ type: 4, empId : id, description : description, title : title }, function( response ){
+
+                        if ( response ) {
+                            return res.json( { success : true , data : responseData  });    
+                        }
+                    });                 
+                } else {
+                    res.json(response.status, { success : false , data : "Error"  });                
+                }   
             }); 
         } else {           
-            DepartmentService.saveDepartment(req.param('activeRecord'), function(success) {
-                if ( success ) {
-                    res.json( { success : true , data : success  });                
-                }
-            }, function( xhr, errMsg ){
-                res.json( { success : false , data : success  });                            
+            DepartmentService.saveDepartment(req.param('activeRecord'), function(response) {
+                if ( response ) {
+                    var responseData = response;
+                    var id = req.param('userId');
+                    var title =  "New Department";                    
+                    var description = "\"" + req.param('activeRecord').departmentName + "\" department has been registered.";
+
+                    EmployeeActivitiesService.saveEmployeeActivity({ type: 4, empId : id, description : description, title : title }, function( response ){
+
+                        if ( response ) {
+                            return res.json( { success : true , data : responseData  });    
+                        }
+                    });                 
+                } else {
+                    res.json(response.status, { success : false , data : "Error"  });                
+                }   
             });
         }
 
@@ -64,8 +84,22 @@ module.exports = {
         
         var departmentId = ( req.param('id') )  ? req.param('id') : undefined;
 
-        DepartmentService.removeDepartment(departmentId, function(success) {
-            res.json( { success : true , data : success.id  });
+        DepartmentService.removeDepartment(departmentId, function(response) {
+            if ( response ) {
+                var responseData = response;
+                var id = req.param('userId');
+                var title =  "Remove Department";                    
+                var description = "Department \"" + req.param('departmentName') + "\" has been removed.";
+
+                EmployeeActivitiesService.saveEmployeeActivity({ type: 2.2, empId : id, description : description, title : title }, function( response ){
+
+                    if ( response ) {
+                        return res.json( { success : true , data : responseData  });    
+                    }
+                });                 
+            } else {
+                res.json(response.status, { success : false , data : "Error"  });                
+            }  
         });
     }
 	

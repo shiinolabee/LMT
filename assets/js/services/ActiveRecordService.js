@@ -84,7 +84,7 @@ cereliApp.service('activeRecordService', [ '$http', '$q' , function( $http, $q )
 
             var defer = $q.defer();
             
-            $http.post(url, { id : activeRecord })
+            $http.post(url, activeRecord)
                 .success(function(resp){
                     defer.resolve(resp);
                 })

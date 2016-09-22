@@ -27,10 +27,23 @@ module.exports = {
             model : 'user'
         },
 
+        type : {
+            type : 'float'
+        },
+
+        title : {
+            type : 'text',
+            required : false
+        },     
+
         description : {
             type : 'text',
             required : false
         },     
+
+        dateCommitted : {
+            type : 'date',
+        },
 
         createdAt : {
             type : 'datetime'         

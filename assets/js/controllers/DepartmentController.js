@@ -180,7 +180,7 @@ cereliApp
 
                         var responseData;
 
-                        activeRecordService.removeActiveRecord(departmentDetails.id, 'departments/removeDepartment').then(function(response) {
+                        activeRecordService.removeActiveRecord({ id : departmentDetails.id , departmentName : departmentDetails.departmentName }, 'departments/removeDepartment').then(function(response) {
 
                             if ( response.success ) {
                                 responseData = response;                                    
