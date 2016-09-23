@@ -61,7 +61,7 @@ module.exports = {
                 var responseData = response;
                 var id = req.param('id');
                 var title = "Time Record of " + req.param('fullName') + " - " + req.param('empId');
-                var description = "Time Record \"" + new Date(req.param('activeRecord').startsAt).toLocaleString() + "\" has been removed from his/her record.";
+                var description = "Time Record \"" + new Date(response.startsAt).toLocaleString() + "\" has been removed from his/her record.";
 
                 EmployeeActivitiesService.saveEmployeeActivity({ type: 2.2, empId : id, description : description, title : title }, function( response ){
 

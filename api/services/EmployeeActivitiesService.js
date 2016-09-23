@@ -20,7 +20,7 @@ module.exports = {
 
 	getEmployeeActivityList : function( id, callback ){
 
-		Employee_activities.find({ where : { empId : id, id: id }}).exec(function( err, result ){
+		Employee_activities.find({ where : { empId : id }}).exec(function( err, result ){
 
 			if ( err ) callback(err);
 

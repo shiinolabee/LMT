@@ -725,7 +725,11 @@
 
 				var _self = this;	
 
-				// console.log(_self)			
+				// console.log(_self)	
+
+				// _self.activityTypes = [
+				// 	"1.1" => { type : 'fa-' }
+				// ];		
 
 				// _self.getTrackingActivities = function(){
 
@@ -887,7 +891,7 @@
 				title : '='							
 			},
 
-			template : '<a uib-tooltip="{{vm.title}} - {{vm.orderType}} " ng-click="vm.sort();" ng-class="{\'sorting_asc\' : (vm.orderType == \'ASC\'), \'sorting_desc\' : (vm.orderType == \'DESC\')}">{{ vm.title }} </a>',
+			template : '<a tooltip-placement="bottom" uib-tooltip="{{vm.title}} - {{vm.orderType}} " ng-click="vm.sort();" ng-class="{\'sorting_asc\' : (vm.orderType == \'ASC\'), \'sorting_desc\' : (vm.orderType == \'DESC\')}">{{ vm.title }} </a>',
 
 			controller : function( $scope ){					
 

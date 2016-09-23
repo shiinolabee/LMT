@@ -115,7 +115,7 @@ module.exports = {
             var title = "Time Records";
             var description = "File " + uploadedFiles[0].filename + " has been successfully imported.";
 
-            EmployeeActivitiesService.saveEmployeeActivity({ type : 0, empId : id, description : description, title : title }, function( response ){
+            EmployeeActivitiesService.saveEmployeeActivity({ type : 0, userId : id, description : description, title : title }, function( response ){
 
                 if ( response ) {
 

@@ -19,8 +19,7 @@ module.exports = {
         },
 
         title : {
-        	type : 'string',
-            length : 20,
+        	type : 'text',            
         	defaulsTo : ''
         },
 
@@ -47,9 +46,7 @@ module.exports = {
         },
 
         applysToAll : {
-        	type : 'string',
-            length: 10,
-            defaulsTo : '1'
+        	type : 'text'            
         },
 
         // applysTo : {

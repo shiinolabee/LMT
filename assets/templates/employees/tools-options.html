@@ -1,6 +1,32 @@
 <uib-accordion close-others="true">
 
-  <div uib-accordion-group class="panel box box-secondary" heading="Import Time Records" is-open="employeeToolsOptionsCtrl.accordionSettings.status.isFirstOpen" is-disabled="employeeToolsOptionsCtrl.accordionSettings.status.isFirstDisabled">
+ <div uib-accordion-group class="panel box box-secondary" heading="Import Employee Records" is-open="employeeToolsOptionsCtrl.accordionSettings.status.isFirstOpen" is-disabled="employeeToolsOptionsCtrl.accordionSettings.status.isFirstDisabled">
+       <!-- Upload/Import Employees Form -->
+
+      <form name="importRecordForm" ng-model="importRecordForm">         
+          <div class="form-group">                  
+              Select csv files to read/import : 
+              <!-- ngf-accept="'csv/*'" ngf-pattern="'csv/*'" -->
+              <input type="file" ngf-select="employeeToolsOptionsCtrl.upload(importFile)" name="file" ng-model="importFile"/>              
+          </div>        
+
+          <div class="form-group">              
+              <div ngf-src="importFile" ngf-background="importFile" 
+              ngf-no-object-url="true"></div>
+              <!-- ng-disabled="!importRecordForm.$valid" -->
+              <!-- <button type="submit" class="btn btn-primary" ng-click="employeeToolsOptionsCtrl.submitUpload();"> Submit </button> -->
+          </div>   
+          <uib-progressbar ng-show="filePercentage > 0" class="progress-striped" ng-class="{ active : filePercentage > 0 }" value="filePercentage">{{ importMessage }}</uib-progressbar>
+
+          <div ng-show="employeeToolsOptionsCtrl.message.length > 0" uib-alert ng-class="'alert-' + ( 'success')" type="success" close="Close" dismiss-on-timeout="4000">{{ employeeToolsOptionsCtrl.message }}</div>
+
+      </form>   
+
+
+      <!-- !Upload/Import Employees Form -->
+  </div>
+
+  <div uib-accordion-group class="panel box box-secondary" heading="Import Time Records">
        <!-- Upload/Import Time Record Form -->
 
       <form name="importRecordForm" ng-model="importRecordForm">         

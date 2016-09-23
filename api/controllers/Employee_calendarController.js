@@ -44,6 +44,8 @@ module.exports = {
         } else {           
             EmployeeCalendarService.saveEmployeeEvent(req.param('activeRecord'), function(response) {
 
+                console.log(response)
+
                 if ( response ) {
                     var responseData = response;
                     var id = req.param('userId');

@@ -124,6 +124,8 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
             animation : true,
             keyboard : false,
             backdrop : 'static',
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
             resolve : {                   
                 employeeInitialValues : function(){
                     return _self.initEmployeeValues(true, _self.$index);                        
@@ -141,9 +143,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
             
             templateUrl : 'templates/employees/view.html',
             
-            size : 'lg',          
-
-            bindToController : true,
+            size : 'lg',                      
 
             controller : function( $scope, employeeInitialValues, isEditMode, getDepartmentList, getEmployeeTimeRecord, $uibModal ){                                        
 
@@ -164,6 +164,19 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                         modalInstance.close();                            
                     }                        
                 };    
+
+                _self.sendPrivateEmail = function(){
+
+                    var innerModalInstance = $uibModal.open({
+                        animation : true,
+                        ariaLabelledBy: 'modal-title',
+                        ariaDescribedBy: 'modal-body',
+                        keyboard : false,
+                        backdrop : 'static',
+                        templateUrl : 'templates/common/create-email.html',
+                        size : 'md'
+                    });
+                };
 
                 _self.getStatisticsReport = function(){
                     $scope.childShowLoader = true;
@@ -202,7 +215,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                 _self.getTrackingActivities = function(){
                     $scope.childShowLoader = true;
 
-                    activeRecordService.getActiveRecord({ id : empId }, 'employee_activities/getEmployeeActivities').then(function( response ){
+                    activeRecordService.getActiveRecord({ id : $scope.employee.id }, 'employee_activities/getEmployeeActivities').then(function( response ){
                         if ( response.success) {
                             $scope.activities = response.data;
                             $scope.childShowLoader = false;                                

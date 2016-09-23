@@ -11,9 +11,9 @@
 	</li>
 
 	<li ng-repeat="item in value">
-		<i class="fa" ng-class="{ 'fa-user' : item.type == 1, 'bg-blue' : item.type == 1, 'fa-download' : item.type == 0, 'bg-purple' : item.type == 0, 'fa-building-o' : item.type == 4, 'bg-yellow' : item.type == 4, 'fa-tasks' : item.type == 2, 'bg-orange' : item.type == 2 }"></i>
+		<i class="fa" ng-class="{ 'fa-user' : item.type == 1, 'bg-blue' : item.type == 1, 'fa-download' : item.type == 0, 'bg-purple' : item.type == 0, 'fa-building-o' : item.type == 4, 'bg-yellow' : item.type == 4, 'fa-tasks' : item.type == 2, 'bg-orange' : item.type == 2, 'fa-trash' : item.type == 2.2 || item.type == 1.2 || item.type == 3.2 || item.type == 4.2}"></i>
 		<div class="timeline-item">
-	      <span class="time"><i class="fa fa-clock-o"></i> <span am-time-ago="item.createdAt"></span></span>
+	      <span class="time"><i class="fa fa-clock-o"></i> <span am-time-ago="item.createdAt"></span> - {{ item.createdAt | date : 'shortTime' }}</span>
 
 	      <h3 class="timeline-header">{{ item.title.length > 0 ? item.title : "No Title" }} </h3>
 	      <div class="timeline-body">{{ item.description }} </div>
