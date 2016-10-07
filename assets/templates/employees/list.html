@@ -3,9 +3,12 @@
     <div class="col-md-12">
         <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
 
-        <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveEmployee(0, false)"><i class="fa fa-user"></i> <b>New Employee</b></button>
+        <div class="btn-group margin-bottom" role="group" aria-label="...">
+          <button type="button" class="btn btn-primary"><i class="fa fa-user"></i></button>
+          <button class="btn btn-primary" ng-click="employeeCtrl.saveEmployee(0, false)"><b>New Employee</b></button>   
+        </div>        
         
-        <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveTimeRecord()"><i class="fa fa-user"></i> <b>New Employee Time Record</b></button>
+        <!-- <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveTimeRecord()"><i class="fa fa-user"></i> <b>New Employee Time Record</b></button> -->
 
     </div>   
     
@@ -18,7 +21,7 @@
             <!-- Employee Timeline -->
             <uib-tab index="0" select="employeeCtrl.getAllEmployeeActivities();">
               <uib-tab-heading>
-                <i class="fa fa-tasks"></i> Timeline                
+                <i class="fa fa-tasks"></i> Timeline & Activities                
               </uib-tab-heading>
 
               <!-- <div ng-if="!childShowLoader"> -->
@@ -120,6 +123,19 @@
       
     </div> 
     <!-- !Employee Tabs Section -->
+
+    <!-- Employee Time Records Tracker Calendar -->
+    <div class="col-md-3">
+      <div class="box box-success">
+        <div class="box-header with-border">
+            Time Records Tracker Calendar
+        </div>
+        <div class="box-body">
+          <div uib-datepicker ng-model="dt" datepicker-options="calendarTrackerOptions"></div>          
+        </div>
+      </div>      
+    </div>
+    <!-- !Employee Time Records Tracker Calendar -->
 
     <!-- Employee Tools Section-->    
     <div class="col-md-3">

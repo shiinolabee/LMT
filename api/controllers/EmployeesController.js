@@ -9,23 +9,32 @@ var responseDataList = [];
 
 module.exports = {
 
-    uploadTimeRecord : function( req, res ){
+    uploadCsvRecords : function( req, res ){
 
         req.file('file').upload({            
             maxBytes: 10000000, // don't allow the total upload size to exceed ~10MB
             dirname: require('path').resolve(sails.config.appPath, 'assets/uploads'),
             adapter: require('skipper-csv'),
-            csvOptions: {delimiter: ',', columns: true},
+            csvOptions: {delimiter: ',', columns: true},         
             rowHandler: function(row, fd){    
-
-                var tempTimeRecord = {        
-                    id : 0,            
-                    empId : 0,   
-                    remarks : '',
-                    startsAt : '',
-                    date : '',
-                    endsAt : '',
-                    timeRecordType : 1                    
+        
+                var tempEmployeeRecord = {
+                    id : 0,
+                    empId : '',
+                    position : '',
+                    departmentAssigned : '',
+                    dateHired : new Date(),
+                    dateRegularized : new Date(),
+                    paidLeaveLimit : 0,
+                    unpaidLeaveLimit : 0,
+                    noOfAbsences : 0,
+                    noOfLates: 0,
+                    totalOvertime : 0,
+                    recordStatus : 1,                                      
+                    contactNumber : '',
+                    gender : '',
+                    homeAddress : '',
+                    emailAddress : ''              
                 };
 
                 var tempArray = [];                
@@ -46,7 +55,7 @@ module.exports = {
                     }                    
                 });
 
-                console.log('Temp Array : ', tempArray);
+                // console.log('Temp Array : ', tempArray);
 
                 if ( tempArray.length >= 4 ) {
                     tempArray.forEach(function( item, index ){ 
@@ -65,13 +74,13 @@ module.exports = {
                     var dateAttended = tempArray.length >= 2 ? new Date(tempArray[1].replace(new RegExp('/', 'g'),'-')) : new Date();
 
 
-                    tempTimeRecord.empId = parseInt(tempArray[0]);
+                    tempEmployeeRecord.empId = parseInt(tempArray[0]);
                     
                     startsAtDate.setFullYear(dateAttended.getFullYear());
                     startsAtDate.setMonth(dateAttended.getMonth());
                     startsAtDate.setDate(dateAttended.getDate());
 
-                    tempTimeRecord.date = startsAtDate;
+                    tempEmployeeRecord.date = startsAtDate;
                     
                     if ( tempArray.length >= 3 ) {
                         
@@ -87,17 +96,17 @@ module.exports = {
                         startsAtDate.setSeconds(0);  
                     }
                     
-                    tempTimeRecord.startsAt = startsAtDate;  
+                    tempEmployeeRecord.startsAt = startsAtDate;  
 
                     var endsAtDate = new Date(startsAtDate);
 
                     endsAtDate.setHours(startsAtDate.getHours() + 1);                  
 
-                    tempTimeRecord.endsAt = endsAtDate;       
+                    tempEmployeeRecord.endsAt = endsAtDate;       
 
-                    console.log(tempTimeRecord);
+                    // console.log(tempEmployeeRecord);
                   
-                    EmployeesTimeRecordService.saveEmployeeTimeRecord(tempTimeRecord, function( response ){
+                    EmployeesTimeRecordService.saveEmployeeTimeRecord(tempEmployeeRecord, function( response ){
                         responseDataList.push(response);                 
                     });
                 }
@@ -130,21 +139,6 @@ module.exports = {
 
 
         });
-
-    },
-
-    getEmployeeStatisticsReport : function( req, res ){
-
-        if ( req.param('id') ) {
-
-            var id = req.param('id');
-
-            Employee_time_records.find({ where : { empId : id } }, { sum : 'recordValue' }).groupBy('date').max('startsAt')
-                .then(function( result ){
-                res.json({ success : true, data : result });
-            });                  
-
-        }
 
     },
 
@@ -229,7 +223,7 @@ module.exports = {
 
                 if ( response ) {
                     var responseData = response;
-                    var id = response.data.id;
+                    var id = response.id;
                     var title = "New Employee";
                     var description = req.param('activeRecord').fullName + "'s details has been registered.";
 

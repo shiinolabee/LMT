@@ -9,6 +9,9 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
     $scope.mainDataList = [];  
     $scope.activities = [];
     $scope.departmentList = getDepartmentList.data; // get department lists            
+    $scope.calendarTrackerOptions = {
+        minDate: new Date()        
+    };
 
     _self.recordStatusArr = [ 
         {  name : 'Active', value : 1 },
@@ -150,7 +153,8 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                 var _self = this;                 
 
                 $scope.editMode = isEditMode;
-                $scope.employee = employeeInitialValues;                    
+                $scope.employee = employeeInitialValues;                 
+                $scope.statisticsRecordResult = [];   
            
                 $scope.departmentList = getDepartmentList; 
                 $scope.employeeTimeRecords = getEmployeeTimeRecord.data;
@@ -181,25 +185,19 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                 _self.getStatisticsReport = function(){
                     $scope.childShowLoader = true;
 
-                    activeRecordService.getActiveRecord({ id : $scope.employee.empId }, 'employees/getEmployeeStatisticsReport').then(function( response ){
+                    $scope.initDate = moment();
+
+                    $scope.selectedYear = $scope.initDate.format('YYYY');
+                    $scope.selectedMonth = $scope.initDate.format('MMMM');                    
+
+                    activeRecordService.getActiveRecord({ id : $scope.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
                         if ( response.success ) {                                
                             $scope.statisticsRecordResult = response.data;
                             $scope.childShowLoader = false;                                
                         } 
                     });
                 };   
-
-                _self.getEmployeeEventCalendar = function(){
-                    $scope.childShowLoader = true;
-
-                    activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeEventCalendar').then(function( response ){
-                        if ( response.success ) {                                
-                            $scope.employeeEventCalendarRecords = response.data;
-                            $scope.childShowLoader = false;                                
-                        } 
-                    });
-                };
-
+         
                 _self.getDailyTimeRecordCalendar = function(){
                     $scope.childShowLoader = true;
 
@@ -222,7 +220,7 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
                         }
                     });
 
-                };        
+                };                 
                
             },
 
@@ -239,10 +237,12 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
         
         $scope.childShowLoader = true;
 
-        activeRecordService.getActiveRecordList('employee_activities/getAllEmployeeActivities').then(function( response ){
+        activeRecordService.getActiveRecord({ lastActivityRecord : ($scope.lastActivityRecord ? $scope.lastActivityRecord : null) }, 'employee_activities/getAllEmployeeActivities').then(function( response ){
             if ( response.success) {
                 $scope.childShowLoader = false;                                
-                $scope.activities = response.data;              
+                $scope.activities = response.data;  
+
+                $scope.lastActivityRecord = $scope.activities[$scope.activities.length-1].dateCommitted;            
             }
         });
     };

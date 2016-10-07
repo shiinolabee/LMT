@@ -8,8 +8,9 @@
           <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
-            <alert class="alert alert-danger" ng-repeat="error in errors" type="danger">{{error.err}}</alert>
-
+            <div uib-alert ng-repeat="error in errors" class="alert-danger" type="danger" dismiss-on-timeout="4000">
+              <i class="fa fa-exclamation-triangle"></i> {{error.err}}</div>
+                         
             <form novalidate name="loginForm" ng-model="loginForm" method="post">
 
               <div class="form-group has-feedback">

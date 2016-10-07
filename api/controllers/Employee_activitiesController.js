@@ -25,7 +25,7 @@ module.exports = {
 
 	getAllEmployeeActivities : function( req, res ){
 	
-		EmployeeActivitiesService.getAllEmployeeActivities(function( response ){
+		EmployeeActivitiesService.getAllEmployeeActivities(req.param('lastActivityRecord'), function( response ){
 
 			if ( response ) {
 				res.json({ success : true, data : response });

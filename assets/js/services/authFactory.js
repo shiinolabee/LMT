@@ -80,9 +80,13 @@ cereliApp
 
         if (response.status === 401 || response.status === 403) {
 
+          var expiredUser = angular.fromJson(LocalService.get('auth_token')).user;
+
+          LocalService.set('refresh_auth_token', JSON.stringify(expiredUser));
+
           LocalService.unset('auth_token');
 
-          $injector.get('$state').go('login');
+          $injector.get('$state').go('lock-user');
         }
 
         return $q.reject(response);

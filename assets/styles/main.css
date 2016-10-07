@@ -157,9 +157,10 @@ a.day-calculate-hours{
     background-color: #ffcccc !important;
 }
 
-.year-dropdown-wrapper {
+.dropdown-wrapper {
   display: inline-block;
-  margin-left: 10px;
+  margin-right: 20px;
+  margin-bottom: 20px;
 }
 
 .label-special{
@@ -175,4 +176,9 @@ table.dataTable td, table.dataTable th {
     padding: 10px !important;
     position: relative;
     outline: 0;
+}
+
+.lockscreen-name {
+  color:#fff;
+  text-align: center;
 }

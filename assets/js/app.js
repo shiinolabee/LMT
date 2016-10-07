@@ -26,6 +26,20 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             }        
         })
 
+        .state('lock-user', {
+            url : '/lock-user',
+            views : {
+                'parent-content' : {
+                    templateUrl : 'templates/auth/lock-user.html',
+                    controller : 'lockUserController',
+                    controllerAs : 'lockUserCtrl'
+                }
+            },
+            data: {
+              access: AccessLevels.anon
+            } 
+        })
+
         .state('register', {
             url : '/register',
             views : {
@@ -189,7 +203,7 @@ cereliApp
 
         $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {       
 
-            if( toState.url != '/login' || toState.url != '/logout' ) {
+            if( toState.url != '/login' || toState.url != '/logout' || toState.url != '/lock-user' ) {
 
                 if ( !Auth.authorize(toState.data.access)) {
                     

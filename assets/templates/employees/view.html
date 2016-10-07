@@ -85,11 +85,7 @@
 	    			</uib-tab-heading>
 
 	    			<div ng-show="!childShowLoader">
-
-	    				<div ng-if="!statisticsRecordResult.length" uib-alert class="alert-warning">
-    			  			<i class="icon fa fa-warning"></i> No Time Records yet uploaded.</div>  		
-
-	    				<employee-statistics-report ng-if="statisticsRecordResult.length" employee-time-records="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
+	    				<employee-statistics-report emp-id="employee.empId" employee-time-records="employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
 	    			</div>
 	    			<div class="clearfix"></div>
 	    		</uib-tab>

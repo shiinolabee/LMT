@@ -1,8 +1,15 @@
 
-<div class="col-md-6">
-	<label>Current Year :</label><div class="year-dropdown-wrapper" year-dropdown model-name="test" offset="0" range="20"></div>
+<div class="col-md-12">
+	<!-- <h5><i class="fa fa-filter"></i> Filters </h5> -->
+	<div class="dropdown-wrapper" dropdown-selector type="year" emp-id="employee.empId" model="selectedYear" offset="0" range="20"></div>		     
+	<div class="dropdown-wrapper" dropdown-selector type="month" emp-id="employee.empId" model="selectedMonth"></div>		     
 </div>
 
-<hc-custom-graph options="chartOptions"></hc-custom-graph>
+<div class="clearfix"></div>
 
-<hc-pie-chart title="Browser usage" data="pieData">Placeholder for pie chart</hc-pie-chart>
+<div ng-if="chartIsEmpty" uib-alert class="alert-warning">
+	<i class="icon fa fa-warning"></i> No Time Records yet uploaded for the current month of <strong>{{ ( selectedMonth.length ? selectedMonth : initDate ) | date : 'MMMM' }} {{ selectedYear }}</strong>.</div>
+
+<hc-custom-graph options="chartOptions" ng-if="chartOptions"></hc-custom-graph>
+
+<hc-custom-graph ng-if="pieOptions" options="pieOptions"></hc-custom-graph>

@@ -138,27 +138,68 @@
     /** 
     *for year selector dropdown
     **/
-    cereliDirectives.directive('yearDropdown',function(){
+    cereliDirectives.directive('dropdownSelector',function(){        
+
+    	var currentYear = new Date().getFullYear();
+
+        return {
+
+        	restrict : 'EA',
+
+        	scope : {
+            	type : '@',
+            	model : '=',
+            	empId : '='
+        	},        	
+
+            link: function(scope, element, attrs){
+
+                scope.typeOptions = [];
+
+                if ( scope.type == 'year' ) {
+
+	                for (var i = +attrs.offset; i < +attrs.range + 1; i++){
+	                    scope.typeOptions.push(currentYear - i);
+	                }            	               
+                } else {
+                	scope.typeOptions = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];  
+                }
+
+            	scope.model = scope.model || currentYear;
+
+            }, 
+
+            templateUrl : 'templates/common/dropdown-selector.html',
+
+            controller : [ '$scope', 'activeRecordService', function( $scope, activeRecordService ) {            	
+
+            	$scope.changeItem = function( newItem ){
+            		$scope.model = newItem;
+            	};
+            }]
+        }
+    });   
+
+    /** 
+    *for month selector dropdown
+    **/
+    cereliDirectives.directive('monthDropdown',function(){
 
         var currentYear = new Date().getFullYear();
 
         return {
 
         	scope : {
-        		modelName : '@'
+        		selectedMonth : '='
         	},
 
             link: function(scope, element, attrs){
 
-                scope.years = [];
+                scope.months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];               
 
-                for (var i = +attrs.offset; i < +attrs.range + 1; i++){
-                    scope.years.push(currentYear - i);
-                }
-
-                scope.selectedYear = currentYear;
+                // scope.selectedMonth = currentYear.getMonth();
             },
-            template: '<select ng-model="modelName" ng-options="y for y in years" ng-init="modelName=years[0]"></select>'
+            template: '<select ng-model="selectedMonth" ng-options="m for m in months"></select>'
 
         }
     });
@@ -190,7 +231,7 @@
 
 	});
 
-	cereliDirectives.directive('employeeStatisticsReport', [ 'moment', function( moment ){
+	cereliDirectives.directive('employeeStatisticsReport', [ 'moment', 'activeRecordService', function( moment, activeRecordService ){
 
 		return {
 
@@ -200,145 +241,338 @@
 
 			scope : {
 				statisticsRecordResult : '=',
-				employeeTimeRecords : '='
+				employeeTimeRecords : '=',
+				empId : '=',
 			},
 
 			templateUrl : 'templates/employees/employee-statistics-report.html',
 
 			controller : function( $scope ){
 
-				var _self = this;
+				var _self = this;			
 
-				_self.init = function(){
-
-					_self.employeeTimeRecordsList = [];	
-
-					for (var key in $scope.employeeTimeRecords) {				  	
-
-	                	var employeeTimeRecord = $scope.employeeTimeRecords[key];
-
-	                	if ( employeeTimeRecord.remarks.length > 0 ) employeeTimeRecord.title = employeeTimeRecord.remarks;
-	                	
-	               		employeeTimeRecord.startsAt = moment($scope.employeeTimeRecords[key].startsAt).toDate();
-	                	
-	                	if ( $scope.employeeTimeRecords[key].endsAt.length > 0 ) {
-	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].endsAt).toDate();
-	                	} else {
-	                		employeeTimeRecord.endsAt = moment($scope.employeeTimeRecords[key].startsAt).add(1,'hours').toDate();
-	                	}	  
-	                	
-	                	_self.employeeTimeRecordsList.push(employeeTimeRecord);
-
-					}  
-
-					_self.eventsGroup = [];					
-
-		     	 	_self.employeeTimeRecordsList.forEach(function(event) {
-			      		
-			      		var startsAtDate = event.startsAt.toDateString();
-		      		
-				        _self.eventsGroup[startsAtDate] = _self.eventsGroup[startsAtDate] || [];
-					   	_self.eventsGroup[startsAtDate].push(event);	    		     	 	
-				 	});
+				$scope.initDate = moment();	
+				$scope.selectedYear = $scope.initDate.format('YYYY');
+				$scope.selectedMonth = $scope.initDate.format('MMMM');
+				$scope.chartDataValues = [];
+				$scope.daysOfCurrentMonth = [];	
+				$scope.pieChartValues = [];
+				$scope.chartIsEmpty = true;
 
 
-				 	Object.keys(_self.eventsGroup).forEach(function( event, i ){				 		
-
-				 		var item = _self.eventsGroup[event];
-				 		
-			 			var totalHoursRendered = Math.abs( item[0].startsAt - item[item.length-1].startsAt  ) / 36e5;
-			 			item.totalHoursRendered = totalHoursRendered;				 		
-
-				 	});
-
-					console.log(_self.eventsGroup);	
-				}
-
-				_self.init();
-			 	
-				console.log(_self.eventsGroup);		
-
-				$scope.timeRecordTypes = [
+			 	$scope.timeRecordTypes = [
 					{ name : 'Attended', value : 1 },
 					{ name : 'Absent', value : 2 },
 					{ name : 'Leave(Paid)', value : 3 },
 					{ name : 'Leave(Unpaid)', value : 4 }
-				];				
+				];	
 
-			 	$scope.chartOptions = {
-			 		 chart: {
-			            type: 'column'
-			        },
-                    title: {
-                        text: 'Yearly Employee Time Record'
-                    },
-                    xAxis: {
-                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                    },
+				$scope.$watchCollection('[selectedYear, selectedMonth, statisticsRecordResult, chartDataValues]', function(newValue, oldValue){
 
-                    yAxis: {
-			            min: 0,
-			            title: {
-			                text: 'Rendered Hours Per Month(hrs)'
-			            }
-			        },
+			 	 	if ( newValue[0] !== oldValue[0] || newValue[1] !== oldValue[1] ) {				 	 		
+			 	 		$scope.getReportsBy(newValue[0] + ' ' + newValue[1]);
+			 	 	}
 
-                 	tooltip: {
-			            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-			            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-			                '<td style="padding:0"><b>{point.y:.1f} hours</b></td></tr>',
-			            footerFormat: '</table>',
-			            shared: true,
-			            useHTML: true
-			        },
-			        plotOptions: {
-			            column: {
-			                pointPadding: 0.2,
-			                borderWidth: 0
-			            }
-			        },
-			        series: [{
-			            name: 'Absents',
-			            data: [$scope.statisticsRecordResult[0].recordValue, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+			 	 	if ( newValue[2] !== oldValue[2] ) {
+			 	 		_self.init();
+			 	 	}
 
-			        }, {
-			            name: 'Attended',
-			            data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+			 	 	if ( (newValue[3] !== oldValue[3]) ) {
+			 	 		_self.initChartOptions();
+			 	 	}
 
-			        }, {
-			            name: 'Paid Leaves',
-			            data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+                }); 
 
-			        }, {
-			            name: 'Unpaid Leaves',
-			            data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+				_self.init = function(){
 
-			        }]
-                };
+					_self.employeeTimeRecordsList = [];	
+					_self.timeRecordsGroup = [];					
 
-             	// Sample data for pie chart
-                $scope.pieData = [{
-                        name: "Microsoft Internet Explorer",
-                        y: 56.33
-                    }, {
-                        name: "Chrome",
-                        y: 24.03,
-                        sliced: true,
-                        selected: true
-                    }, {
-                        name: "Firefox",
-                        y: 10.38
-                    }, {
-                        name: "Safari",
-                        y: 4.77
-                    }, {
-                        name: "Opera",
-                        y: 0.91
-                    }, {
-                        name: "Proprietary or Undetectable",
-                        y: 0.2
-                }]
+					for (var key in $scope.statisticsRecordResult) {				  	
+
+	                	var employeeTimeRecord = $scope.statisticsRecordResult[key];	                	
+	                	
+	               		employeeTimeRecord.startsAt = moment($scope.statisticsRecordResult[key].startsAt).toDate();
+	                	
+	                	if ( $scope.statisticsRecordResult[key].endsAt.length > 0 ) {
+	                		employeeTimeRecord.endsAt = moment($scope.statisticsRecordResult[key].endsAt).toDate();
+	                	} else {
+	                		employeeTimeRecord.endsAt = moment($scope.statisticsRecordResult[key].startsAt).add(1,'hours').toDate();
+	                	}	  
+	                	
+	                	_self.employeeTimeRecordsList.push({ type :  $scope.statisticsRecordResult[key].timeRecordType, startsAt : employeeTimeRecord.startsAt, endsAt:  employeeTimeRecord.endsAt });
+					} 
+
+				 	_self.employeeTimeRecordsList.map(function( obj ){			 		
+
+				 		if ( angular.isObject(obj) ) {			 			
+				 			_self.timeRecordsGroup[obj.type] = [];
+				 		}
+				 	});
+
+				 	_self.employeeTimeRecordsList.map(function( obj ){			 		
+
+				 		if ( angular.isObject(obj) ) {			 			
+
+				 			var groupByDate = moment(obj.startsAt);
+
+				 			_self.timeRecordsGroup[obj.type][groupByDate.format('D')] = [];
+				 		}
+				 	});
+
+			 		_self.employeeTimeRecordsList.map(function( obj ){			 		
+				 		if ( angular.isObject(obj) ) {		
+				 			var groupByDate = moment(obj.startsAt);					 					 			 						
+				 			_self.timeRecordsGroup[obj.type][groupByDate.format('D')].push(obj);
+				 		}
+				 	});
+
+
+				 	_self.timeRecordsGroup.map(function( parentItem, parentIndex ){		
+
+				 		parentItem.map(function( childItem, childIndex ){
+
+				 			var item = childItem;				 			
+
+					 		if ( angular.isArray( item ) && item.length > 1 ) {
+
+					 			var groupByDate = moment(item[0].startsAt);					 					 			 						
+
+					 			var totalHoursRendered = Math.abs( item[0].startsAt - item[item.length-1].startsAt  ) / 36e5;
+
+					 			_self.timeRecordsGroup[parentIndex][groupByDate.format('D')] = totalHoursRendered;				 			
+					 			
+					 		} else {
+					 			var totalHoursRendered = Math.abs( item[0].startsAt - item[0].endsAt  ) / 36e5;
+					 			var groupByDate = moment(item[0].startsAt);					 					 			 						
+
+					 			_self.timeRecordsGroup[parentIndex][groupByDate.format('D')] = totalHoursRendered;			 			
+					 			
+					 		}
+				 		});
+
+				 	});	
+
+				 	console.log(_self.timeRecordsGroup);			 	 				 			 			
+
+		 			$scope.mapTimeRecordsGroup();						
+
+		 			$scope.calculateTimeRecordGroup();
+
+					$scope.getDaysInMonth($scope.initDate);             
+	
+				};
+
+				_self.initChartOptions = function(){
+
+				 	$scope.chartOptions = {
+				 		 chart: {
+				            type: 'spline'
+				        },
+	                    title: {
+	                        text: 'Monthly Employee Time Record'
+	                    },
+	                    xAxis: {
+	                        categories: $scope.daysOfCurrentMonth,
+	                        title: {
+				                text: 'Days of ' + $scope.selectedMonth
+				            }				            
+	                    },
+
+	                    yAxis: {
+				            min: 0,
+				            title: {
+				                text: 'Rendered Hours Per Month(hrs)'
+				            },
+			              	labels: {
+				                format: '{value} hr(s)'
+				            },
+				            plotBands : [
+				            	{ // Overtime
+					                from: 9,
+					                to: 150,					                
+					                color: '#ffbcb3',
+					                label: {
+					                    text: 'Overtime Hours',
+					                    style: {
+					                        color: '#fff'					                        
+					                    }
+					                }
+					            }
+				            ]
+				        },
+
+	                 	tooltip: {
+				            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+				            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+				                '<td style="padding:0"><b>{point.y:.1f} hours</b></td></tr>',
+				            footerFormat: '</table>',
+				            shared: true,
+				            useHTML: true
+				        },
+				        plotOptions: {
+				            spline: {
+				                lineWidth: 3.5,
+				                states: {
+				                    hover: {
+				                        lineWidth: 4.5
+				                    }
+				                },
+				                marker: {
+				                    enabled: false
+				                }				                
+				            }
+				        },
+				        series: [{
+				            name: 'Attended',
+				            data: $scope.chartDataValues[0]
+
+				        }, {
+				            name: 'Absent',
+				            data: $scope.chartDataValues[1]
+
+				        }, {
+				            name: 'Paid/Unpaid Leaves',
+				            data: $scope.chartDataValues[2]
+
+				        }]
+	                };
+
+	                $scope.pieOptions = {
+	                    chart: {
+	                        type: 'pie'
+	                    },
+	                    title: {
+	                        text: "Time Records Pie Ratio month of " + $scope.selectedMonth,
+	                    },
+	                    plotOptions: {
+	                        pie: {
+	                            allowPointSelect: true,
+	                            cursor: 'pointer',
+	                            dataLabels: {
+	                                enabled: true,
+	                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+	                            }
+	                        }
+	                    },
+	                    tooltip: {				           
+				            pointFormat: '<b>{point.y:.1f} hours</b>',				           
+				            shared: true,
+				            useHTML: true
+				        },
+	                    series: [{
+	                        data: [{
+			                        name: "Attended",
+			                        y: $scope.pieChartValues[0],
+			                        sliced: true,
+			                        selected: true
+			                    }, {
+			                        name: "Absent",
+			                        y: $scope.pieChartValues[1]			                        
+			                    }, {
+			                        name: "Paid/Unpaid Leaves",
+			                        y: $scope.pieChartValues[2]
+			                    }
+			                ]
+	                    }]
+                	};
+					
+
+				};			
+
+				$scope.getDaysInMonth = function( selectedDate ){					
+
+					var totalDaysOfMonth = moment(selectedDate).daysInMonth(),
+						i;
+
+					$scope.daysOfCurrentMonth = [];
+
+					for( i = 1; i <= totalDaysOfMonth; i++ ) {
+						$scope.daysOfCurrentMonth.push(i);
+					};					
+
+				};
+
+				$scope.mapTimeRecordsGroup = function() {
+
+					if ( _self.timeRecordsGroup.length > 0 ) {
+						var i, tempDaysResults = [],tempRecordsResults = [];
+
+
+						//pre populate temp list for number of days of the month
+						for ( i = 0; i <= ($scope.daysOfCurrentMonth.length -1 ); i++ ) {
+							tempDaysResults.push(0);
+						}						
+
+						Object.keys(_self.timeRecordsGroup).forEach(function( item, i ){				
+							
+							var clonedDaysResults = angular.copy(tempDaysResults);							
+
+							angular.forEach(_self.timeRecordsGroup[item], function( value, key ){														
+								clonedDaysResults[key] = value;								
+							});
+
+							tempRecordsResults.push(clonedDaysResults);
+
+						});						
+
+						$scope.chartDataValues = tempRecordsResults;
+					}
+
+				};	
+
+				$scope.calculateTimeRecordGroup = function(){
+
+					if ( angular.isObject(_self.timeRecordsGroup) && _self.timeRecordsGroup ) {
+
+						var tempRecordsResults = [];					
+
+						angular.forEach(_self.timeRecordsGroup, function( parentItem, key){
+
+							var tempTotalHours = 0;
+
+							angular.forEach(parentItem, function( childItem, index ){
+								tempTotalHours += parseInt(childItem.toFixed(1));
+							});
+
+							tempRecordsResults.push(tempTotalHours)
+						});
+
+						$scope.pieChartValues = tempRecordsResults;						
+
+					}
+				};	 	 	
+
+			 	$scope.getReportsBy = function( date ){
+
+			 		var selectedDate = moment(date);
+
+			 		$scope.$parent.childLoader = true;
+
+			 		if ( selectedDate.isValid() ) {				 						
+
+			 			$scope.getDaysInMonth(date);			 			
+
+		 				activeRecordService.getActiveRecord({ id: $scope.empId, date : selectedDate }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
+		 					if ( response.success ) {
+			 					$scope.$parent.childLoader = false;
+
+			 					if ( response.data.length > 0 ) {
+                            		$scope.statisticsRecordResult = response.data;		 									 						
+			 						$scope.chartIsEmpty = false;
+			 					} else {
+			 						$scope.chartIsEmpty = true;
+			 					}
+		 					}
+		 				})	
+			 		}
+
+			 	};
+
+			 	if ( $scope.statisticsRecordResult.length ) {
+					_self.init();			 				 		
+			 	}
+
 			}
 		};
 
@@ -580,6 +814,8 @@
 
                 	var recordType = _self.getTimeRecordType(_self.time_record.timeRecordType);
 
+                	_self.time_record.date = moment(_self.time_record.startsAt).format('YYYY-MM-DD');
+
                 	newCalendarEvent.title = _self.time_record.remarks;
                 	newCalendarEvent.color = recordType.color;
                 	newCalendarEvent.type = recordType.type;
@@ -703,7 +939,7 @@
 	/**
 	* Employee's Tracking Activities
 	**/
-	cereliDirectives.directive('employeeTrackingActivities', [ 'activeRecordService', function( activeRecordService ){
+	cereliDirectives.directive('employeeTrackingActivities', [ 'activeRecordService', 'moment', function( activeRecordService, moment ){
 
 		return {
 
@@ -713,40 +949,40 @@
 
 			templateUrl : 'templates/employees/employee-tracking-activities.html',
 
-			scope : true,
-
-			bindToController : {
-				empId : '@',
-				activities : '=',
-				showLoader : '='
+			scope : {
+				empId : '@',				
+				showLoader : '=',
+				activities : '='
 			},
 
-			controller : function(){
+			controller : [ '$scope', function( $scope ){
 
-				var _self = this;	
+				var _self = this;					
 
-				// console.log(_self)	
+			    _self.getAllEmployeeActivities = function(){
+        
+			        _self.showLoader = true;			        
 
-				// _self.activityTypes = [
-				// 	"1.1" => { type : 'fa-' }
-				// ];		
+			        activeRecordService.getActiveRecord({ lastActivityRecord : $scope.$parent.lastActivityRecord }, 'employee_activities/getAllEmployeeActivities').then(function( response ){
+			            if ( response.success) {
+			                _self.showLoader = false;                                
 
-				// _self.getTrackingActivities = function(){
+			                if ( response.data.length > 0 ) {			                	
 
-				// 	activeRecordService.getActiveRecordList('employee_activities/getAllEmployeeActivities').then(function( response ){
-				// 		if ( response.success) {
-				// 			_self.activities.push(response.data);
-				// 			console.log
-				// 		}
-				// 	});
+			                	angular.forEach(response.data, function( item, index ){
+			                		$scope.$parent.activities.push(item);
+			                	});   		                				                	
 
-				// };
+			                	$scope.$parent.lastActivityRecord = _self.lastActivityRecord = $scope.$parent.activities[$scope.$parent.activities.length-1].dateCommitted;            			                	
+			                } else {
+			                	$scope.$parent.lastActivityRecord = _self.lastActivityRecord = moment($scope.$parent.lastActivityRecord).subtract(8,'days').format('YYYY-MM-DD');            			                	
+			                }
+			            }
+			        });
+			    };
 
-				// if ( _self.empId == 0 ) {
-				// 	_self.getTrackingActivities();
-				// }
 
-			},
+			}],
 
 			controllerAs : 'employeeTrackingActivitiesCtrl'
 		};
@@ -841,6 +1077,28 @@
 		        
 		        _self.toolsOptions.typeChosen = _self.toolsOptions.exportTypes[0];
 
+		        _self.uploadEmployees = function( file ){
+
+		        	Upload.upload({
+	                	url : 'employees/uploadCsvRecords',
+		                data : { file: file, userId : $scope.authorizeUser.user.id }
+		            }).then(function( response ){
+		                if ( response.status == 200 ) {
+		                	$scope.filePercentage = 0;
+		                	_self.message = response.data.message;		                	
+		                }
+		            }, function( response ){
+		            	console.log('Error status: ' + response.status);
+		            }, function( evt ){		
+
+		            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+	            		$scope.filePercentage = progressPercentage;
+	            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+
+		            });		     
+
+		        };
+
 				_self.submitUpload = function(){
 
 					console.info('Importing selected file...');					
@@ -855,7 +1113,7 @@
 		        	if ( file ) {
 
 	        			Upload.upload({
-		                	url : 'employees/uploadTimeRecord',
+		                	url : 'employee_time_records/uploadTimeRecord',
 			                data : { file: file, userId : $scope.authorizeUser.user.id }
 			            }).then(function( response ){
 			                if ( response.status == 200 ) {
@@ -938,51 +1196,22 @@
 			},
 
 			link : function( scope, element ){
+
+				Highcharts.setOptions({
+			     	colors: ['#00c0ef', '#ff851b', '#605ca8']
+			    });
+
 				Highcharts.chart(element[0], scope.options);
+
+				scope.$watch('options', function( newValue, oldValue ){
+					if ( newValue ) {						
+						Highcharts.chart(element[0], newValue);						
+					}
+				})
 			}
 		};
 
 	});
-	
-    cereliDirectives.directive('hcPieChart', function () {
-
-        return {
-
-            restrict: 'E',
-
-            template: '<div></div>',
-
-            scope: {
-                title: '@',
-                data: '='
-            },
-
-            link: function (scope, element) {
-
-                Highcharts.chart(element[0], {
-                    chart: {
-                        type: 'pie'
-                    },
-                    title: {
-                        text: scope.title
-                    },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: true,
-                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                            }
-                        }
-                    },
-                    series: [{
-                        data: scope.data
-                    }]
-                });
-            }
-        };
-    })
 
 	// cereliDirectives.directive('tabs', function(){
 
