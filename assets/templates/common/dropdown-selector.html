@@ -1,0 +1,11 @@
+<div class="btn-group" uib-dropdown>
+	<button type="button" class="btn btn-primary"><i class="fa fa-calendar-times-o"></i> Selected {{ type | lowercase }} :</button>
+  	<button id="split-button" type="button" class="btn btn-default">{{ model }}</button>
+  	<button type="button" class="btn btn-default" uib-dropdown-toggle>
+    	<span class="caret"></span>
+    	<span class="sr-only">Split button!</span>
+  	</button>
+  	<ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+  		<li role="menuitem" ng-class="{ active : item == model }" ng-repeat="item in typeOptions"><a href="javascript:void(0);" ng-click="changeItem(item)">{{ item }}</a></li>
+  	</ul>	
+</div>

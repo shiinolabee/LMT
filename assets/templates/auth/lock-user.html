@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="center-block-container">
+
+    <div class="lockscreen-wrapper">
+      <div class="lockscreen-logo">
+          <a href="#"><b>Cereli</b> Electrical Services</a>        
+      </div>
+      <!-- User name -->
+      <div class="lockscreen-name">{{ tempUser.fullName }}</div>
+
+      
+      <div uib-alert ng-repeat="error in errors" class="alert-danger" type="danger" dismiss-on-timeout="4000">
+              <i class="fa fa-exclamation-triangle"></i> {{error.err}}</div>
+
+      <!-- START LOCK SCREEN ITEM -->
+      <div class="lockscreen-item">
+        <!-- lockscreen image -->
+        <div class="lockscreen-image">
+          <img src="img/user1-128x128.jpg" alt="User Image">
+        </div>
+        <!-- /.lockscreen-image -->
+
+        <!-- lockscreen credentials (contains the form) -->
+        <form novalidate name="loginForm" ng-model="loginForm" method="post" class="lockscreen-credentials">       
+              <div class="form-group has-feedback input-group">          
+                  <input type="password" ng-model="user.password" class="form-control" placeholder="Enter your password...">
+                  <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn" ng-click="login();"><i class="fa fa-arrow-right text-muted"></i></button>
+                  </div>
+              </div>
+          </div>
+        </form>
+        <!-- /.lockscreen credentials -->
+
+      </div>
+      <!-- /.lockscreen-item -->
+      <div class="help-block text-center">
+        Enter your password to retrieve your session
+      </div>
+      <div class="text-center">
+        <a ui-sref="login">Or sign in as a different user</a>
+      </div>
+      <div class="lockscreen-footer text-center text-aqua">
+        Copyright © 2014-2016 <b><a href="http://almsaeedstudio.com">Cereli Electrical Services</a></b><br>
+        All rights reserved
+      </div>
+    </div>
+
+  </div>
+</div>
