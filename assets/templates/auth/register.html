@@ -1,52 +1,53 @@
-<div class="container" ng-controller="registerController as registerCtrl">
-  <div class="center-block-container">
-      <div class="register-box">
-        <div class="register-logo">
-          <a href="#"><b>Cereli</b> Electrical Services</a>
-        </div>
-        <!-- /.register-logo -->
-        <div class="register-box-body">
-          <p class="register-box-msg">Register as Employee</p>
+<div class="register-box" ng-controller="registerController as registerCtrl">
+<!--   <div class="register-logo">
+    <a href="#"><b>Cereli</b> Electrical Services</a>
+  </div> -->
+  <!-- /.register-logo -->
+  <div class="register-box-body">
 
-          <div uib-alert ng-repeat="alert in registerCtrl.listAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+    <h3 class="text-left no-margin-bottom">Sign Up</h3>
+    <h5 class="text-left">To start your experience.</h5>
 
-          <form name="registerForm" ng-model="registerForm" novalidate>
 
-            <div class="form-group has-feedback">
-              <input type="text" class="form-control" ng-model="registerCtrl.user.fullName" placeholder="Full name" ng-required="true">
-              <span class="glyphicon glyphicon-user form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-              <input type="email" class="form-control" ng-model="registerCtrl.user.email" placeholder="Email" ng-required="true">
-              <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-              <input type="password" class="form-control" ng-model="registerCtrl.user.password" placeholder="Password" ng-required="true">
-              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-              <input type="password" class="form-control" ng-model="registerCtrl.user.confirmPassword"placeholder="Retype password" ng-required="true">
-              <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
-            </div>
-            <div class="row">
-              <div class="col-xs-8">
-                <div class="checkbox icheck">
-                  <label class="">
-                    <div class="icheckbox_square-blue" aria-checked="false" aria-disabled="false" style="position: relative;"><input type="checkbox" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"><ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> I agree to the <a href="#">terms</a>
-                  </label>
-                </div>
-              </div>
-              <!-- /.col -->
-              <div class="col-xs-4">
-                <button type="submit" ng-disabled="registerForm.$invalid" ng-click="registerCtrl.register()" class="btn btn-primary btn-block btn-flat">Register</button>
-              </div>
-              <!-- /.col -->
-            </div>
-          </form>
-
-          <a ui-sref="login" class="text-center">Already a member?</a>
-        </div>
-      <!-- /.form-box -->
+    <div uib-alert ng-repeat="alert in registerCtrl.listAlerts" ng-class="'alert-' + ({{alert.type}} || 'danger')" type="{{alert.type}}" close="closeAlert('listAlerts', $index)" dismiss-on-timeout="6000">
+      <i class="fa fa-exclamation-triangle"></i> {{alert.msg}}
     </div>
+
+    <form name="registerForm" ng-model="registerForm" novalidate class="margin-bottom">
+
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" ng-model="registerCtrl.user.fullName" placeholder="Full name" ng-required="true">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      
+      <div class="form-group has-feedback">
+        <input type="email" class="form-control" ng-model="registerCtrl.user.email" placeholder="Email" ng-required="true">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      
+      <div class="form-group has-feedback">
+        <input type="password" class="form-control" ng-model="registerCtrl.user.password" placeholder="Password" ng-required="true">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      
+      <div class="form-group has-feedback">
+        <input type="password" class="form-control" ng-model="registerCtrl.user.confirmPassword"placeholder="Retype password" ng-required="true">
+        <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+      </div>
+
+      <div class="row">        
+        <div class="col-xs-5 col-md-5 pull-right">
+          <button type="submit" ng-disabled="registerForm.$invalid" ng-click="registerCtrl.register()" class="btn btn-danger btn-block btn-flat"><i class="fa fa-upload"></i> <strong>Register</strong></button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+
+    <p class="text-left">
+      I'm already an existing user. Just get me to <a ui-sref="admin.login">login</a> page!
+    </p>
+    
   </div>
+<!-- /.form-box -->
 </div>
+  

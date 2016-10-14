@@ -4,7 +4,7 @@ var adminController = function( $scope, Auth, $state, $sce, $http, $timeout ){
     $scope.selectedMenu = 0;
 
     $scope.clock = "loading clock..."; // initialise the time variable
-    $scope.tickInterval = 1000; //ms
+    $scope.tickInterval = 1000; //ms    
 
     var tick = function() {
         $scope.clock = Date.now() // get the current time
@@ -26,7 +26,7 @@ var adminController = function( $scope, Auth, $state, $sce, $http, $timeout ){
 
     $scope.logout = function(){
         Auth.logout();         
-        $state.go('login');   
+        $state.go('admin.login');   
     };   
 
 };

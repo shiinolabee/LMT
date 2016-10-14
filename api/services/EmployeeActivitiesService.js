@@ -11,11 +11,11 @@ module.exports = {
 
 	getAllEmployeeActivities : function(lastActivityRecord, callback ){
 
-		var lastActivityRecord = lastActivityRecord || null;
+		var lastActivityRecord = lastActivityRecord == null ? null : lastActivityRecord;
 
 		console.log(lastActivityRecord);
 
-		if ( moment(lastActivityRecord).isValid() ) {
+		if ( lastActivityRecord !== 0 && moment(lastActivityRecord).isValid() ) {
 			var lastActivityRecordDate = moment(lastActivityRecord);
 			var last6days = moment(lastActivityRecord).subtract(8, 'days');		
 
@@ -25,9 +25,8 @@ module.exports = {
 					'>=' : last6days.format('YYYY-MM-DD')
 				} 
 			};		
-			
 
-		} else {
+		} else if ( lastActivityRecord == null ) {
 			var currentDate = moment();
 			var last6days = currentDate.subtract(6, 'days');					
 
@@ -36,6 +35,10 @@ module.exports = {
 					'>=' : last6days.format('YYYY-MM-DD') 
 				} 
 			};				
+		} else {
+			var query = {
+				type : 0
+			};
 		}
 
 		console.log(query)

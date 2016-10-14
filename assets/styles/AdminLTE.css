@@ -167,14 +167,17 @@ h6,
 }
 /* General Links */
 a {
-  color: #3c8dbc;
+  /*color: #3c8dbc;*/
+  color: #d73925;
+  cursor:pointer;
 }
 a:hover,
 a:active,
 a:focus {
   outline: none;
   text-decoration: none;
-  color: #72afd2;
+  /*color: #72afd2;*/
+  color: #d73925;
 }
 /* Page Header */
 .page-header {
@@ -3226,7 +3229,7 @@ table.text-center th {
 .login-box-body,
 .register-box-body {
   background: #fff;
-  padding: 20px;
+  padding: 20px 30px;
   border-top: 0;
   color: #666;
 }

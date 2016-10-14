@@ -11,7 +11,8 @@
     "angular-color-picker": "angularjs-color-picker#^2.4.3",
     "ngGAPI": "https://github.com/christiansmith/ngGAPI.git",
     "angular-trix": "^1.0.2",
-    "angular-moment": "^0.10.3"
+    "angular-moment": "^0.10.3",
+    "angucomplete-alt": "^2.5.0"
   },
   "devDependencies": {
     "angular-ui-router": "^0.3.1",

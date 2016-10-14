@@ -31,7 +31,7 @@ module.exports = {
     
     getEmployee : function( criteria, callback ) {
 
-        Employees.find({ where : { fullName : criteria, emailAddress : criteria, empId : criteria } }).exec(function( err, employees ) {
+        Employees.find({ empId : { 'contains': criteria } }, { fullName : { 'contains': criteria } }, { emailAddress : { 'contains': criteria } }, { position : { 'contains': criteria } }).exec(function( err, employees ) {
 
             if( err ) callback(err);
 

@@ -18,7 +18,7 @@ module.exports = {
             csvOptions: {delimiter: ',', columns: true},         
             rowHandler: function(row, fd){    
         
-                var tempEmployeeRecord = {
+               var tempEmployeeRecord = {
                     id : 0,
                     empId : '',
                     position : '',
@@ -34,7 +34,9 @@ module.exports = {
                     contactNumber : '',
                     gender : '',
                     homeAddress : '',
-                    emailAddress : ''              
+                    emailAddress : '',
+                    createdAt : '',
+                    updatedAt : ''
                 };
 
                 var tempArray = [];                
@@ -166,7 +168,12 @@ module.exports = {
         var criteria = (req.param('criteria')) ? req.param('criteria') : undefined;       
 
         EmployeesService.getEmployee(criteria, function( response ){
-            res.json(response);
+            
+            if ( response ) {
+                res.json( { success : true , data : response  });    
+            } else {
+                res.json(response.status, { success : false , data : "Error"  });                
+            } 
         });
     },
 

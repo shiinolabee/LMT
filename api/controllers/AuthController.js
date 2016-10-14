@@ -28,7 +28,7 @@ module.exports = {
       User.comparePasswordIfValid(password, user, function(err, valid) {
        
         if (err) {
-          return res.json(403, {err: 'Incorrect log-in details' });
+          return res.json(401, {err: 'Incorrect log-in details' });
         }
 
         if (!valid) {
@@ -46,13 +46,13 @@ module.exports = {
     var data = req.param('data');
 
     if (data.password !== data.confirmPassword) {
-      return res.json(401, { success : false, err: 'Password doesn\'t match'});
+      return res.json(401,{ success : false, err: 'Password doesn\'t match'});
     }
 
     User.create(data).exec(function(err, user) {
 
       if (err) {     
-        return res.json(err.status,{ success :false, err: "Error" });        
+        return res.json(401,{ success :false, err: "Error registering your details" });        
       }
 
       if (user) {

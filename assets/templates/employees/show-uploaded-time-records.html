@@ -1,0 +1,54 @@
+<div class="modal-header">
+    <h4>{{modalOptions.headerText}}</h4>
+</div>
+<div class="modal-body">
+	<h3>Total Records imported : {{ mainDataList.length }}</h3>
+   	<table class="table table-hover table-responsive table-striped">
+      	<tbody>
+          	<tr>          
+	            <th>Employee ID</th>
+	            <th>Date</th>
+	            <th>Time starts</th>
+	            <th>Time ends</th>	            
+          	</tr>
+          	<tr ng-repeat="time_record in mainDataList">
+            	<td>{{ time_record.empId }}</td>
+            	<td>{{ time_record.date | date:'MMM d, yyyy' }}</td>
+            	<td>{{ time_record.startsAt | date : 'h:m a' }}</td>            
+            	<td>{{ time_record.endsAt | date : 'h:m a' }}</td>                        	
+          	</tr>         
+    	</tbody>
+  	</table>
+
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="dataTables_info">
+          Showing {{ vm.pager.startIndex + 1}} to {{ vm.pager.endIndex + 1 }} of {{ vm.pager.totalItems }} records
+        </div>
+      </div>
+      <div class="col-sm-9 pull-right">
+        <div class="dataTables_paginate paging_simple_numbers">                  
+          <ul ng-if="vm.pager.pages.length" class="pagination">
+              <li ng-class="{disabled:vm.pager.currentPage === 1}">
+                  <a ng-click="vm.setPage(1)">First</a>
+              </li>
+              <li ng-class="{disabled:vm.pager.currentPage === 1}">
+                  <a ng-click="vm.setPage(vm.pager.currentPage - 1)">Previous</a>
+              </li>
+              <li ng-repeat="page in vm.pager.pages" ng-class="{active:vm.pager.currentPage === page}">
+                  <a ng-click="vm.setPage(page)">{{page}}</a>
+              </li>                
+              <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
+                  <a ng-click="vm.setPage(vm.pager.currentPage + 1)">Next</a>
+              </li>
+              <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
+                  <a ng-click="vm.setPage(vm.pager.totalPages)">Last</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+  </div>  
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>   
+</div>

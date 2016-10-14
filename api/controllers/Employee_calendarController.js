@@ -59,7 +59,7 @@ module.exports = {
                         }
                     });                 
                 } else {
-                    res.json(response.status, { success : false , data : "Error"  });                
+                    res.json({ success : false , data : "Error"  });                
                 }   
             });
         }

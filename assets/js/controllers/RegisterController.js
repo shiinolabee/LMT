@@ -15,13 +15,28 @@ var registerController = function( $scope, $state, Auth ){
 
     _self.register = function() {
 
-      _self.user.username = _self.user.email;
+        _self.user.username = _self.user.email;
 
-        Auth.register(_self.user).then(function( response ) {
+        Auth.register(_self.user).success(function( response ) {
         
-          if ( response ) {
-            $state.go('login');             
+          if ( response.success ) {
+            
+            $scope.addAlert('listAlerts', {
+                type: 'success',
+                msg: 'Your registration is successful.'
+            });               
+
           }
+
+
+        }).error(function(err, data) {
+
+            $scope.addAlert('listAlerts', {
+                type: 'danger',
+                msg: err.err
+            });   
+
+            console.log(_self.listAlerts)
 
         });
       

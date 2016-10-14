@@ -1,25 +1,20 @@
-<div ng-show="isAuthenticated">
+<div ng-if="authorizeUser">
 
     <div class="col-md-12">
-        <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
-
-        <div class="btn-group margin-bottom" role="group" aria-label="...">
-          <button type="button" class="btn btn-primary"><i class="fa fa-user"></i></button>
-          <button class="btn btn-primary" ng-click="employeeCtrl.saveEmployee(0, false)"><b>New Employee</b></button>   
-        </div>        
+        <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>     
         
         <!-- <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveTimeRecord()"><i class="fa fa-user"></i> <b>New Employee Time Record</b></button> -->
 
     </div>   
     
     <!-- Employee Tabs Section -->    
-    <div class="col-md-9">
+    <div class="col-md-8">
 
       <div class="nav-tabs-custom">
 
         <uib-tabset active="active">
             <!-- Employee Timeline -->
-            <uib-tab index="0" select="employeeCtrl.getAllEmployeeActivities();">
+            <uib-tab index="0" select="employeeCtrl.getEmployeeActivities(null);">
               <uib-tab-heading>
                 <i class="fa fa-tasks"></i> Timeline & Activities                
               </uib-tab-heading>
@@ -37,19 +32,47 @@
               <uib-tab-heading>
                     <i class="fa fa-th-list"></i> List of Employees
               </uib-tab-heading>
-
          
               <ajax-loader show-loader="parentShowLoader"></ajax-loader>
-              
-              <div class="pull-left">
-                <h4 class="lead">There are {{ mainDataList.length }} employee(s) registered in the system. </h4>
-              </div>
-              <div class="pull-right">
-                <div class="has-feedback">
-                  <input type="text" class="form-control input-sm" placeholder="Search Employee" ng-model="employeeCtrl.searchString" uib-typeahead="employee for searchList in searchEmployee($viewValue)" typeahead-min-length="3" typeahead-no-results="noResults">
-                  <span class="glyphicon glyphicon-search form-control-feedback"></span>
+
+         <!--      <div class="col-md-12 no-padding">
+                <a class="btn btn-app" ng-repeat="department in departmentList">
+                  <span class="badge bg-yellow"><total-employees-in-department employee-list="mainDataList" department-id="department.id"></total-employees-in-department></span>
+                  <i class="fa fa-building"></i> {{ department.departmentName }}
+                </a>               
+              </div>              
+               -->
+              <div class="col-md-3 no-padding pull-right">
+                <div class="input-group input-group-md">
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>                    
+                  <angucomplete-alt id="ex2"
+                    placeholder="Search by Emp. ID, Name"
+                    pause="400"
+                    selected-object="employeeCtrl.selectedSearchEmployee"
+                    selected-object-data="row"
+                    remote-url="/employees/getEmployee?criteria="
+                    remote-url-data-field="data"
+                    title-field="empId,fullName"
+                    text-searching="Searching employee"
+                    description-field="position"
+                    minlength="2"
+                    input-class="form-control input-md"
+                    match-class="highlight" />
                 </div>
               </div>
+
+              <div class="col-md-5 no-padding pull-left">
+
+                <div class="btn-group" uib-dropdown>                  
+                  <button class="btn btn-warning btn-md" type="button"><i class="fa fa-filter"></i> Filters</button>                  
+                  <button class="btn btn-warning btn-md" type="button" popover-placement="{{filterOptions.placement}}" uib-popover-template="filterOptions.template"><span class="fa fa-arrow-down"></span></button>                
+                </div>   
+                <div class="btn-group" role="group" aria-label="...">
+                  <button type="button" class="btn btn-warning"><i class="fa fa-user"></i></button>
+                  <button class="btn btn-warning" ng-click="employeeCtrl.saveEmployee(0, false)"><b>New Employee</b></button>   
+                </div>        
+
+              </div>              
 
               <div class="clearfix"></div><br>
               <div class="table-responsive employee-list-content">
@@ -125,20 +148,35 @@
     <!-- !Employee Tabs Section -->
 
     <!-- Employee Time Records Tracker Calendar -->
-    <div class="col-md-3">
-      <div class="box box-success">
+    <div class="col-md-4 col-xs-12">
+      <div class="box box-warning">
         <div class="box-header with-border">
-            Time Records Tracker Calendar
+          <i class="fa fa-eye"></i>  Time Records Tracker
         </div>
-        <div class="box-body">
-          <div uib-datepicker ng-model="dt" datepicker-options="calendarTrackerOptions"></div>          
+        <div class="box-body has-max-height">                    
+            <table class="table table-striped">
+              <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Date Uploaded</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="activity in timeRecordActivities">
+                    <td>{{ activity.title }}</td>
+                    <td>{{ activity.description }}</td>
+                    <td>{{ activity.dateCommitted | date:'yyyy-MM-dd' }}</td>                    
+                </tr>
+              </tbody>
+            </table>
         </div>
       </div>      
     </div>
     <!-- !Employee Time Records Tracker Calendar -->
 
     <!-- Employee Tools Section-->    
-    <div class="col-md-3">
+    <div class="col-md-4 col-xs-12 pull-right">
       <!--  Tools/Options -->
       <employee-tools-options></employee-tools-options>
     </div>

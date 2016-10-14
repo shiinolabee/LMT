@@ -13,6 +13,13 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
         minDate: new Date()        
     };
 
+    $scope.filterOptions = {
+        title : "Test Filters",
+        template : 'templates/common/filter-options.html',        
+        placement : 'bottom-left'
+    };
+
+
     _self.recordStatusArr = [ 
         {  name : 'Active', value : 1 },
         {  name : 'Inactive', value : 0}
@@ -29,6 +36,10 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
 
     $scope.addAlert = function(type, options) {
         _self[type].push(options);
+    };
+
+    $scope.filterItem = function( newItem ){
+        $scope.filterBy = newItem;
     };
 
     $scope.closeAlert = function(type, index) {
@@ -102,6 +113,8 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
     _self.getEmployeeList = function() {
 
         $scope.parentShowLoader = true;
+
+        _self.getEmployeeActivities(0);
 
         activeRecordService.getActiveRecordList('employees/getEmployeeList').then(function( response ){
 
@@ -233,16 +246,22 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
 
     };
 
-    _self.getAllEmployeeActivities = function(){
+    _self.getEmployeeActivities = function( getAll ){
         
         $scope.childShowLoader = true;
 
-        activeRecordService.getActiveRecord({ lastActivityRecord : ($scope.lastActivityRecord ? $scope.lastActivityRecord : null) }, 'employee_activities/getAllEmployeeActivities').then(function( response ){
+        activeRecordService.getActiveRecord({ lastActivityRecord : getAll }, 'employee_activities/getAllEmployeeActivities').then(function( response ){
             if ( response.success) {
-                $scope.childShowLoader = false;                                
-                $scope.activities = response.data;  
+                $scope.childShowLoader = false;   
 
-                $scope.lastActivityRecord = $scope.activities[$scope.activities.length-1].dateCommitted;            
+                if ( getAll == 0 ) { 
+                    $scope.timeRecordActivities = response.data;  
+                } 
+                else{
+                    $scope.activities = response.data;                      
+                    $scope.lastActivityRecord = $scope.activities[$scope.activities.length-1].dateCommitted;            
+                } 
+
             }
         });
     };
@@ -389,12 +408,10 @@ var employeeController = function( $scope, $uibModal, activeRecordService, pager
     };           
 
     /**
-    * Fetches employee in search box via string
+    * Selects employee in search box via string
     **/
-    _self.searchEmployee = function( val ){
-
-        return activeRecordService.getActiveRecord( { criteria : val }, 'employees/getEmployee');                
-
+    _self.selectedSearchEmployee = function( data ){             
+        $scope.mainDataList = [data.originalObject];       
     };
 
     /**

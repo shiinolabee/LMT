@@ -2,30 +2,48 @@
     <h4>{{modalOptions.headerText}}</h4>
 </div>
 <div class="modal-body">
+    
+    <ajax-loader show-loader="childShowLoader"></ajax-loader>
+
 	<form method="post" name="departmentForm" ng-model="departmentForm" novalidate>
-	   	<div class="form-group" ng-class="{ 'has-error': (departmentForm.departmentName.$touched || departmentForm.$submitted) && departmentForm.departmentName.$invalid }">
-            <label for="">Department Name</label>
-            <input type="text" class="form-control" name="departmentName" ng-model="department.departmentName" required />
-            <span class="help-block" ng-if="(departmentForm.departmentName.$touched || departmentForm.$submitted) && departmentForm.departmentName.$error.required">Department name is required</span>
+
+        <div class="col-md-6">
+    	   	<div class="form-group" ng-class="{ 'has-error': (departmentForm.departmentName.$touched || departmentForm.$submitted) && departmentForm.departmentName.$invalid }">
+                <label for="">Department Name</label>
+                <input type="text" class="form-control" name="departmentName" ng-model="department.departmentName" required />
+                <span class="help-block" ng-if="(departmentForm.departmentName.$touched || departmentForm.$submitted) && departmentForm.departmentName.$error.required">Department name is required</span>
+            </div>
+
+        	<div class="form-group" ng-class="{ 'has-error': (departmentForm.departmentCode.$touched || departmentForm.$submitted) && departmentForm.departmentCode.$invalid }">
+                <label for="">Department Code</label>
+                <input type="text" class="form-control" name="departmentCode" ng-model="department.departmentCode" required />
+                <span class="help-block" ng-if="(departmentForm.departmentCode.$touched || departmentForm.$submitted) && departmentForm.departmentCode.$error.required">Department code is required</span>
+            </div>            
         </div>
 
-    	<div class="form-group" ng-class="{ 'has-error': (departmentForm.departmentCode.$touched || departmentForm.$submitted) && departmentForm.departmentCode.$invalid }">
-            <label for="">Department Code</label>
-            <input type="text" class="form-control" name="departmentCode" ng-model="department.departmentCode" required />
-            <span class="help-block" ng-if="(departmentForm.departmentCode.$touched || departmentForm.$submitted) && departmentForm.departmentCode.$error.required">Department code is required</span>
+        <div class="col-md-6">
+        	<div class="form-group" ng-class="{ 'has-error': (departmentForm.locationId.$touched || departmentForm.$submitted) && departmentForm.locationId.$invalid }">
+                <label for="">Location</label>
+                <input type="text" class="form-control" name="locationId" ng-model="department.locationId" required />
+                <span class="help-block" ng-if="(departmentForm.locationId.$touched || departmentForm.$submitted) && departmentForm.locationId.$error.required">Location is required</span>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error': (departmentForm.icon.$touched || departmentForm.$submitted) && departmentForm.icon.$invalid }">
+                <label for="">Icon</label>
+                <input type="text" class="form-control" name="icon" ng-model="department.icon" required />
+                <span class="help-block" ng-if="(departmentForm.icon.$touched || departmentForm.$submitted) && departmentForm.icon.$error.required">Icon is required</span>
+            </div>            
         </div>
 
-    	<div class="form-group" ng-class="{ 'has-error': (departmentForm.locationId.$touched || departmentForm.$submitted) && departmentForm.locationId.$invalid }">
-            <label for="">Location</label>
-            <input type="text" class="form-control" name="locationId" ng-model="department.locationId" required />
-            <span class="help-block" ng-if="(departmentForm.locationId.$touched || departmentForm.$submitted) && departmentForm.locationId.$error.required">Location is required</span>
+        <div class="col-md-6">            
+       		<div class="form-group" ng-class="{ 'has-error': (departmentForm.recordStatus.$touched || departmentForm.$submitted) && departmentForm.recordStatus.$invalid }">
+    	        <label for="">Record Status</label>
+    	        <select class="form-control" name="recordStatus" ng-model="department.recordStatus" ng-options="recordstatus.value as recordstatus.name for recordstatus in recordStatusArr">
+    	        </select>
+    	        <span class="help-block" ng-if="(departmentForm.recordStatus.$touched || departmentForm.$submitted) && departmentForm.recordStatus.$error.required">Record Status is required</span>
+    	    </div>   
         </div>
-   		<div class="form-group" ng-class="{ 'has-error': (departmentForm.recordStatus.$touched || departmentForm.$submitted) && departmentForm.recordStatus.$invalid }">
-	        <label for="">Record Status</label>
-	        <select class="form-control" name="recordStatus" ng-model="department.recordStatus" ng-options="recordstatus.value as recordstatus.name for recordstatus in recordStatusArr">
-	        </select>
-	        <span class="help-block" ng-if="(departmentForm.recordStatus.$touched || departmentForm.$submitted) && departmentForm.recordStatus.$error.required">Record Status is required</span>
-	    </div>   
+        <div class="clearfix"></div>
 	</form>    
 </div>
 <div class="modal-footer">

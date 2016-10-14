@@ -112,8 +112,10 @@ module.exports = {
                 return res.negotiate(err);   
             }
 
+            var splittedFilename = uploadedFiles[0].filename.split('.');
+
             var id = req.param('userId');
-            var title = "Time Records";
+            var title =  splittedFilename[0] + " Records";
             var description = "File " + uploadedFiles[0].filename + " has been successfully imported.";
 
             EmployeeActivitiesService.saveEmployeeActivity({ type : 0, userId : id, description : description, title : title }, function( response ){

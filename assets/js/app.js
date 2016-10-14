@@ -1,7 +1,7 @@
 'use strict';
 
 
-var cereliApp = angular.module('cereliApp', [ 'angular.filter', 'angularMoment', 'cereliDirectives', 'mwl.calendar', 'ngAnimate','ui.bootstrap', 'ui.router' ]);
+var cereliApp = angular.module('cereliApp', [ 'angular.filter', 'angularMoment', 'angucomplete-alt', 'cereliDirectives', 'mwl.calendar', 'ngAnimate','ui.bootstrap', 'ui.router' ]);
 
 
 cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 'AccessLevels' , function( $stateProvider, $locationProvider, 
@@ -10,49 +10,7 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
     $urlRouterProvider            
         .otherwise("/dashboard");
 
-    $stateProvider      
-
-        .state('login', {
-            url : '/login',
-            views : {
-                'parent-content' : {
-                    templateUrl : 'templates/auth/login.html',
-                    controller : 'loginController',
-                    controllerAs : 'loginCtrl'
-                }      
-            },
-            data: {
-              access: AccessLevels.anon
-            }        
-        })
-
-        .state('lock-user', {
-            url : '/lock-user',
-            views : {
-                'parent-content' : {
-                    templateUrl : 'templates/auth/lock-user.html',
-                    controller : 'lockUserController',
-                    controllerAs : 'lockUserCtrl'
-                }
-            },
-            data: {
-              access: AccessLevels.anon
-            } 
-        })
-
-        .state('register', {
-            url : '/register',
-            views : {
-                'parent-content' : {
-                    templateUrl : 'templates/auth/register.html',
-                    controller : 'registerController',
-                    controllerAs : 'registerCtrl'
-                }
-            },
-            data: {
-              access: AccessLevels.anon
-            }  
-        })
+    $stateProvider                    
         
         .state('admin', {
             abstract:true,      
@@ -66,6 +24,48 @@ cereliApp.config([ '$stateProvider', '$locationProvider', '$urlRouterProvider', 
             data: {
               access: AccessLevels.user
             },
+        })
+
+        .state('admin.register', {
+            url : 'register',
+            views : {
+                'child-content' : {
+                    templateUrl : 'templates/auth/register.html',
+                    controller : 'registerController',
+                    controllerAs : 'registerCtrl'
+                }
+            },
+            data: {
+              access: AccessLevels.anon
+            }  
+        })
+
+        .state('admin.login', {
+            url : 'login',
+            views : {
+                'child-content' : {
+                    templateUrl : 'templates/auth/login.html',
+                    controller : 'loginController',
+                    controllerAs : 'loginCtrl'
+                }      
+            },
+            data: {
+              access: AccessLevels.anon
+            }        
+        })   
+
+        .state('admin.lock-user', {
+            url : 'lock-user',
+            views : {             
+                'child-content' : {
+                    templateUrl : 'templates/auth/lock-user.html',
+                    controller : 'lockUserController',
+                    controllerAs : 'lockUserCtrl'
+                }
+            },
+            data: {
+              access: AccessLevels.anon
+            } 
         })
 
         .state('admin.dashboard', {
@@ -200,6 +200,7 @@ cereliApp
     .run(function($rootScope, $state, Auth, LocalService) {
 
         $rootScope.$state = $state;  
+        $rootScope.isAuthenticated = false;
 
         $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {       
 
@@ -207,18 +208,15 @@ cereliApp
 
                 if ( !Auth.authorize(toState.data.access)) {
                     
-                    $state.go('login');
+                    $state.go('admin.login');
 
                     event.preventDefault();
 
-                } else {                   
+                } else {                                       
 
-                    $rootScope.selectedMenu = toState.data.menuCode;
-
-                    $rootScope.isAuthenticated = true;
+                    $rootScope.selectedMenu = toState.data.menuCode;                    
                     $rootScope.authorizeUser = angular.fromJson(LocalService.get('auth_token'));
 
-                    // console.log($rootScope.authorizeUser)
                     $rootScope.currentState = toState.name.split('.')[1];                 
                 }              
             }  

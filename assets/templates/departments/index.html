@@ -3,7 +3,10 @@
 	<div class="col-md-12">		
 	  	<div uib-alert ng-repeat="alert in mainDataListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('mainDataListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
 
-     	<button class="btn btn-primary margin-bottom" ng-click="departmentCtrl.saveDepartmentRecord(0, false)"><i class="fa fa-building"></i> <b>New Department</b></button>
+	  	<div class="btn-group margin-bottom">
+	  		<button class="btn btn-primary" type="button"><i class="fa fa-building"></i></button>
+     		<button class="btn btn-primary" ng-click="departmentCtrl.saveDepartmentRecord(0, false)"><b>New Department</b></button>
+	  	</div>
 
 	</div>	
 

@@ -20,6 +20,8 @@ module.exports = {
 
     saveEmployeeEvent : function ( data, callback ) {
 
+        console.log(data);
+
         Employee_calendar.create( data ).exec(function( err, result ){
             if( err ) callback(err);
 

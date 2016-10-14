@@ -204,11 +204,44 @@
         }
     });
 
+    cereliDirectives.directive('totalEmployeesInDepartment', function(){
+		
+		return {		
+
+			scope : {
+				departmentId : "=",
+				employeeList : "="
+			},
+
+			link : function( scope, element, attrs ){
+
+				scope.results = [];		
+
+				console.log(scope.employeeList)				
+
+				if ( scope.departmentId > 0 ) {
+
+					angular.forEach(scope.employeeList, function( value , key ){
+
+						console.log(value)
+						if (  value.departmentAssigned == scope.departmentId ) {
+							results.push(value);
+						}
+					});
+
+				}
+
+			},
+
+			template : '{{ results }}'
+		}    	
+    })
+
 	cereliDirectives.directive('showSubdetailsEmployee', function(){
 
 		return {		
 
-			scope : { id : '@', type : '@', index : '@' },			
+			scope : { id : '@' },			
 
 			link : function( scope, element, attr ) {				
 
@@ -217,7 +250,8 @@
 					angular.forEach(scope.$parent.departmentList, function(value, key){
 
 						if ( value.id == scope.id ) {						
-							scope.selectedDepartment = value.departmentName;																					
+							scope.selectedDepartment = value.departmentName;	
+							scope.$parent.departmentAssigned = value.departmentName;																				
 						}
 					});
 
@@ -1015,7 +1049,7 @@
 	/**
 	* Directive for Employee import/export time records
  	**/
-	cereliDirectives.directive('employeeToolsOptions', [ 'Upload', '$timeout', function( Upload, $timeout ){
+	cereliDirectives.directive('employeeToolsOptions', [ 'Upload', '$timeout', '$uibModal', function( Upload, $timeout, $uibModal ){
 		
 		return {
 			
@@ -1108,6 +1142,57 @@
 		            } 
 		        };
 
+		        _self.openUploadedRecordsModal = function( list ){
+
+		        	var modalInstance = $uibModal.open({
+	        		   	animation: true,
+			            keyboard : false,
+			            backdrop : false,
+			            templateUrl : 'templates/employees/show-uploaded-time-records.html',
+			            size: 'lg',
+			            resolve : {
+			            	getList : function(){
+			            		return list;
+			            	}
+			            },
+
+			            controllerAs : 'vm',
+
+			            controller: function( $scope, getList, pagerService ){			   
+
+			            	$scope.mainDataList = getList;
+
+			            	this.pager = {};
+			            	this.dummyList = getList;
+
+					    	this.setPage = function( page ){            
+
+						        if (page < 1 || page > this.pager.totalPages) {
+						            return;
+						        }
+
+						        // get pager object from service
+						        this.pager = pagerService.getPager(this.dummyList.length, page, 25);
+
+						        // get current page of items
+						        $scope.mainDataList = this.dummyList.slice(this.pager.startIndex, this.pager.endIndex + 1);
+						        
+						    };						    
+
+			            	this.setPage(1);
+
+		            	 	$scope.modalOptions = {
+			                    headerText : 'Uploaded Time Records',    
+			                    closeButtonText : 'Close',		                    
+			                    close : function(){
+			                        modalInstance.dismiss('cancel');
+			                    }
+			                };
+			            }
+		        	});
+
+		        };
+
 		        _self.upload = function( file ){    			        	            
 
 		        	if ( file ) {
@@ -1118,7 +1203,8 @@
 			            }).then(function( response ){
 			                if ( response.status == 200 ) {
 			                	$scope.filePercentage = 0;
-			                	_self.message = response.data.message;		                	
+			                	_self.message = response.data.message;
+			                	_self.openUploadedRecordsModal(response.data.data);		                	
 			                }
 			            }, function( response ){
 			            	console.log('Error status: ' + response.status);

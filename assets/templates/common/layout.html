@@ -1,6 +1,6 @@
 <header class="main-header" ng-controller="adminController">
 
-    <a href="index2.html" class="logo">
+    <a href="#" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>CERELI</b></span>
       <!-- logo for regular state and mobile devices -->
@@ -14,7 +14,7 @@
       </a> -->
 
       <!-- Navbar Right Menu -->
-      <div class="navbar-custom-menu">
+      <div class="navbar-custom-menu" ng-if="authorizeUser">
         <ul class="nav navbar-nav"> 
         
           <!-- User Account: style can be found in dropdown.less -->
@@ -67,7 +67,7 @@
 
 </header>
 
-<aside class="main-sidebar">
+<aside class="main-sidebar" ng-if="authorizeUser">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
@@ -148,10 +148,10 @@
     <!-- /.sidebar -->
 </aside>
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper" style="min-height: 921px;">
+<div class="content-wrapper" style="min-height: 921px;" ng-style="!authorizeUser && { 'margin-left' : '0' } || { 'margin-left' : '230px' }">
 
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header" ng-if="authorizeUser">
       <h1>
         {{ currentState | uppercase }}
         <small>Control panel</small>
@@ -169,7 +169,7 @@
     
 </div>
 
-<footer class="main-footer">
+<footer class="main-footer" ng-style="!authorizeUser && { 'margin-left' : '0' } || { 'margin-left' : '230px' }">
       <div class="pull-right hidden-xs">
         <b>Version</b> 2.3.3
       </div>

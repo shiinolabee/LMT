@@ -1,47 +1,34 @@
-<div class="container">
-    <div class="center-block-container">
-        <div class="login-box">
-          <div class="login-logo">
-            <a href="#"><b>Cereli</b> Electrical Services</a>
-          </div>
-          <!-- /.login-logo -->
-          <div class="login-box-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+<div class="login-box">
+  <div class="login-box-body">
+    <h3 class="text-left no-margin-bottom">Sign In</h3>
+    <h5 class="text-left">To start your session.</h5>
+    <div uib-alert ng-repeat="error in errors" class="alert-danger" type="danger" dismiss-on-timeout="4000">
+      <i class="fa fa-exclamation-triangle"></i> {{error.err}}</div>
+                 
+    <form novalidate name="loginForm" ng-model="loginForm" method="post" class="margin-bottom">
 
-            <div uib-alert ng-repeat="error in errors" class="alert-danger" type="danger" dismiss-on-timeout="4000">
-              <i class="fa fa-exclamation-triangle"></i> {{error.err}}</div>
-                         
-            <form novalidate name="loginForm" ng-model="loginForm" method="post">
+      <div class="form-group has-feedback">
+        <input type="email" class="form-control" ng-model="user.email" placeholder="e.g sample@gmail.com" ng-required="true" uib-popover="Enter a valid email address." popover-placement="top" popover-popup-delay="0">
+        <span class="glyphicon glyphicon-envelope form-control-feedback" ></span>
+      </div>
+      
+      <div class="form-group has-feedback">
+        <input type="{{loginCtrl.passwordInputType}}" ng-model="user.password" class="form-control" placeholder="******" ng-required="true">
+        <span class="toggle-show-password" ng-click="loginCtrl.togglePassword();" uib-tooltip="Show/Hide"><i class="fa" ng-class="{ 'fa-eye' : !loginCtrl.showHidePasswordIcon, 'fa-eye-slash' : loginCtrl.showHidePasswordIcon }"></i></span>
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
 
-              <div class="form-group has-feedback">
-                <input type="email" class="form-control" ng-model="user.email" placeholder="Email" ng-required="true">
-                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-              </div>
-              <div class="form-group has-feedback">
-                <input type="password" ng-model="user.password" class="form-control" placeholder="Password" ng-required="true">
-                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-              </div>
-              <div class="row">
-                <div class="col-xs-8">
-                  <div class="checkbox icheck">
-                    <label class="">
-                      <div class="icheckbox_square-blue" aria-checked="false" aria-disabled="false" style="position: relative;"><input type="checkbox" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div> Remember Me
-                    </label>
-                  </div>
-                </div>
-                <!-- /.col -->
-                <div class="col-xs-4">
-                  <button type="submit" ng-click="login();" ng-disabled="loginForm.$invalid" class="btn btn-primary btn-block btn-flat">Sign In</button>
-                </div>
-                <!-- /.col -->
-              </div>
-            </form>
-
-            <a href="#">I forgot my password</a><br>
-            <a ui-sref="register" href="#" class="text-center">Register a new Employee</a>
-
-          </div>
-          <!-- /.login-box-body -->
+      <div class="row">       
+        <div class="col-xs-5 col-md-5 pull-right">
+          <button type="submit" ng-click="login();" class="btn btn-danger btn-block btn-flat"><strong><i class="fa fa-sign-in"></i> Log In</strong></button>
         </div>
-    </div>
+        <!-- /.col -->
+      </div>
+    </form>
+
+    <!-- <a href="#">I forgot my password</a><br> -->
+    <p class="text-left">You don't have yet any account? Just click <a ui-sref="admin.register" href="#" class="text-center">here</a></p>
+
+  </div>
+  <!-- /.login-box-body -->
 </div>
