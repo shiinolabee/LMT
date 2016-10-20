@@ -43,7 +43,7 @@ module.exports = {
     saveEmployee : function ( data, callback ) {
 
         Employees.create( data ).exec(function( err, employee ){
-            if( err ) callback(err);
+            if( err ) throw err;
 
             callback(employee);
         });

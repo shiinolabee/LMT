@@ -1,6 +1,6 @@
 <uib-accordion close-others="true">
 
- <div uib-accordion-group class="panel box box-success" heading="Import Employee Records" is-open="employeeToolsOptionsCtrl.accordionSettings.status.isFirstOpen" is-disabled="employeeToolsOptionsCtrl.accordionSettings.status.isFirstDisabled">
+ <div uib-accordion-group class="panel box box-warning" heading="Import Employee Records" is-open="employeeToolsOptionsCtrl.accordionSettings.status.isFirstOpen" is-disabled="employeeToolsOptionsCtrl.accordionSettings.status.isFirstDisabled">
        <!-- Upload/Import Employees Form -->
 
        <h5 class="text-aqua"><strong>Example Time Record Format</strong></h5>
@@ -9,7 +9,7 @@
           <tbody><tr>            
             <th>Employee ID</th>
             <th>Full Name</th>
-            <th>Position</th>                                    
+            <th>Position(optional)</th>                                    
           </tr>
           <tr>
             <td>1600</td>
@@ -29,7 +29,7 @@
           <div class="form-group">                  
               <h5 class="display-inline">Select file to import : </h5>
               <!-- <input type="file" ngf-select="employeeToolsOptionsCtrl.upload(importFile)" name="file" ng-model="importFile"/>  -->
-              <button type="button" class="btn btn-sm btn-primary" ngf-accept="'csv/*'" ngf-pattern="'csv/*'" ngf-select="employeeToolsOptionsCtrl.uploadEmployees(employeeFile)" ng-model="employeeFile" name="employeeFile"><i class="fa fa-paperclip"></i> Browse a csv file </button>              
+              <button type="button" class="btn btn-sm btn-primary" ngf-select="employeeToolsOptionsCtrl.uploadEmployees(employeeFile)" name="file" ng-model="employeeFile" ngf-pattern="'*.csv'" ngf-accept="'*.csv'"><i class="fa fa-paperclip"></i> Browse a csv file </button>              
           </div>        
       
           <uib-progressbar ng-show="filePercentage > 0" class="progress-striped" ng-class="{ active : filePercentage > 0 }" value="filePercentage">{{ importMessage }}</uib-progressbar>
@@ -42,7 +42,7 @@
       <!-- !Upload/Import Employees Form -->
   </div>
 
-  <div uib-accordion-group class="panel box box-success" heading="Import Time Records">
+  <div uib-accordion-group class="panel box box-warning" heading="Import Time Records">
        <!-- Upload/Import Time Record Form -->
 
        <h5 class="text-aqua"><strong>Example Time Record Format</strong></h5>
@@ -82,7 +82,7 @@
       <form name="importRecordForm" ng-model="importRecordForm">         
           <div class="form-group">                  
               <h5 class="display-inline">Select file to import : </h5>
-              <button class="btn btn-sm btn-primary" type="button" ngf-select="employeeToolsOptionsCtrl.upload(importFile)" name="file" ng-model="importFile"><i class="fa fa-paperclip"></i> Browse a csv file</button>                 
+              <button class="btn btn-sm btn-primary" type="button" ngf-select="employeeToolsOptionsCtrl.uploadTimeRecords(importFile)" name="file" ng-model="importFile"><i class="fa fa-paperclip"></i> Browse a csv file</button>                 
           </div>  
       
           <uib-progressbar ng-show="filePercentage > 0" class="progress-striped" ng-class="{ active : filePercentage > 0 }" value="filePercentage">{{ importMessage }}</uib-progressbar>
@@ -95,7 +95,7 @@
       <!-- !Upload/Import Time Record Form -->
   </div>
 
-  <div uib-accordion-group class="panel box box-success" heading="Export Time Records">
+  <div uib-accordion-group class="panel box box-warning" heading="Export Time Records">
        <!-- Export Time Record Form -->
        <div uib-alert ng-class="'callout-' + (alert.type || 'info')" class="callout">
           <h4><i class="icon fa fa-info"></i> Note </h4>

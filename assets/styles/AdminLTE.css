@@ -168,7 +168,8 @@ h6,
 /* General Links */
 a {
   /*color: #3c8dbc;*/
-  color: #d73925;
+  /*color: #d73925;*/
+  color: #ef9200;
   cursor:pointer;
 }
 a:hover,
@@ -177,7 +178,8 @@ a:focus {
   outline: none;
   text-decoration: none;
   /*color: #72afd2;*/
-  color: #d73925;
+  /*color: #d73925;*/
+  color: #ef9200;
 }
 /* Page Header */
 .page-header {
@@ -2496,7 +2498,8 @@ a:focus {
   border-color: transparent;
 }
 .nav-tabs-custom /*>*/ .nav-tabs > li.active {
-  border-top-color: #3c8dbc;
+  /*border-top-color: #3c8dbc;*/
+  border-top-color: #ef9200;
 }
 .nav-tabs-custom /*>*/ .nav-tabs > li.active > a,
 .nav-tabs-custom /*>*/ .nav-tabs > li.active:hover > a {

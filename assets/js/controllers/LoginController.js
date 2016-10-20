@@ -1,44 +1,51 @@
+(function(){
 
-var loginController = function( $scope, $state, Auth ) {
+  'use strict';
 
-    var _self = this;
+  var loginController = function( $scope, $state, AuthenticationFactory ) {
 
-    _self.passwordInputType = 'password';
-    _self.showHidePasswordIcon = false;
+      var _self = this;
 
-    _self.togglePassword = function(){
+      _self.passwordInputType = 'password';
+      _self.showHidePasswordIcon = false;
 
-      if ( _self.passwordInputType == 'password' ) {
-        _self.passwordInputType = 'text';
-        _self.showHidePasswordIcon = true;
-      } else{
-        _self.showHidePasswordIcon = false;
-        _self.passwordInputType = 'password';
-      }
+      _self.togglePassword = function(){
 
-    };
+        if ( _self.passwordInputType == 'password' ) {
+          _self.passwordInputType = 'text';
+          _self.showHidePasswordIcon = true;
+        } else{
+          _self.showHidePasswordIcon = false;
+          _self.passwordInputType = 'password';
+        }
 
+      };
 
-    $scope.errors = [];
-
-    $scope.login = function() {
 
       $scope.errors = [];
 
-      Auth.login($scope.user).success(function(result) {
+      $scope.login = function() {
 
-        $state.go('admin.dashboard');
+        $scope.errors = [];
 
-      }).error(function(err, data) {
+        AuthenticationFactory.login($scope.user).success(function(result) {
 
-        $scope.errors.push(err);            
+          $state.go('admin.dashboard');
 
-      });
+        }).error(function(err, data) {
 
-    }
+          $scope.errors.push(err);            
 
-};
+        });
 
-cereliApp.controller('loginController', loginController);
+      }
 
-loginController.$inject = [ '$scope', '$state', 'Auth' ];
+  };
+
+  angular.module('cereliApp').controller('loginController', loginController);
+
+  loginController.$inject = [ '$scope', '$state', 'AuthenticationFactory' ];  
+
+})();
+
+

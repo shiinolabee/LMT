@@ -217,3 +217,7 @@ span.toggle-show-password{
 .no-margin-bottom{
   margin-bottom: 0px !important;
 }
+
+.skin-red .sidebar-menu>li:hover>a, .skin-red .sidebar-menu>li.active>a{
+  border-left-color: #ef9200 !important;
+}

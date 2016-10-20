@@ -1,11 +1,8 @@
 (function(){
 
-	var cereliDirectives = angular.module('cereliDirectives', [ 'ngFileUpload' ] );
+	'use strict';
 
-
-	cereliDirectives.controller('DashboardController' , [ '$scope' ,function( $scope ){
-
-	}]);
+	var cereliDirectives = angular.module('cereliDirectives', [ 'ngFileUpload' ] );	
 
 	cereliDirectives.filter('getRenderedHours', function(){
 
@@ -63,7 +60,7 @@
 
 	});
 
-	cereliDirectives.directive('checkInputContentExists', function( activeRecordService, $timeout ){ 
+	cereliDirectives.directive('checkInputContentExists', function( ActiveRecordFactory, $timeout ){ 
 
 		return {
 
@@ -81,7 +78,7 @@
 
 					timeout = $timeout(function(){
 
-						activeRecordService.getActiveRecord( { criteria : scope.checkInputContentExists }, attrs.model + '/' + attrs.checkUrl ).then(function( response ){
+						ActiveRecordFactory.getActiveRecord( { criteria : scope.checkInputContentExists }, attrs.model + '/' + attrs.checkUrl ).then(function( response ){
 							if (  response.success && response.data.length > 0 ) {
 								element.$setValidity('exists', true);							
 							}
@@ -97,7 +94,7 @@
 
 	});
 
-	cereliDirectives.directive('selectEmployee', function(activeRecordService, $timeout){
+	cereliDirectives.directive('selectEmployee', function(ActiveRecordFactory, $timeout){
 
 		return {
 			
@@ -117,7 +114,7 @@
 
 						scope.selectEmployee = element[0].value;
 
-						activeRecordService.getActiveRecord({ criteria : scope.selectEmployee }, 'employees/getEmployee')
+						ActiveRecordFactory.getActiveRecord({ criteria : scope.selectEmployee }, 'employees/getEmployee')
 							.then(function( response ){
 								if ( response.success ) {
 									
@@ -171,7 +168,7 @@
 
             templateUrl : 'templates/common/dropdown-selector.html',
 
-            controller : [ '$scope', 'activeRecordService', function( $scope, activeRecordService ) {            	
+            controller : [ '$scope', 'ActiveRecordFactory', function( $scope, ActiveRecordFactory ) {            	
 
             	$scope.changeItem = function( newItem ){
             		$scope.model = newItem;
@@ -265,7 +262,7 @@
 
 	});
 
-	cereliDirectives.directive('employeeStatisticsReport', [ 'moment', 'activeRecordService', function( moment, activeRecordService ){
+	cereliDirectives.directive('employeeStatisticsReport', [ 'moment', 'ActiveRecordFactory', function( moment, ActiveRecordFactory ){
 
 		return {
 
@@ -587,7 +584,7 @@
 
 			 			$scope.getDaysInMonth(date);			 			
 
-		 				activeRecordService.getActiveRecord({ id: $scope.empId, date : selectedDate }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
+		 				ActiveRecordFactory.getActiveRecord({ id: $scope.empId, date : selectedDate }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
 		 					if ( response.success ) {
 			 					$scope.$parent.childLoader = false;
 
@@ -615,8 +612,8 @@
 	/**
 	* Employee's Details and Time Record Details with Calendar View	
 	**/
-	cereliDirectives.directive('employeeDailyTimeRecordCalendar', [ '$location', '$anchorScroll', 'calendarConfig', 'activeRecordService', '$timeout', 'moment',
-		function( $location, $anchorScroll, calendarConfig, activeRecordService, $timeout, moment ){
+	cereliDirectives.directive('employeeDailyTimeRecordCalendar', [ '$location', '$anchorScroll', 'calendarConfig', 'ActiveRecordFactory', '$timeout', 'moment',
+		function( $location, $anchorScroll, calendarConfig, ActiveRecordFactory, $timeout, moment ){
 
 		return {
 
@@ -686,7 +683,7 @@
                   label: '<i class=\'glyphicon glyphicon-remove\'></i>',
                   onClick: function(args) {                   
 
-                    activeRecordService.removeActiveRecord( { id : args.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
+                    ActiveRecordFactory.removeActiveRecord( { id : args.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
                     	if ( response.success ) {
                     		console.info('Deleted Record : ', args.calendarEvent);
                     		_self.events.splice(_self.events.indexOf(args.calendarEvent), 1);                    		
@@ -765,7 +762,7 @@
 
 			    _self.refreshDTRCalendar = function(){
 
-			    	activeRecordService.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function(response){
+			    	ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function(response){
 			    		$scope.employeeTimeRecords = response.data;	
 
 			    		_self.initializeCalendar();
@@ -856,7 +853,7 @@
 
             		console.log('Saving Time Record : ',_self.time_record);  
 
-	           	  	activeRecordService.saveActiveRecord(_self.time_record, _self.isEditMode, 'employee_time_records/saveEmployeeTimeRecord').then(function( response ){
+	           	  	ActiveRecordFactory.saveActiveRecord(_self.time_record, _self.isEditMode, 'employee_time_records/saveEmployeeTimeRecord').then(function( response ){
                     	if ( response.success ) {
 
                     		if ( !_self.isEditMode ) _self.events.push(newCalendarEvent);                    		
@@ -877,7 +874,7 @@
 
                 _self.removeTimeRecord = function(){
 
-	           	  	activeRecordService.removeActiveRecord( { id : _self.time_record.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
+	           	  	ActiveRecordFactory.removeActiveRecord( { id : _self.time_record.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
                     	if ( response.success ) {
                     		console.log('Deleted Record : ' + _self.time_record.calendarEvent);
 
@@ -909,7 +906,7 @@
 	                		timeRecordType : event.timeRecordType
 	                	};
 
-	                  	activeRecordService.saveActiveRecord(_self.time_record, true, 'employee_time_records/saveEmployeeTimeRecord').then(function( response ){
+	                  	ActiveRecordFactory.saveActiveRecord(_self.time_record, true, 'employee_time_records/saveEmployeeTimeRecord').then(function( response ){
 	                    	if ( response.success ) {
 	                    		console.log('Updated Record : ',event);  
 
@@ -973,7 +970,7 @@
 	/**
 	* Employee's Tracking Activities
 	**/
-	cereliDirectives.directive('employeeTrackingActivities', [ 'activeRecordService', 'moment', function( activeRecordService, moment ){
+	cereliDirectives.directive('employeeTrackingActivities', [ 'ActiveRecordFactory', 'moment', function( ActiveRecordFactory, moment ){
 
 		return {
 
@@ -997,7 +994,7 @@
         
 			        _self.showLoader = true;			        
 
-			        activeRecordService.getActiveRecord({ lastActivityRecord : $scope.$parent.lastActivityRecord }, 'employee_activities/getAllEmployeeActivities').then(function( response ){
+			        ActiveRecordFactory.getActiveRecord({ lastActivityRecord : $scope.$parent.lastActivityRecord }, 'employee_activities/getAllEmployeeActivities').then(function( response ){
 			            if ( response.success) {
 			                _self.showLoader = false;                                
 
@@ -1113,23 +1110,27 @@
 
 		        _self.uploadEmployees = function( file ){
 
-		        	Upload.upload({
-	                	url : 'employees/uploadCsvRecords',
-		                data : { file: file, userId : $scope.authorizeUser.user.id }
-		            }).then(function( response ){
-		                if ( response.status == 200 ) {
-		                	$scope.filePercentage = 0;
-		                	_self.message = response.data.message;		                	
-		                }
-		            }, function( response ){
-		            	console.log('Error status: ' + response.status);
-		            }, function( evt ){		
+		        	if ( file ) {
 
-		            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-	            		$scope.filePercentage = progressPercentage;
-	            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+			        	Upload.upload({
+		                	url : 'employees/uploadCsvRecords',
+			                data : { file: file, userId : $scope.authorizeUser.user.id }
+			            }).then(function( response ){
+			                if ( response.status == 200 ) {
+			                	$scope.filePercentage = 0;
+			                	_self.message = response.data.message;		                	
+			                }
+			            }, function( response ){
+			            	console.log('Error status: ' + response.status);
+			            }, function( evt ){		
 
-		            });		     
+			            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+		            		$scope.filePercentage = progressPercentage;
+		            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+
+			            });		     
+		        	}
+
 
 		        };
 
@@ -1172,7 +1173,9 @@
 						        }
 
 						        // get pager object from service
-						        this.pager = pagerService.getPager(this.dummyList.length, page, 25);
+						        var pagerInstance = new PagerService(this.dummyList.length, 25);
+
+						        this.pager = pagerInstance.getPager(page);
 
 						        // get current page of items
 						        $scope.mainDataList = this.dummyList.slice(this.pager.startIndex, this.pager.endIndex + 1);
@@ -1193,7 +1196,7 @@
 
 		        };
 
-		        _self.upload = function( file ){    			        	            
+		        _self.uploadTimeRecords = function( file ){    			        	            
 
 		        	if ( file ) {
 
@@ -1221,7 +1224,7 @@
 		}
 	} ]);
 
-	cereliDirectives.directive('sortDataList', [ 'activeRecordService', function( activeRecordService ){
+	cereliDirectives.directive('sortDataList', [ 'ActiveRecordFactory', function( ActiveRecordFactory ){
 
 		return {
 
@@ -1246,7 +1249,7 @@
 				_self.sort = function(){
 
 					console.info('Sorting by ' + _self.orderBy + '...');
-					activeRecordService.getActiveRecord({ data : { orderType : _self.orderType, orderBy : _self.orderBy } }, _self.options.type + '/sortBy').then(function( response ){
+					ActiveRecordFactory.getActiveRecord({ data : { orderType : _self.orderType, orderBy : _self.orderBy } }, _self.options.type + '/sortBy').then(function( response ){
 						if (  response  ) {		
 
 							$scope.$parent.$parent.mainDataList = response.data;

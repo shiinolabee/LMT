@@ -5,7 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-var responseDataList = []; 
+var moment = require('moment');
+var employeeUploadedDataList = []; 
 
 module.exports = {
 
@@ -22,9 +23,9 @@ module.exports = {
                     id : 0,
                     empId : '',
                     position : '',
-                    departmentAssigned : '',
-                    dateHired : new Date(),
-                    dateRegularized : new Date(),
+                    departmentAssigned : 0,
+                    dateHired : moment().toDate(),
+                    dateRegularized : moment().toDate(),
                     paidLeaveLimit : 0,
                     unpaidLeaveLimit : 0,
                     noOfAbsences : 0,
@@ -32,85 +33,34 @@ module.exports = {
                     totalOvertime : 0,
                     recordStatus : 1,                                      
                     contactNumber : '',
-                    gender : '',
+                    gender : 0,
                     homeAddress : '',
                     emailAddress : '',
                     createdAt : '',
                     updatedAt : ''
                 };
 
-                var tempArray = [];                
+                var tempArray = [];                            
 
                 Object.keys(row).forEach(function(key){
+                    tempArray.push(row[key]);
+                });                
 
-                    var rowValueLength = row[key].length;
-                    
-                    // console.log('row Length : ' + row[key].length, row[key]);
+                if ( tempArray.length > 0) {  
 
-                    if ( row[key] != '' && row[key] != '1' && row[key] != '0' && (rowValueLength >= 4 || rowValueLength >= 5) ) {
-                                                                 
-                        var parseIntValue = parseInt(row[key]) || 0;
-                        
-                        if ( parseIntValue != 0 ) {                            
-                            tempArray.push(row[key]);
-                        }
-                    }                    
-                });
+                    tempEmployeeRecord.empId = tempArray[0];
+                    tempEmployeeRecord.fullName = tempArray[1];   
 
-                // console.log('Temp Array : ', tempArray);
-
-                if ( tempArray.length >= 4 ) {
-                    tempArray.forEach(function( item, index ){ 
-
-                        //remove pretenders :)
-                        if ( item.length == 5 ) {
-                            tempArray.splice(index, 1);
-                        }
-                    });                        
-                }
-
-
-                if ( tempArray.length > 0) { 
-
-                    var startsAtDate = new Date();          
-                    var dateAttended = tempArray.length >= 2 ? new Date(tempArray[1].replace(new RegExp('/', 'g'),'-')) : new Date();
-
-
-                    tempEmployeeRecord.empId = parseInt(tempArray[0]);
-                    
-                    startsAtDate.setFullYear(dateAttended.getFullYear());
-                    startsAtDate.setMonth(dateAttended.getMonth());
-                    startsAtDate.setDate(dateAttended.getDate());
-
-                    tempEmployeeRecord.date = startsAtDate;
-                    
                     if ( tempArray.length >= 3 ) {
-                        
-                        var concatTimeString = tempArray[2].split(':');
-                        startsAtDate.setHours(concatTimeString[0]);
-                        startsAtDate.setMinutes(concatTimeString[1]);                        
-
-                        if ( concatTimeString.length > 2 ) startsAtDate.setSeconds(concatTimeString[2]);
-
-                    } else {
-                        startsAtDate.setHours(0);
-                        startsAtDate.setMinutes(0);
-                        startsAtDate.setSeconds(0);  
+                        tempEmployeeRecord.position = tempArray[2];
                     }
-                    
-                    tempEmployeeRecord.startsAt = startsAtDate;  
 
-                    var endsAtDate = new Date(startsAtDate);
-
-                    endsAtDate.setHours(startsAtDate.getHours() + 1);                  
-
-                    tempEmployeeRecord.endsAt = endsAtDate;       
-
-                    // console.log(tempEmployeeRecord);
+                    console.log(tempEmployeeRecord);
                   
-                    EmployeesTimeRecordService.saveEmployeeTimeRecord(tempEmployeeRecord, function( response ){
-                        responseDataList.push(response);                 
+                    EmployeesService.saveEmployee(tempEmployeeRecord, function( response ){
+                        employeeUploadedDataList.push(response);                 
                     });
+
                 }
                 
 
@@ -123,7 +73,7 @@ module.exports = {
             }
 
             var id = req.param('userId');
-            var title = "Time Records";
+            var title = "Employee Records";
             var description = "File " + uploadedFiles[0].filename + " has been successfully imported.";
 
             EmployeeActivitiesService.saveEmployeeActivity({ type : 0, userId : id, description : description, title : title }, function( response ){
@@ -132,9 +82,9 @@ module.exports = {
 
                     return res.json({
                         success : true,
-                        message : 'Time record file ' + uploadedFiles[0].filename + ' successfully imported '+ responseDataList.length +' records.',
+                        message : 'Time record file ' + uploadedFiles[0].filename + ' successfully imported '+ employeeUploadedDataList.length +' records.',
                         files : uploadedFiles,
-                        data : responseDataList
+                        data : employeeUploadedDataList
                     });
                 }
             });

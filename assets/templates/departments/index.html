@@ -1,17 +1,17 @@
-<div ng-show="isAuthenticated">
+<div ng-show="authorizeUser">
 
 	<div class="col-md-12">		
 	  	<div uib-alert ng-repeat="alert in mainDataListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('mainDataListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
 
 	  	<div class="btn-group margin-bottom">
-	  		<button class="btn btn-primary" type="button"><i class="fa fa-building"></i></button>
-     		<button class="btn btn-primary" ng-click="departmentCtrl.saveDepartmentRecord(0, false)"><b>New Department</b></button>
+	  		<button class="btn btn-warning" type="button"><i class="fa fa-building"></i></button>
+     		<button class="btn btn-warning" ng-click="departmentCtrl.saveDepartmentRecord(0, false)"><b>New Department</b></button>
 	  	</div>
 
 	</div>	
 
 	<div class="col-md-9">
-		<div class="box box-primary">
+		<div class="box box-warning">
 			<div class="box-header with-border">
 				<h3 class="box-title">List of Departments</h3>
 				<div class="box-tools pull-right">

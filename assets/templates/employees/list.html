@@ -87,7 +87,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                  <tr ng-repeat="employee in mainDataList | filter:employeeCtrl.searchString" class="animate-repeat">               
+                  <tr bindonce="employee" ng-repeat="employee in mainDataList | filter:employeeCtrl.searchString" class="animate-repeat">               
                     <td><input type="checkbox" value="{{ employee.id }}" ng-model="employee.selected"></td>                
                     <td>{{ employee.empId }}</td>
                     <td>{{ employee.fullName }} </td>
@@ -157,16 +157,14 @@
             <table class="table table-striped">
               <thead>
                   <tr>
-                    <th>Title</th>
-                    <th>Description</th>
+                    <th>Title</th>                    
                     <th>Date Uploaded</th>
                   </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="activity in timeRecordActivities">
-                    <td>{{ activity.title }}</td>
-                    <td>{{ activity.description }}</td>
-                    <td>{{ activity.dateCommitted | date:'yyyy-MM-dd' }}</td>                    
+                    <td>{{ activity.title }}</td>                    
+                    <td>{{ activity.dateCommitted | date:'MMM dd yyyy' }}</td>                    
                 </tr>
               </tbody>
             </table>

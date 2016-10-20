@@ -1,5 +1,8 @@
-cereliApp
-	.service('miniModalService', [ '$uibModal', function( $uibModal ){
+(function(){
+
+	'use strict';
+
+	var miniModalService = function( $uibModal ){
 
 		return {
 			createModal : function( options, modalOptions ){
@@ -20,5 +23,12 @@ cereliApp
 				}
 			 	
 			}
-		}
-	}])
+		};
+
+	};
+
+	angular.module('cereliApp').service('miniModalService', miniModalService);
+
+	miniModalService.$inject = [ '$uibModal' ];
+
+})();

@@ -1,20 +1,23 @@
-cereliApp
-	.controller('departmentController', [ '$scope', '$uibModal', 'pagerService', 'activeRecordService', function( $scope, $uibModal, pagerService, activeRecordService ){
+(function(){
+
+    'use strict';
+
+    var departmentController = function( $scope, $uibModal, PagerService, ActiveRecordFactory ){
 
         var _self = this;        
 
-		$scope.mainDataList = [];
+        $scope.mainDataList = [];
         $scope.mainDataListAlerts = [];
 
-		_self.dummyMainDataList = [];
-		_self.pager = {};
+        _self.dummyMainDataList = [];
+        _self.pager = {};
 
-		_self.recordStatusArr = [ 
+        _self.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
             {  name : 'Inactive', value : 0}
         ];
 
-		$scope.addAlert = function(type, options) {
+        $scope.addAlert = function(type, options) {
             $scope[type].push(options);
         };
 
@@ -24,13 +27,15 @@ cereliApp
 
         _self.setPage = function( page ){
 
-        	if ( page < 1 || page > _self.pager.totalPages ) {
-        		return;
-        	}
+            if ( page < 1 || page > _self.pager.totalPages ) {
+                return;
+            }
 
-        	_self.pager = pagerService.getPager(_self.dummyMainDataList.length, page);
+            var pagerInstance = new PagerService(_self.dummyMainDataList.length);
 
-        	$scope.mainDataList = _self.dummyMainDataList.slice(_self.pager.startIndex, _self.pager.endIndex + 1);
+            _self.pager = pagerInstance.getPager(page);
+
+            $scope.mainDataList = _self.dummyMainDataList.slice(_self.pager.startIndex, _self.pager.endIndex + 1);
         };
 
         _self.tableHeaders = [
@@ -42,26 +47,26 @@ cereliApp
 
         _self.initDepartmentValues = function( isEditMode, index ){
 
-        	if ( !isEditMode && index == 0 ) {
-        		var department = {
-        			id : 0,
-        			departmentName : '',
-        			departmentCode : '0000',
-        			locationId : '',
-        			createdAt : '',
-        			updatedAt : '',
-        			recordStatus : 1        				
-        		}
-        	} else {
-        		var department = angular.copy($scope.mainDataList[index]);
-        	}
+            if ( !isEditMode && index == 0 ) {
+                var department = {
+                    id : 0,
+                    departmentName : '',
+                    departmentCode : '0000',
+                    locationId : '',
+                    createdAt : '',
+                    updatedAt : '',
+                    recordStatus : 1                        
+                }
+            } else {
+                var department = angular.copy($scope.mainDataList[index]);
+            }
 
-        	return department;
+            return department;
         }
 
         _self.getDepartmentList = function(){
 
-    	   activeRecordService.getActiveRecordList('departments/getDepartmentList').then(function( response ){
+           ActiveRecordFactory.getActiveRecordList('departments/getDepartmentList').then(function( response ){
 
                 if ( response.success ) {
                     $scope.mainDataList = response.data;                    
@@ -74,76 +79,76 @@ cereliApp
 
         _self.saveDepartmentRecord = function( index, isEditMode ){
 
-        	$scope.editMode = isEditMode;
-        	$scope.index = index;
+            $scope.editMode = isEditMode;
+            $scope.index = index;
 
-        	var modalInstance = $uibModal.open({
-        		animation : true,
-        		keyboard : false,
+            var modalInstance = $uibModal.open({
+                animation : true,
+                keyboard : false,
                 backdrop : false,
-        		resolve : {
-        			departmentInitialValues : function(){
-        				return _self.initDepartmentValues($scope.editMode, $scope.index);
-        			},
-        			isEditMode : function(){
-        				return $scope.editMode;
-        			},
-        			getRecordStatusArr : function(){
+                resolve : {
+                    departmentInitialValues : function(){
+                        return _self.initDepartmentValues($scope.editMode, $scope.index);
+                    },
+                    isEditMode : function(){
+                        return $scope.editMode;
+                    },
+                    getRecordStatusArr : function(){
                         return _self.recordStatusArr;
                     }
-        		},
-        		templateUrl : 'templates/departments/form.html',
-        		// windowTemplateUrl : 'templates/common/ui-modal.html',
-        		size : 'md',
-        		controller : function( $scope, departmentInitialValues, isEditMode, getRecordStatusArr ) {
+                },
+                templateUrl : 'templates/departments/form.html',
+                // windowTemplateUrl : 'templates/common/ui-modal.html',
+                size : 'md',
+                controller : function( $scope, departmentInitialValues, isEditMode, getRecordStatusArr ) {
 
-        			$scope.department = departmentInitialValues;
-        			$scope.editMode = isEditMode;
-        			$scope.recordStatusArr = getRecordStatusArr;
+                    $scope.department = departmentInitialValues;
+                    $scope.editMode = isEditMode;
+                    $scope.recordStatusArr = getRecordStatusArr;
 
-        			$scope.modalOptions = {
-        				headerText : !$scope.editMode ? 'New Department' : 'Edit Department Details',
-        				closeButtonText : 'Cancel',
-        				actionButtonText : !$scope.editMode ? 'Save' : 'Save changes',
+                    $scope.modalOptions = {
+                        headerText : !$scope.editMode ? 'New Department' : 'Edit Department Details',
+                        closeButtonText : 'Cancel',
+                        actionButtonText : !$scope.editMode ? 'Save' : 'Save changes',
 
-        				ok : function( result ){
+                        ok : function( result ){
 
-        					var responseData;
+                            var responseData;
 
-        					activeRecordService.saveActiveRecord($scope.department, $scope.editMode, 'departments/saveDepartment').then(function( response ){
-        						if ( response.success ){
-        							responseData = response;
-        						}
-        					}, function( xhr, errMsg ){
-        						responseData = {
-        							success : false,
-        							errors : errMsg
-        						};
-        					}).finally(function(){
-        						modalInstance.close(responseData);
-        					});
+                            ActiveRecordFactory.saveActiveRecord($scope.department, $scope.editMode, 'departments/saveDepartment').then(function( response ){
+                                if ( response.success ){
+                                    responseData = response;
+                                }
+                            }, function( xhr, errMsg ){
+                                responseData = {
+                                    success : false,
+                                    errors : errMsg
+                                };
+                            }).finally(function(){
+                                modalInstance.close(responseData);
+                            });
 
-        				},
+                        },
 
-        				close : function(){
-        					modalInstance.dismiss('cancel');
-        				}
-        			}
+                        close : function(){
+                            modalInstance.dismiss('cancel');
+                        }
+                    }
 
-        		}
-        	});
+                }
+            });
 
-        	modalInstance.result.then(function( responseData ){
+            modalInstance.result.then(function( responseData ){
 
-        		if ( responseData.success ) {
-        			_self.getDepartmentList();
+                if ( responseData.success ) {
+                    _self.getDepartmentList();
 
-        			$scope.addAlert('mainDataListAlerts', {
-        				type : 'success',
-        				msg : 'Department details successfully ' + ( isEditMode ? 'updated.' : 'added.') 
-        			});
-        		}
-        	});
+                    $scope.addAlert('mainDataListAlerts', {
+                        type : 'success',
+                        msg : 'Department details successfully ' + ( isEditMode ? 'updated.' : 'added.') 
+                    });
+                }
+            });
 
         };
    
@@ -167,7 +172,7 @@ cereliApp
                     }
                 },
                 size: 'sm',
-                controller: function($scope, $uibModalInstance, departmentDetails, index, activeRecordService) {                       
+                controller: function($scope, $uibModalInstance, departmentDetails, index, ActiveRecordFactory) {                       
 
                     $scope.modalOptions = {
                         closeButtonText: 'Cancel',
@@ -180,7 +185,7 @@ cereliApp
 
                         var responseData;
 
-                        activeRecordService.removeActiveRecord({ id : departmentDetails.id , departmentName : departmentDetails.departmentName }, 'departments/removeDepartment').then(function(response) {
+                        ActiveRecordFactory.removeActiveRecord({ id : departmentDetails.id , departmentName : departmentDetails.departmentName }, 'departments/removeDepartment').then(function(response) {
 
                             if ( response.success ) {
                                 responseData = response;                                    
@@ -224,4 +229,10 @@ cereliApp
 
         _self.getDepartmentList();
 
-	}])
+    };
+
+    angular.module('cereliApp').controller('departmentController', departmentController);
+    
+    departmentController.$inject = [ '$scope', '$uibModal', 'PagerService', 'ActiveRecordFactory' ];
+
+})();

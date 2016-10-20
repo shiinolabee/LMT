@@ -11,7 +11,7 @@
 	            <th>Time starts</th>
 	            <th>Time ends</th>	            
           	</tr>
-          	<tr ng-repeat="time_record in mainDataList">
+          	<tr bindonce="time_record" ng-repeat="time_record in mainDataList">
             	<td>{{ time_record.empId }}</td>
             	<td>{{ time_record.date | date:'MMM d, yyyy' }}</td>
             	<td>{{ time_record.startsAt | date : 'h:m a' }}</td>            

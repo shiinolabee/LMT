@@ -1,49 +1,55 @@
+(function(){
 
-var registerController = function( $scope, $state, Auth ){
+    'use strict';
 
-    var _self = this;
+    var registerController = function( $scope, $state, AuthenticationFactory ){
 
-    _self.listAlerts = [];
+        var _self = this;
 
-    $scope.addAlert = function(type, options) {
-        _self[type].push(options);
-    };
+        _self.listAlerts = [];
 
-    $scope.closeAlert = function(type, index) {
-        _self[type].splice(index, 1);
-    };
+        $scope.addAlert = function(type, options) {
+            _self[type].push(options);
+        };
 
-    _self.register = function() {
+        $scope.closeAlert = function(type, index) {
+            _self[type].splice(index, 1);
+        };
 
-        _self.user.username = _self.user.email;
+        _self.register = function() {
 
-        Auth.register(_self.user).success(function( response ) {
-        
-          if ( response.success ) {
+            _self.user.username = _self.user.email;
+
+            AuthenticationFactory.register(_self.user).success(function( response ) {
             
-            $scope.addAlert('listAlerts', {
-                type: 'success',
-                msg: 'Your registration is successful.'
-            });               
+              if ( response.success ) {
+                
+                $scope.addAlert('listAlerts', {
+                    type: 'success',
+                    msg: 'Your registration is successful.'
+                });               
 
-          }
-
-
-        }).error(function(err, data) {
-
-            $scope.addAlert('listAlerts', {
-                type: 'danger',
-                msg: err.err
-            });   
-
-            console.log(_self.listAlerts)
-
-        });
-      
-    };    
-};
+              }
 
 
-cereliApp.controller('registerController', registerController);
+            }).error(function(err, data) {
 
-registerController.$inject = [ '$scope', '$state', 'Auth' ];
+                $scope.addAlert('listAlerts', {
+                    type: 'danger',
+                    msg: err.err
+                });   
+
+                console.log(_self.listAlerts)
+
+            });
+          
+        };    
+    };
+
+
+    angular.module('cereliApp').controller('registerController', registerController);
+
+    registerController.$inject = [ '$scope', '$state', 'AuthenticationFactory' ];
+
+})();
+

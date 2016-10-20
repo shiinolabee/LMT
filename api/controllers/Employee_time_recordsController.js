@@ -94,9 +94,7 @@ module.exports = {
 
                     endsAtDate.setHours(startsAtDate.getHours() + 1);                  
 
-                    tempTimeRecord.endsAt = endsAtDate;       
-
-                    // console.log(tempTimeRecord);
+                    tempTimeRecord.endsAt = endsAtDate;                           
                   
                     EmployeesTimeRecordService.saveEmployeeTimeRecord(tempTimeRecord, function( response ){
                         responseDataList.push(response);                 
