@@ -23,7 +23,8 @@ module.exports = {
 
       }       
 
-      // console.log(password, user);
+      console.log("User attempting to login using email: ",email);
+      console.log("User attempting to login using password: ",password);
 
       User.comparePasswordIfValid(password, user, function(err, valid) {
        

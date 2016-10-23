@@ -106,13 +106,13 @@
             </li>
             <li ng-class="{active: $state.includes('admin.employees') || $state.includes('admin.calendar')}" class="">
                 <a ng-click="checkToggleMenu(2);">
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-users"></i>
                     Employees
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="sidebar-sub-menu" uib-collapse="selectedMenu!=2"> 
                   <li ng-class="{active: $state.includes('admin.employees')}"> 
-                    <a ui-sref=".employees" href="#/dashboard/panels-wells"><i class="fa fa-list-alt"></i> All Employees</a> 
+                    <a ui-sref=".employees" href="#/dashboard/panels-wells"><i class="fa fa-list-alt"></i> List of Employees</a> 
                   </li>  
                   <li ng-class="{active: $state.includes('admin.calendar')}"> 
                     <a ui-sref=".calendar" href="#/dashboard/panels-wells"><i class="fa fa-calendar"></i> Employee Calendar</a> 
@@ -121,13 +121,13 @@
             </li>
             <li ng-class="{active: $state.includes('admin.reports')}" class="">
                 <a ui-sref=".reports">
-                    <i class="fa fa-users"></i>
-                    Reports
+                    <i class="fa fa-bar-chart"></i>
+                    Statistics & Report
                 </a>
             </li>
             <li ng-class="{active: $state.includes('admin.accounting')}" class="">
                 <a ui-sref=".accounting">
-                    <i class="fa fa-share"></i>
+                    <i class="fa fa-book"></i>
                     <span class="visible-xs-inline">Accounting</span>
                     Accounting
                 </a>

@@ -30,7 +30,7 @@
 
             <div class="form-group" ng-class="{ 'has-error': (departmentForm.icon.$touched || departmentForm.$submitted) && departmentForm.icon.$invalid }">
                 <label for="">Icon</label>
-                <input type="text" class="form-control" name="icon" ng-model="department.icon" required />
+                <input type="text" class="form-control" name="icon" ng-model="department.icon" placeholder="e.g fa-building" required />
                 <span class="help-block" ng-if="(departmentForm.icon.$touched || departmentForm.$submitted) && departmentForm.icon.$error.required">Icon is required</span>
             </div>            
         </div>

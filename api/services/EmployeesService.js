@@ -20,9 +20,11 @@ module.exports = {
     getEmployeeList : function( callback ) {
 
         // Employees.find().paginate({ page : pageValue , limit : limitValue}).exec(function( err, employees ) {
-        Employees.find().exec(function( err, employees ) {
+        Employees.find().populate('time_records').exec(function( err, employees ) {
 
             if( err ) callback(err);
+
+            sails.log('There are %d employee(s) fetched in the collection.', employees.length);
 
             callback(employees);
         });
@@ -31,11 +33,12 @@ module.exports = {
     
     getEmployee : function( criteria, callback ) {
 
-        Employees.find({ empId : { 'contains': criteria } }, { fullName : { 'contains': criteria } }, { emailAddress : { 'contains': criteria } }, { position : { 'contains': criteria } }).exec(function( err, employees ) {
+        Employees.find({ empId : { 'contains': criteria } }, { fullName : { 'contains': criteria } }, { emailAddress : { 'contains': criteria } }, { position : { 'contains': criteria } })
+            .exec(function( err, employees ) {
 
-            if( err ) callback(err);
+                if( err ) callback(err);
 
-            callback(employees);
+                callback(employees);
         });
 
     },

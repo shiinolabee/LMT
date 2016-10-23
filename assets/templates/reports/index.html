@@ -1,3 +1,52 @@
-<div ng-show="isAuthenticated">   
-    <button class="btn btn-md btn-danger">Add To-do</button>    
+<div ng-if="authorizeUser">   
+
+	<div class="row">
+		
+		<div class="col-md-3 col-sm-6 col-xs-12" ng-repeat="department in getDepartmentList()">
+			<div class="info-box">
+				<span class="info-box-icon bg-orange"><i class="fa fa-building"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">{{ department.departmentName }}</span>
+					<span class="info-box-number">{{ department.employees.length }} <small>employee(s)</small></span>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="row">
+
+		<div class="col-md-8">
+			<div class="box box-warning">
+				<div class="box-header with-border">
+					<h3 class="box-title"></h3>
+				</div>
+				<div class="box-body">
+
+					<div class="callout callout-warning"></div>
+
+
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+<!-- 
+	<div class="col-md-4 col-xs-12">
+
+		<div class="box box-warning">
+			<div class="box-header with-border">				
+				<h4 class="box-title">Departments</h4>
+			</div>
+			<div class="box-body">				
+				<a href="javascript:void(0);" class="btn btn-app" ng-repeat="department in getDepartmentList()">
+					<i class="fa fa-building"></i>
+					{{ department.departmentName }}
+				</a>
+			</div>
+		</div>
+	</div> -->
+
+
 </div>

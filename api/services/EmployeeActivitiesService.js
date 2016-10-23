@@ -11,9 +11,7 @@ module.exports = {
 
 	getAllEmployeeActivities : function(lastActivityRecord, callback ){
 
-		var lastActivityRecord = lastActivityRecord == null ? null : lastActivityRecord;
-
-		console.log(lastActivityRecord);
+		var lastActivityRecord = lastActivityRecord == null ? null : lastActivityRecord;		
 
 		if ( lastActivityRecord !== 0 && moment(lastActivityRecord).isValid() ) {
 			var lastActivityRecordDate = moment(lastActivityRecord);
@@ -40,8 +38,6 @@ module.exports = {
 				type : 0
 			};
 		}
-
-		console.log(query)
 
 		Employee_activities.find({ where : query }, { sort : 'createdAt DESC' }).exec(function( err, result ){
 

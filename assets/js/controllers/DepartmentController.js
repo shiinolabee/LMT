@@ -52,6 +52,7 @@
                     id : 0,
                     departmentName : '',
                     departmentCode : '0000',
+                    icon : '',
                     locationId : '',
                     createdAt : '',
                     updatedAt : '',

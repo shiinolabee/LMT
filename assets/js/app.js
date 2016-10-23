@@ -73,6 +73,15 @@
                 views : {
                     'child-content' : {
                         templateUrl : 'templates/admin/dashboard.html',
+                        resolve : {
+                            departmentList : function( ActiveRecordFactory ){
+                                return ActiveRecordFactory.getActiveRecordList('departments/getDepartmentList');
+                            },
+                            employeeList : function( ActiveRecordFactory ){
+                                return ActiveRecordFactory.getActiveRecordList('employees/getEmployeeList');
+                            }
+                        },
+                        controller : 'dashboardController'
                     }
                 },
                 data: {
@@ -123,7 +132,13 @@
                 url : 'reports',
                 views : {
                     'child-content' : {
-                        templateUrl : 'templates/reports/index.html'
+                        templateUrl : 'templates/reports/index.html',
+                        resolve : {
+                            departmentList : function( ActiveRecordFactory ){
+                                return ActiveRecordFactory.getActiveRecordList('departments/getDepartmentList');
+                            }
+                        },
+                        controller : 'reportsController'
                     }
                 },
                 data : {

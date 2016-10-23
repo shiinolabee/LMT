@@ -30,6 +30,10 @@ module.exports = {
             type : 'string'
         },
 
+        icon : {
+            type : 'string'
+        },
+
         createdAt : {
             type : 'datetime'
         },
@@ -41,6 +45,13 @@ module.exports = {
         recordStatus : {
             type : 'integer',
             defaultsTo : 1
+        },
+
+        // Add a reference to employees model
+        employees: {
+          collection: 'employees',
+          via: 'departmentAssigned',
+          dominant: true
         }
 
     }

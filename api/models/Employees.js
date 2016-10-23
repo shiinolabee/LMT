@@ -96,8 +96,9 @@ module.exports = {
         },
 
         time_records : {
-            collection : 'Employee_time_records',
-            via : 'empId'
+            collection : 'employee_time_records',
+            via : 'empId',
+            dominant: true
         },
 
         //attribute methods

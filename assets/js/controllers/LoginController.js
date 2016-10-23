@@ -27,14 +27,17 @@
       $scope.login = function() {
 
         $scope.errors = [];
+        $scope.showLoader = true;
 
         AuthenticationFactory.login($scope.user).success(function(result) {
 
           $state.go('admin.dashboard');
+           $scope.showLoader = false;
 
         }).error(function(err, data) {
 
-          $scope.errors.push(err);            
+          $scope.showLoader = false;
+          $scope.errors.push(err);              
 
         });
 

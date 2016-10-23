@@ -4,8 +4,9 @@
     <h5 class="text-left">To start your session.</h5>
     <div uib-alert ng-repeat="error in errors" class="alert-danger" type="danger" dismiss-on-timeout="4000">
       <i class="fa fa-exclamation-triangle"></i> {{error.err}}</div>
-                 
+    
     <form novalidate name="loginForm" ng-model="loginForm" method="post" class="margin-bottom">
+      <ajax-loader show-loader="showLoader"></ajax-loader>             
 
       <div class="form-group has-feedback">
         <input type="email" class="form-control" ng-model="user.email" placeholder="e.g sample@gmail.com" ng-required="true" uib-popover="Enter a valid email address." popover-placement="top" popover-popup-delay="0">
@@ -20,7 +21,7 @@
 
       <div class="row">       
         <div class="col-xs-5 col-md-5 pull-right">
-          <button type="submit" ng-click="login();" class="btn btn-warning btn-block btn-flat"><strong><i class="fa fa-sign-in"></i> Log-In</strong></button>
+          <button type="submit" ng-click="login();" ng-class="{ showLoader : 'disabled', '' }" class="btn btn-warning btn-block btn-flat"><strong><i class="fa fa-sign-in"></i> Log-In</strong></button>
         </div>
         <!-- /.col -->
       </div>

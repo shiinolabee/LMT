@@ -24,16 +24,17 @@
     <!-- /.lockscreen-image -->
 
     <!-- lockscreen credentials (contains the form) -->
-    <form novalidate name="loginForm" ng-model="loginForm" method="post" class="lockscreen-credentials">       
-          <div class="form-group has-feedback input-group">          
-              <input type="{{lockUserCtrl.passwordInputType}}" ng-model="user.password" class="form-control" placeholder="Enter your password...">
-              <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
-              <span class="toggle-show-password" ng-click="lockUserCtrl.togglePassword();" uib-tooltip="Show/Hide"><i class="fa" ng-class="{ 'fa-eye' : !lockUserCtrl.showHidePasswordIcon, 'fa-eye-slash' : lockUserCtrl.showHidePasswordIcon }"></i></span>
-              <div class="input-group-btn">
-                <button type="submit" class="btn" ng-click="login();"><i class="fa fa-arrow-right text-muted"></i></button>
-              </div>
+    <form novalidate name="loginForm" ng-model="loginForm" method="post" class="lockscreen-credentials">   
+      <ajax-loader show-loader="showLoader"></ajax-loader>             
+
+      <div class="form-group has-feedback input-group">          
+          <input type="{{lockUserCtrl.passwordInputType}}" ng-model="user.password" class="form-control" placeholder="Enter your password...">
+          <!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
+          <span class="toggle-show-password" ng-click="lockUserCtrl.togglePassword();" uib-tooltip="Show/Hide"><i class="fa" ng-class="{ 'fa-eye' : !lockUserCtrl.showHidePasswordIcon, 'fa-eye-slash' : lockUserCtrl.showHidePasswordIcon }"></i></span>
+          <div class="input-group-btn">
+            <button type="submit" class="btn" ng-click="login();"><i class="fa fa-arrow-right text-muted"></i></button>
           </div>
-      </div>
+      </div>      
     </form>
     <!-- /.lockscreen credentials -->
 

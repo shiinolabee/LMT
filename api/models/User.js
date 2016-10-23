@@ -63,8 +63,8 @@ module.exports = {
 
   comparePasswordIfValid : function (password, user, cb) {
 
-    console.log("User password from DB : ", user.password)
-    console.log("User inputted password : ", password);
+    // console.log("User password from DB : ", user.password)
+    // console.log("User inputted password : ", password);
 
     bcrypt.compare(password, user.password, function (err, match) {
 

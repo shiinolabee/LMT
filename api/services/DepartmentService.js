@@ -7,13 +7,13 @@
 
 module.exports = {
     
-    getDepartmentList : function( next ) {
+    getDepartmentList : function( callback ) {
         
-        Departments.find().exec(function( err, departments ) {
+        Departments.find().populate('employees').exec(function( err, departments ) {
 
             if( err ) throw err;
 
-            next(departments);
+            callback(departments);
         });
 
     },
@@ -39,30 +39,30 @@ module.exports = {
 
     },
 
-    saveDepartment : function ( data, next ) {
+    saveDepartment : function ( data, callback ) {
 
         Departments.create( data ).exec(function( err, department ){
             if( err ) throw err;
 
-            next(department);
+            callback(department);
         });
     },
 
-    updateDepartment : function ( data, id, next ) {
+    updateDepartment : function ( data, id, callback ) {
 
         Departments.update( { id : id }, data ).exec(function( err, department ){
             if( err ) throw err;
 
-            next(department);
+            callback(department);
         });
     },
 
-    removeDepartment : function( id, next) {
+    removeDepartment : function( id, callback) {
 
         Departments.destroy( { id : id } ).exec(function( err, department ){
             if( err ) throw err;
 
-            next(department);
+            callback(department);
         });
     }
 };
