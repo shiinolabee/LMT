@@ -13,6 +13,8 @@ module.exports = {
 
             if( err ) callback(err);
 
+            sails.log('Sorted data list successfully fetched in the collection.');            
+
             callback(employees);
         });
     },
@@ -38,6 +40,8 @@ module.exports = {
 
                 if( err ) callback(err);
 
+                sails.log('Searched employee(s) successfully fetched in the collection.', employees.length);
+
                 callback(employees);
         });
 
@@ -48,6 +52,8 @@ module.exports = {
         Employees.create( data ).exec(function( err, employee ){
             if( err ) throw err;
 
+            sails.log('Employee details successfully saved in the collection.');
+
             callback(employee);
         });
     },
@@ -57,6 +63,8 @@ module.exports = {
         Employees.update( { id : id }, data ).exec(function( err, employee ){
             if( err ) callback(err);
 
+            sails.log('Employee details successfully updated in the collection.');
+
             callback(employee);
         });
     },
@@ -65,6 +73,8 @@ module.exports = {
 
         Employees.destroy( { id : id } ).exec(function( err, employee ){
             if( err ) callback(err);
+
+            sails.log('Employee details successfully removed in the collection.');
 
             callback(employee);
         });

@@ -1066,7 +1066,8 @@
 					exportType : 0,	
 					exportDate : new Date()										
 				};				
-				$scope.importMessage = "Reading ...";
+				$scope.importEmployeeRecordsMessage = "Reading ...";
+				$scope.importTimeRecordsMessage = "Reading ...";
 
 				_self.message = '';
 				
@@ -1117,7 +1118,7 @@
 			                data : { file: file, userId : $scope.authorizeUser.user.id }
 			            }).then(function( response ){
 			                if ( response.status == 200 ) {
-			                	$scope.filePercentage = 0;
+			                	$scope.fileImportEmployeesPercentage = 0;
 			                	_self.message = response.data.message;		                	
 			                }
 			            }, function( response ){
@@ -1125,8 +1126,8 @@
 			            }, function( evt ){		
 
 			            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-		            		$scope.filePercentage = progressPercentage;
-		            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+		            		$scope.fileImportEmployeesPercentage = progressPercentage;
+		            		$scope.importEmployeeRecordsMessage = 'Reading...Please wait..';						        
 
 			            });		     
 		        	}
@@ -1205,7 +1206,7 @@
 			                data : { file: file, userId : $scope.authorizeUser.user.id }
 			            }).then(function( response ){
 			                if ( response.status == 200 ) {
-			                	$scope.filePercentage = 0;
+			                	$scope.fileImportTimeRecordsPercentage = 0;
 			                	_self.message = response.data.message;
 			                	_self.openUploadedRecordsModal(response.data.data);		                	
 			                }
@@ -1214,8 +1215,8 @@
 			            }, function( evt ){		
 
 			            	var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-		            		$scope.filePercentage = progressPercentage;
-		            		$scope.importMessage = 'Reading...' + progressPercentage + '%';						        
+		            		$scope.fileImportTimeRecordsPercentage = progressPercentage;
+		            		$scope.importTimeRecordsMessage = 'Reading...Please wait.';						        
 
 			            });		        		
 		        	}

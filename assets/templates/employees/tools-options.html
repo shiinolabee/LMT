@@ -28,11 +28,11 @@
       <form name="importRecordForm" ng-model="importRecordForm">         
           <div class="form-group">                  
               <h5 class="display-inline">Select file to import : </h5>
-              <!-- <input type="file" ngf-select="employeeToolsOptionsCtrl.upload(importFile)" name="file" ng-model="importFile"/>  -->
+             
               <button type="button" class="btn btn-sm btn-primary" ngf-select="employeeToolsOptionsCtrl.uploadEmployees(employeeFile)" name="file" ng-model="employeeFile" ngf-pattern="'*.csv'" ngf-accept="'*.csv'"><i class="fa fa-paperclip"></i> Browse a csv file </button>              
           </div>        
       
-          <uib-progressbar ng-show="filePercentage > 0" class="progress-striped" ng-class="{ active : filePercentage > 0 }" value="filePercentage">{{ importMessage }}</uib-progressbar>
+          <uib-progressbar ng-show="fileImportEmployeesPercentage > 0" class="progress-striped" ng-class="{ active : fileImportEmployeesPercentage > 0 }" value="fileImportEmployeesPercentage">{{ importEmployeeRecordsMessage }}</uib-progressbar>
 
           <div ng-show="employeeToolsOptionsCtrl.message.length > 0" uib-alert ng-class="'alert-' + ( 'success')" type="success" close="Close" dismiss-on-timeout="4000">{{ employeeToolsOptionsCtrl.message }}</div>
 
@@ -85,7 +85,7 @@
               <button class="btn btn-sm btn-primary" type="button" ngf-select="employeeToolsOptionsCtrl.uploadTimeRecords(importFile)" name="file" ng-model="importFile"><i class="fa fa-paperclip"></i> Browse a csv file</button>                 
           </div>  
       
-          <uib-progressbar ng-show="filePercentage > 0" class="progress-striped" ng-class="{ active : filePercentage > 0 }" value="filePercentage">{{ importMessage }}</uib-progressbar>
+          <uib-progressbar ng-show="fileImportTimeRecordsPercentage > 0" class="progress-striped" ng-class="{ active : fileImportTimeRecordsPercentage > 0 }" value="fileImportTimeRecordsPercentage">{{ importTimeRecordsMessage }}</uib-progressbar>
 
           <div ng-show="employeeToolsOptionsCtrl.message.length > 0" uib-alert ng-class="'alert-' + ( 'success')" type="success" close="Close" dismiss-on-timeout="4000">{{ employeeToolsOptionsCtrl.message }}</div>
 

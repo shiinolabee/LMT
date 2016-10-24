@@ -13,6 +13,9 @@ module.exports = {
 
             if( err ) throw err;
 
+            sails.log('There are %d department(s) fetched in the collection.', departments.length);
+
+
             callback(departments);
         });
 
@@ -24,6 +27,9 @@ module.exports = {
 
             if( err ) callback(err);
 
+            sails.log('Sorted data list successfully fetched in the collection.');
+
+
             callback(departments);
         });
     },
@@ -33,6 +39,8 @@ module.exports = {
         Departments.find({ where : { departmentName : criteria, departmentCode : criteria } }).exec(function( err, departments ) {
 
             if( err ) throw err;
+
+            sails.log('Searched department(s) successfully fetched in the collection.');
 
             next(departments);
         });
@@ -44,6 +52,8 @@ module.exports = {
         Departments.create( data ).exec(function( err, department ){
             if( err ) throw err;
 
+            sails.log('Department details successfully saved in the collection.');
+
             callback(department);
         });
     },
@@ -53,6 +63,8 @@ module.exports = {
         Departments.update( { id : id }, data ).exec(function( err, department ){
             if( err ) throw err;
 
+            sails.log('Department details successfully updated in the collection.');
+
             callback(department);
         });
     },
@@ -61,6 +73,8 @@ module.exports = {
 
         Departments.destroy( { id : id } ).exec(function( err, department ){
             if( err ) throw err;
+
+            sails.log('Department details successfully removed in the collection.');
 
             callback(department);
         });

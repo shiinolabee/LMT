@@ -19,22 +19,26 @@ module.exports = {
     User.findOne({ where : { email : email } }).then(function(user) {      
 
       if (!user) {
+        sails.log("User attempting to login failed. System didn\'t recognize your log-in details");
         return res.json(401, {err: 'System didn\'t recognize your log-in details'});
 
       }       
 
-      console.log("User attempting to login using email: ",email);
-      console.log("User attempting to login using password: ",password);
+      sails.log("User attempting to login using email: ",email);
+      sails.log("User attempting to login using password: ",password);
 
       User.comparePasswordIfValid(password, user, function(err, valid) {
        
         if (err) {
+          sails.log("User attempting to login failed. Incorrect log-in details");
           return res.json(401, {err: 'Incorrect log-in details' });
         }
 
         if (!valid) {
+          sails.log("User attempting to login failed. Invalid email/password.");          
           return res.json(401, {err: 'Invalid email/password.'});
         } else {
+          sails.log("User attempting to login successful."); 
           res.json({user: user, token: jwToken.issue({id : user.id })});
         }
       });
@@ -47,16 +51,19 @@ module.exports = {
     var data = req.param('data');
 
     if (data.password !== data.confirmPassword) {
+      sails.log("Provided password doesn\'t match."); 
       return res.json(401,{ success : false, err: 'Password doesn\'t match'});
     }
 
     User.create(data).exec(function(err, user) {
 
-      if (err) {     
+      if (err) {
+        sails.log("Error registering your details.");      
         return res.json(401,{ success :false, err: "Error registering your details" });        
       }
 
       if (user) {
+        sails.log("User details successfully registered."); 
         res.json(200,{ user: user, token: jwToken.issue({id: user.id}) });
       }
     });

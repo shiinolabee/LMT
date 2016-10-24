@@ -39,22 +39,26 @@ module.exports = {
 			};
 		}
 
-		Employee_activities.find({ where : query }, { sort : 'createdAt DESC' }).exec(function( err, result ){
+		Employee_activities.find({ where : query }, { sort : 'createdAt DESC' }).exec(function( err, activities ){
 
 			if ( err ) callback(err);
 
-			callback(result);
+            sails.log('There are %d activity(s) fetched in the collection.', activities.length);
+
+            callback(activities);
 		});
 
 	},
 
 	getEmployeeActivityList : function( id, callback ){
 
-		Employee_activities.find({ where : { empId : id } }, { sort : 'createdAt DESC' }).exec(function( err, result ){
+		Employee_activities.find({ where : { empId : id } }, { sort : 'createdAt DESC' }).exec(function( err, activities ){
 
 			if ( err ) callback(err);
 
-			callback(result);
+            sails.log('There are %d activity(s) fetched in the collection.', activities.length);			
+
+			callback(activities);
 		});
 
 	},
@@ -70,10 +74,12 @@ module.exports = {
 			dateCommitted : new Date()
 		};
            
-        Employee_activities.create(record).exec( function(err, result) {
+        Employee_activities.create(record).exec( function(err, activities) {
             if ( err ) callback(err);
 
-            callback(result);
+            sails.log('Activity details successfully saved in the collection.');            
+
+            callback(activities);
         });   
 
     }
