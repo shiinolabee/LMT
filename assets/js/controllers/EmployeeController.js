@@ -16,12 +16,24 @@
             minDate: new Date()        
         };
 
-        $scope.filterOptions = {
-            title : "Test Filters",
-            template : 'templates/common/filter-options.html',        
-            placement : 'bottom-left'
+        $scope.config = {
+            showBulkActionsContent : false,
         };
 
+        $scope.filterOptions = {
+            title : "Filters",
+            isSelectedOption : true,
+            template : 'templates/common/filter-options.html',        
+            placement : 'bottom-right',
+
+            toggle : function(){
+                if ( this.isSelectedOption ) {
+                    this.isSelectedOption = false;
+                } else {
+                    this.isSelectedOption = true;
+                }
+            }
+        }; 
 
         _self.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
@@ -47,6 +59,13 @@
 
         $scope.closeAlert = function(type, index) {
             _self[type].splice(index, 1);
+        };
+
+        _self.showBulkActions = function( type ){           
+            
+            $scope.bulkActionType = type ? 'Edit' : 'Remove';
+            
+            $scope.config.showBulkActionsContent = true;            
         };
 
         _self.tableHeaders = [
@@ -133,7 +152,7 @@
                     $scope.parentShowLoader = false;   
                 }
             });
-        };      
+        };     
 
         _self.viewEmployeeDetails = function(index, empId) {
 
@@ -157,7 +176,12 @@
                         return false;
                     },
                     getEmployeeTimeRecord : function( ActiveRecordFactory ){
-                        return ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord');
+
+                        if ( $scope.mainDataList[index].time_records.length > 0 ) {                            
+                            return $scope.mainDataList[index].time_records;
+                        } else {                            
+                            return ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord');                            
+                        }
                     }
                 },
                 
@@ -172,9 +196,10 @@
                     $scope.editMode = isEditMode;
                     $scope.employee = employeeInitialValues;                 
                     $scope.statisticsRecordResult = [];   
+                    $scope.hasSelectedOtherTab = false;
                
                     $scope.departmentList = getDepartmentList; 
-                    $scope.employeeTimeRecords = getEmployeeTimeRecord.data;
+                    $scope.employeeTimeRecords = angular.isObject(getEmployeeTimeRecord.data) ? getEmployeeTimeRecord.data : getEmployeeTimeRecord;                    
 
                     $scope.modalOptions = {
                         headerText : 'View Employee Details',
@@ -213,21 +238,29 @@
                                 $scope.childShowLoader = false;                                
                             } 
                         });
-                    };   
+                    };
              
-                    _self.getDailyTimeRecordCalendar = function(){
-                        $scope.childShowLoader = true;
+                    _self.getDailyTimeRecordCalendar = function(){    
 
-                        ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
-                            if ( response.success ) {                                
-                                $scope.employeeTimeRecords = response.data;
-                                $scope.childShowLoader = false;                                
-                            } 
-                        });
+                        if( $scope.hasSelectedOtherTab ) {
+
+                            $scope.childShowLoader = true;
+
+                            ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
+                                if ( response.success ) {                                
+                                    $scope.employeeTimeRecords = response.data;
+                                    $scope.childShowLoader = false;                                
+                                } 
+                            });                      
+
+                        }                        
+
                     };       
 
 
                     _self.getTrackingActivities = function(){
+
+                        $scope.hasSelectedOtherTab = true;
                         $scope.childShowLoader = true;
 
                         ActiveRecordFactory.getActiveRecord({ id : $scope.employee.id }, 'employee_activities/getEmployeeActivities').then(function( response ){
@@ -310,6 +343,8 @@
                     $scope.recordStatusArr = getRecordStatusArr;
                     $scope.departmentList = getDepartmentList;
                     $scope.genderArr = getGenderArr;
+
+                    delete $scope.employee.time_records;
                
                     $scope.datePickerOptions = {                                                
                         // dateDisabled: disabled,  

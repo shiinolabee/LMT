@@ -16,7 +16,7 @@
             <!-- Employee Timeline -->
             <uib-tab index="0" select="employeeCtrl.getEmployeeActivities(null);">
               <uib-tab-heading>
-                <i class="fa fa-tasks"></i> Timeline & Activities                
+                <i class="fa fa-tasks"></i> Timeline &amp; Activities                
               </uib-tab-heading>
 
               <!-- <div ng-if="!childShowLoader"> -->
@@ -34,14 +34,7 @@
               </uib-tab-heading>
          
               <ajax-loader show-loader="parentShowLoader"></ajax-loader>
-
-         <!--      <div class="col-md-12 no-padding">
-                <a class="btn btn-app" ng-repeat="department in departmentList">
-                  <span class="badge bg-yellow"><total-employees-in-department employee-list="mainDataList" department-id="department.id"></total-employees-in-department></span>
-                  <i class="fa fa-building"></i> {{ department.departmentName }}
-                </a>               
-              </div>              
-               -->
+     
               <div class="col-md-3 no-padding pull-right">
                 <div class="input-group input-group-md">
                   <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>                    
@@ -59,13 +52,25 @@
                     input-class="form-control input-md"
                     match-class="highlight" />
                 </div>
-              </div>
+              </div>              
+              <div class="col-md-8 no-padding pull-left">
 
-              <div class="col-md-5 no-padding pull-left">
+                <div class="btn-group" uib-dropdown>
+                  <button type="button" class="btn btn-warning"><i class="fa fa-cog"></i> Bulk Actions</button>
+                    <button type="button" class="btn btn-warning" uib-dropdown-toggle>
+                      <span class="caret"></span>
+                      <span class="sr-only">Split button!</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(1);">Edit</a></li>
+                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(0);">Remove</a></li>
+                    </ul> 
+                </div>
 
                 <div class="btn-group" uib-dropdown>                  
                   <button class="btn btn-warning btn-md" type="button"><i class="fa fa-filter"></i> Filters</button>                  
-                  <button class="btn btn-warning btn-md" type="button" popover-placement="{{filterOptions.placement}}" uib-popover-template="filterOptions.template"><span class="fa fa-arrow-down"></span></button>                
+                  <button class="btn btn-warning btn-md" type="button" popover-trigger="'click'" popover-placement="{{filterOptions.placement}}" uib-popover-template="filterOptions.template"><span class="caret"></span>
+                      <span class="sr-only">Split button!</span></button>                
                 </div>   
                 <div class="btn-group" role="group" aria-label="...">
                   <button type="button" class="btn btn-warning"><i class="fa fa-user"></i></button>
@@ -75,6 +80,11 @@
               </div>              
 
               <div class="clearfix"></div><br>
+                
+              <!-- Bulk Items Content -->
+              <employee-bulk-actions bindonce ng-if="config.showBulkActionsContent" bulk-type="bulkActionType" selected-employees="mainDataList" department-list="departmentList"></employee-bulk-actions>                
+              
+
               <div class="table-responsive employee-list-content">
                 <table class="table table-hover table-striped table-bordered no-padding dataTable">
                   <thead>

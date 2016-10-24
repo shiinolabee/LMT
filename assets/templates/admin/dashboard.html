@@ -175,10 +175,10 @@
         <!-- /.box-header -->
         <div class="box-body no-padding">
           <ul class="users-list clearfix">
-            <li ng-repeat="employee in getEmployeeList();">
+            <li ng-repeat="employee in getEmployeeList() | before : 10">
               <img ng-src="img/{{ employee.gender && 'avatar' || !employee.gender && 'avatar2' }}.png" alt="User Image">
               <a class="users-list-name" href="#">{{ employee.fullName }}</a>
-              <span class="users-list-date">{{ employee.createdAt | date:'medium' }}</span>
+              <span class="users-list-date">{{ employee.createdAt | date:'MMM dd, yyyy' }}</span>
             </li>           
           </ul>
           <!-- /.employee-list -->

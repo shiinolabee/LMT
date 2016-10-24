@@ -43,6 +43,57 @@
 
 	});
 
+	cereliDirectives.directive('employeeBulkActions', function(){
+
+		return {
+
+			restrict : 'E',
+
+			transclude : true,
+
+			templateUrl : 'templates/employees/employee-bulk-actions.html',
+
+			scope : true,
+
+			bindToController : {
+				departmentList : '=',
+				selectedEmployees : '=',
+				bulkType : '='
+			},
+
+			controller : ['$scope', 'ActiveRecordFactory', function( $scope, ActiveRecordFactory ){
+
+				var _self = this;		
+
+				_self.selectedEmployees = angular.copy(_self.selectedEmployees);			
+
+				_self.recordStatus = '';
+
+				_self.removeFromBulkItems = function( index ) {
+					_self.selectedEmployees.splice(index, 1);  
+				};		
+
+				_self.cancelBulkItems = function(){									
+					$scope.$parent.$parent.config.showBulkActionsContent = false;	
+				};
+
+				_self.saveChanges = function(){
+
+					console.log(_self.selectedEmployees);
+
+
+					if ( _self.selectedEmployees.length > 0 ) {
+
+					}
+				};				
+
+			}],
+
+			controllerAs : 'vm'
+		}
+
+	});
+
 	cereliDirectives.directive('ajaxLoader', function(){
 
 		return {
@@ -382,9 +433,7 @@
 					 		}
 				 		});
 
-				 	});	
-
-				 	console.log(_self.timeRecordsGroup);			 	 				 			 			
+				 	});		 	 				 			 			
 
 		 			$scope.mapTimeRecordsGroup();						
 

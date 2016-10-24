@@ -221,3 +221,32 @@ span.toggle-show-password{
 .skin-red .sidebar-menu>li:hover>a, .skin-red .sidebar-menu>li.active>a{
   border-left-color: #ef9200 !important;
 }
+
+.users-list > li img{
+  width: 50%;
+}
+
+.filter-options-content button.btn-default{
+    margin: 5px auto;
+}
+
+button.filter-options-content{
+    width: 160px;
+    margin: 5px auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bulk-items {
+    display: block;
+    margin: 0 0 5px;
+    line-height: 140%;
+    height: 12em;
+    border: 1px solid #ddd;
+    overflow-y: scroll;
+    padding: 0 5px;
+}
+
+.bulk-items div {
+    margin: .2em .3em;
+}

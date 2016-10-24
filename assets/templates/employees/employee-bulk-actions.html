@@ -1,0 +1,54 @@
+<div class="box box-warning">
+	<div class="box-header with-border">
+		<h2 class="box-title"> Bulk {{ vm.bulkType }}</h2>
+	</div>
+	<div class="box-body">
+		<div class="bulk-actions-container">			
+			<div class="col-md-4">
+				<h5 class="display-inline">Employees</h5>
+				<input type="text" name="searchEmployee" placeholder="Search employee..." />
+				
+				<div class="bulk-items">
+					<div ng-repeat="item in vm.selectedEmployees | pick : 'selected == true'" ng-model="vm.selectedEmployees">
+						<a href="javascript:void(0);" ng-click="vm.removeFromBulkItems($index);"><i class="fa fa-times"></i></a>
+						{{ item.empId }} - {{ item.fullName }}
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h5>Departments</h5>
+				<div class="bulk-items">
+					<div ng-repeat="item in vm.departmentList">
+						<input type="radio" name="department" value="department.id" ng-model="departmentAssigned"/>
+						{{ item.departmentName }}
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h5>Record Status</h5>
+				<div class="bulk-items">				
+					<div>
+						<input type="radio" name="recordStatus" ng-model="recordStatus" ng-value="1" ng-checked="recordStatus"/>
+						Active
+					</div>
+					<div>
+						<input type="radio" name="recordStatus" ng-model="recordStatus" ng-value="0" ng-checked="recordStatus"/>
+						Inactive
+					</div>
+					<div>
+						<input type="radio" name="recordStatus" ng-model="recordStatus" ng-value="" ng-checked="recordStatus" />
+						No Changes
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3 pull-right text-right" ng-if="vm.bulkType == 'Edit'">
+				<button class="btn btn-sm btn-primary" ng-click="vm.saveChanges();"><i class="fa fa-download"></i> Save changes</button>
+				<button class="btn btn-sm btn-danger" ng-click="vm.cancelBulkItems();"><i class="fa fa-ban"></i> Cancel</button>
+			</div>
+
+			<div class="clearfix"></div>
+		</div>
+		
+	</div>
+</div>

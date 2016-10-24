@@ -107,6 +107,8 @@
                     $scope.editMode = isEditMode;
                     $scope.recordStatusArr = getRecordStatusArr;
 
+                    delete $scope.department.employees;
+
                     $scope.modalOptions = {
                         headerText : !$scope.editMode ? 'New Department' : 'Edit Department Details',
                         closeButtonText : 'Cancel',
