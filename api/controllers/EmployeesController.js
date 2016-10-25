@@ -6,6 +6,7 @@
  */
 
 var moment = require('moment');
+var promise = require('q');
 var employeeUploadedDataList = []; 
 
 module.exports = {
@@ -175,7 +176,38 @@ module.exports = {
                     res.json(response.status, { success : false , data : "Error"  });                
                 }    
             }); 
-        } else {           
+        } else if ( req.param('ids') ) {  
+
+            var i, queryResults = [];
+
+            for (var i=0; i < req.param('ids').length; i++) (function(i){
+
+                EmployeesService.editEmployee(req.param('data'), req.param('ids')[i], function(response) {                
+
+                    if ( response ) queryResults.push(response);
+
+                    return queryResults;
+                });                   
+
+            })(i); // avoid the closure loop problem
+
+            promise.all(queryResults).then(function(response){
+
+                var responseData = response || queryResults;
+                var id = req.param('userId');
+                var title = "Update Employee List Details" ;
+                var description = "Employee ID\'s [ " + req.param('ids').join(',') + " ] Details has been updated.";
+
+                EmployeeActivitiesService.saveEmployeeActivity({ type : 1.3, userId : id, description : description, title : title }, function( response ){
+
+                    if ( response ) {
+                        return res.json( { success : true , data : responseData  });    
+                    }
+                });
+
+            });   
+
+        } else {
             EmployeesService.saveEmployee(req.param('activeRecord'), function(response) {
 
                 if ( response ) {
@@ -202,24 +234,77 @@ module.exports = {
         
         var employeeVal = ( req.param('id') )  ? req.param('id') : undefined;
 
-        EmployeesService.removeEmployee(employeeVal, function(response) {
+        if ( employeeVal ) {
 
-            if ( response ) {
-                var responseData = response;
-                var id = req.param('id');
-                var title = "Remove Employee";
-                var description = req.param('fullName') + "'s details has been removed from the system.";
- 
-                EmployeeActivitiesService.saveEmployeeActivity({ type : 1.2, empId : id, description : description, title : title }, function( response ){
+            EmployeesService.removeEmployee(employeeVal, function(response) {
+
+                if ( response ) {
+
+                    Employee_time_records.destroy( { empId : response[0].empId } ).exec(function( err, time_records ){
+
+                        if( err ) throw err;
+
+                        sails.log('Time record details of Employee ID ' + response[0].empId +' successfully removed in the collection.'); 
+                        
+                        
+                        var responseData = response;
+                        var id = req.param('id');
+                        var title = "Remove Employee";
+                        var description = req.param('fullName') + "'s details has been removed from the system.";
+         
+                        EmployeeActivitiesService.saveEmployeeActivity({ type : 1.2, empId : id, description : description, title : title }, function( response ){
+
+                            if ( response ) {
+                                return res.json( { success : true , data : responseData  });    
+                            }
+                        });                 
+                    });
+                    
+                } else {
+                    res.json(response.status, { success : false , data : "Error"  });                
+                }  
+            });
+        } else if ( req.param('ids') ) {
+
+            var i, queryResults = [];
+
+            for (var i=0; i < req.param('ids').length; i++) (function(i){
+
+                EmployeesService.removeEmployee(req.param('ids')[i], function(response) {                
+
+                    if ( response ) queryResults.push(response);
+
+                    Employee_time_records.destroy( { empId : response[0].empId } ).exec(function( err, time_records ){
+
+                        if( err ) throw err;
+
+                        sails.log('Time record details of Employee ID ' + response[0].empId +' successfully removed in the collection.'); 
+                        
+                        return queryResults;
+                    });
+
+                });                   
+
+            })(i); // avoid the closure loop problem
+
+            promise.all(queryResults).then(function(response){
+
+                var responseData = response || queryResults;
+                var id = req.param('userId');
+                var title = "Remove Employee List Details" ;
+                var description = "Employee ID\'s [ " + req.param('ids').join(',') + " ] Details has been removed from the system.";
+
+                EmployeeActivitiesService.saveEmployeeActivity({ type : 1.4, userId : id, description : description, title : title }, function( response ){
 
                     if ( response ) {
                         return res.json( { success : true , data : responseData  });    
                     }
-                });                 
-            } else {
-                res.json(response.status, { success : false , data : "Error"  });                
-            }  
-        });
+                });
+
+            });   
+
+        }
+
     }
 	
 };

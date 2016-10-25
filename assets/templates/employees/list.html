@@ -62,16 +62,20 @@
                       <span class="sr-only">Split button!</span>
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
-                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(1);">Edit</a></li>
-                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(0);">Remove</a></li>
+                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(1);"><i class="fa fa-cog"></i> Edit Selected</a></li>
+                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(0);"><i class="fa fa-trash"></i> Remove Selected</a></li>
+                      <li role="menuitem"><a href="javascript:void(0);" ng-click="employeeCtrl.showBulkActions(2);"><i class="fa fa-cloud-upload"></i> Export Selected</a></li>
                     </ul> 
                 </div>
 
-                <div class="btn-group" uib-dropdown>                  
-                  <button class="btn btn-warning btn-md" type="button"><i class="fa fa-filter"></i> Filters</button>                  
-                  <button class="btn btn-warning btn-md" type="button" popover-trigger="'click'" popover-placement="{{filterOptions.placement}}" uib-popover-template="filterOptions.template"><span class="caret"></span>
-                      <span class="sr-only">Split button!</span></button>                
-                </div>   
+                <div class="btn-group" uib-dropdown>
+                  <button type="button" class="btn btn-warning"><i class="fa fa-filter"></i> Filters</button>
+                    <button type="button" class="btn btn-warning" uib-dropdown-toggle ng-click="employeeCtrl.showFilterOptions();">
+                      <span class="caret"></span>
+                      <span class="sr-only">Split button!</span>
+                    </button>                   
+                </div>
+
                 <div class="btn-group" role="group" aria-label="...">
                   <button type="button" class="btn btn-warning"><i class="fa fa-user"></i></button>
                   <button class="btn btn-warning" ng-click="employeeCtrl.saveEmployee(0, false)"><b>New Employee</b></button>   
@@ -80,9 +84,12 @@
               </div>              
 
               <div class="clearfix"></div><br>
+
+              <!-- Filter Options Content -->
+              <employee-filter-options department-list="departmentList" ng-if="config.showFilterOptionsContent"></employee-filter-options>
                 
               <!-- Bulk Items Content -->
-              <employee-bulk-actions bindonce ng-if="config.showBulkActionsContent" bulk-type="bulkActionType" selected-employees="mainDataList" department-list="departmentList"></employee-bulk-actions>                
+              <employee-bulk-actions bindonce ng-if="config.showBulkActionsContent" authorize-user-id="authorizeUser.user.id" bulk-type="bulkActionType" selected-employees="mainDataList" department-list="departmentList"></employee-bulk-actions>                
               
 
               <div class="table-responsive employee-list-content">
@@ -105,7 +112,7 @@
                       departmentAssigned"></show-subdetails></td>
                     <td>{{ employee.position | contentIsEmpty }}</td>
                     <!-- <td>{{ employee.emailAddress }}</td> -->
-                    <td>{{ employee.dateHired | date : shortDate | contentIsEmpty }}</td>
+                    <td>{{ employee.recordStatus | recordStatus }}</td>
                     <td colspan="4">
                       <button class="btn btn-default btn-xs" ng-click="employeeCtrl.viewEmployeeDetails($index, employee.empId);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
                       <button class="btn btn-default btn-xs" ng-click="employeeCtrl.saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-pencil"></i></button>

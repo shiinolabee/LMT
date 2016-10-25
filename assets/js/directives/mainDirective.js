@@ -23,9 +23,21 @@
 
 		return function( value ) {
 			if ( !value ) {
-				return 'Not yet specified.'
+				return 'Not specified.';
 			}
+
 			return value;
+		}
+	});
+
+	cereliDirectives.filter('recordStatus', function(){
+
+		return function( value ) {
+			if ( value == 0 ) {
+				return 'Inactive';
+			} else if ( value == 1 ) {
+				return 'Active';
+			}
 		}
 	});
 
@@ -40,6 +52,39 @@
 			}
 
 		}
+
+	});
+
+	cereliDirectives.directive('employeeFilterOptions', function(){
+
+		return {
+			
+			restrict : 'E',
+
+			transclude : true,
+
+			templateUrl : 'templates/employees/employee-filter-options.html',
+
+			scope : true,
+
+			bindToController : {
+				departmentList : '='
+			},
+
+			controller : [ '$scope' , function( $scope ){
+				var _self = this;
+
+				_self.close = function(){									
+					$scope.$parent.$parent.config.showFilterOptionsContent = false;	
+				};
+
+				_self.toggleFilter = function(){
+
+				}
+			}],
+
+			controllerAs : 'vm'
+		};
 
 	});
 
@@ -58,32 +103,166 @@
 			bindToController : {
 				departmentList : '=',
 				selectedEmployees : '=',
-				bulkType : '='
+				bulkType : '=',
+				authorizeUserId : '='
 			},
 
 			controller : ['$scope', 'ActiveRecordFactory', function( $scope, ActiveRecordFactory ){
 
 				var _self = this;		
+				
+				_self.selectedEmployees = angular.copy(_self.selectedEmployees);									
 
-				_self.selectedEmployees = angular.copy(_self.selectedEmployees);			
+				_self.recordStatus = null; // sets record status model
+				_self.selectedEmployeeIds = []; // selected ids array container
 
-				_self.recordStatus = '';
+                _self.time_record_datePicker = {};	
+                _self.exportType = 2; // set to .doc file type
 
 				_self.removeFromBulkItems = function( index ) {
 					_self.selectedEmployees.splice(index, 1);  
 				};		
 
-				_self.cancelBulkItems = function(){									
+				/**
+		        * Selects employee in search box via string
+		        **/
+		        _self.selectedSearchEmployee = function( data ){  
+		        	
+		        	data.originalObject.selected = true;
+		            _self.selectedEmployees.push(data.originalObject);       		        	
+		        };
+
+		        /**
+		        * Removes unneeded employee attributes/properties for updating 		        
+		        **/
+		        _self.removeUnnecessaryObjectProperties = function( dataList ){
+
+		        	angular.forEach(dataList, function( item, key ){
+		        		Object.keys(item).forEach(function( prop ){		        			
+		        			if ( prop !== 'id' && prop !== 'departmentAssigned' && prop !== 'recordStatus' && prop !== 'selected' ) {
+		        				delete item[prop];
+		        			}
+		        		});		        		
+		        	});
+
+		        };
+
+		        /**
+		        * Filters the selected employee lists via selected attribute/property
+		        **/
+		        _self.filterSelectedEmployees = function( obj ){
+
+		        	var id = obj.id;
+
+                    delete obj.id;                                    
+
+                    if ( obj.hasOwnProperty('selected') ) {
+		        		
+		        		_self.selectedEmployeeIds.push(id);
+
+		        		obj.departmentAssigned = _self.departmentAssigned;
+		        		obj.recordStatus = _self.recordStatus !== null ? parseInt(_self.recordStatus) : 1;
+
+		        		delete obj.selected; 
+
+                    	return true;
+                    } else return false;
+		        	
+		        }
+
+		        /**
+		        * Close Bulk Content Container
+		        **/
+				_self.closeBulkItems = function(){									
 					$scope.$parent.$parent.config.showBulkActionsContent = false;	
 				};
 
+				/**
+				* Removes clicked employee from the bulk item list
+				**/
+				_self.removeSelectedItems = function(){
+
+					var duplicateSelectedEmployees = angular.copy(_self.selectedEmployees);
+
+					_self.removeUnnecessaryObjectProperties(duplicateSelectedEmployees);
+
+					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterSelectedEmployees);
+					var totalSelectedEmployeeIds = _self.selectedEmployeeIds;
+
+					_self.selectedEmployeeIds = [];					
+
+					if ( totalSelectedEmployees.length > 0 && totalSelectedEmployeeIds.length > 0 ) {
+
+						_self.showLoader = true;
+						ActiveRecordFactory.removeActiveRecord({ ids : totalSelectedEmployeeIds, userId : _self.authorizeUserId }, 'employees/removeEmployee').then(function( response ){
+							if ( response.success ) {
+								
+								_self.showLoader = false;
+
+								$scope.$parent.$parent.addAlert('employeeListAlerts', {
+                                    type: 'success',
+                                    msg: 'Employee List Details Successfully Deleted.'
+                                });     
+
+                                $scope.$parent.$parent.getEmployeeList();
+
+								_self.closeBulkItems();
+							}
+						});
+					}
+
+				};
+
+				/**
+				* Sets to export selected employees for reports purposes
+				**/
+				_self.exportItems = function(){
+
+				};
+
+				/**
+				* Toggles event for the date picker pop-up
+				**/
+				_self.toggle = function($event, field, event) {
+
+			      	$event.preventDefault();
+			      	$event.stopPropagation();
+			      	event[field] = !event[field];
+
+			    };
+
+			    /**
+			    * Updates employee's department assigned/ record status
+			    **/
 				_self.saveChanges = function(){
 
-					console.log(_self.selectedEmployees);
+					var duplicateSelectedEmployees = angular.copy(_self.selectedEmployees);
 
+					_self.removeUnnecessaryObjectProperties(duplicateSelectedEmployees);
 
-					if ( _self.selectedEmployees.length > 0 ) {
+					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterSelectedEmployees);
+					var totalSelectedEmployeeIds = _self.selectedEmployeeIds;
 
+					_self.selectedEmployeeIds = [];					
+
+					if ( totalSelectedEmployees.length > 0 && totalSelectedEmployeeIds.length > 0 ) {
+
+						_self.showLoader = true;
+						ActiveRecordFactory.updateActiveRecord({ ids : totalSelectedEmployeeIds, data : totalSelectedEmployees[0], userId : _self.authorizeUserId }, 'employees/saveEmployee').then(function( response ){
+							if ( response.success ) {
+								
+								_self.showLoader = false;
+
+								$scope.$parent.$parent.addAlert('employeeListAlerts', {
+                                    type: 'success',
+                                    msg: 'Employee List Details Successfully Updated.'
+                                });     
+
+                                $scope.$parent.$parent.getEmployeeList();
+
+								_self.closeBulkItems();
+							}
+						});
 					}
 				};				
 
@@ -1110,54 +1289,20 @@
 			controller : [ '$scope', function( $scope ){
 
 				var _self = this;								
-
-				$scope.exportRecordVars = {				
-					exportType : 0,	
-					exportDate : new Date()										
-				};				
+					
 				$scope.importEmployeeRecordsMessage = "Reading ...";
 				$scope.importTimeRecordsMessage = "Reading ...";
 
 				_self.message = '';
 				
-                _self.time_record_datePicker = {};
-
-				_self.accordionSettings = {
+              	_self.accordionSettings = {
 					status : {
 			            isCustomHeaderOpen: false,
 			            isFirstOpen: true,
 			            isFirstDisabled: false
 		        	}
 		        }; 
-
-		        _self.toggle = function($event, field, event) {
-				      $event.preventDefault();
-				      $event.stopPropagation();
-				      event[field] = !event[field];
-				};                
-
-
-		        _self.toggleChangeExportType = function(value){
-		        	_self.toolsOptions.typeChosen = _self.toolsOptions.exportTypes[value];
-		        };
-
-		        _self.toolsOptions = {
-		        	exportTypes : [
-		        		{
-		        			typeName : 'Single',
-		        			code : 0,
-		        			message : "Pick only one employee per transaction"		        			
-		        		},
-		        		{	        		
-		        			typeName : 'Multiple',
-		        			code : 1,
-		        			message : "Pick atleast 2 employees to be exported per transaction."
-		        		}		        		
-		        	]	        	
-		        };
-		        
-		        _self.toolsOptions.typeChosen = _self.toolsOptions.exportTypes[0];
-
+		       
 		        _self.uploadEmployees = function( file ){
 
 		        	if ( file ) {

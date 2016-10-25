@@ -92,7 +92,7 @@
             })
 
             .state('admin.employees', {               
-                url : 'employee/time_records',
+                url : 'employee/list',
                 views : {
                     'child-content' : {
                         templateUrl : 'templates/employees/list.html',    

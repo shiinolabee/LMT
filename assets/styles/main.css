@@ -186,7 +186,7 @@ table.dataTable td, table.dataTable th {
 
 .angucomplete-dropdown {
     overflow-y: auto;
-    max-height: 200px; // your preference 
+    max-height: 200px;
 }
 
 .angucomplete-title span.highlight{
@@ -247,6 +247,21 @@ button.filter-options-content{
     padding: 0 5px;
 }
 
+.has-min-margin-bottom{
+  margin-bottom: 10px !important;
+}
+
 .bulk-items div {
     margin: .2em .3em;
+    -webkit-transition: all .2s ease-in-out;
+       -o-transition: all .2s ease-in-out;
+          transition: all .2s ease-in-out;
+}
+
+.bulk-items div:hover {
+  color: #ff851b;
+}
+
+.min-margin-right {
+  margin-right: 10px;
 }

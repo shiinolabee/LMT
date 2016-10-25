@@ -3,49 +3,149 @@
 		<h2 class="box-title"> Bulk {{ vm.bulkType }}</h2>
 	</div>
 	<div class="box-body">
-		<div class="bulk-actions-container">			
+		<div class="bulk-actions-container">		
+			<ajax-loader show-loader="vm.showLoader"></ajax-loader>	
 			<div class="col-md-4">
-				<h5 class="display-inline">Employees</h5>
-				<input type="text" name="searchEmployee" placeholder="Search employee..." />
-				
+				<h5><i class="fa fa-users"></i> Employees</h5>
+
 				<div class="bulk-items">
 					<div ng-repeat="item in vm.selectedEmployees | pick : 'selected == true'" ng-model="vm.selectedEmployees">
-						<a href="javascript:void(0);" ng-click="vm.removeFromBulkItems($index);"><i class="fa fa-times"></i></a>
-						{{ item.empId }} - {{ item.fullName }}
-					</div>
+						<a href="javascript:void(0);" ng-click="vm.removeFromBulkItems($index);" uib-tooltip="Remove from bulk items"><i class="fa fa-times"></i></a>
+						{{ item.empId }} - {{ item.fullName }} - {{ item.position | contentIsEmpty }}
+					</div>					
 				</div>
+
+				<angucomplete-alt id="ex2"
+                    placeholder="Search by Emp. ID, Name to include to bulk items"
+                    pause="400"
+                    selected-object="vm.selectedSearchEmployee"
+                    selected-object-data="row"
+                    remote-url="/employees/getEmployee?criteria="
+                    remote-url-data-field="data"
+                    title-field="empId,fullName"
+                    text-searching="Searching employee"
+                    description-field="position"
+                    minlength="2"
+                    input-class="form-control input-md"
+                    match-class="highlight" />				
 			</div>
-			<div class="col-md-4">
-				<h5>Departments</h5>
+			<div class="col-md-4" ng-if="vm.bulkType == 'Edit'">
+				<h5><i class="fa fa-building"></i> Departments</h5>
 				<div class="bulk-items">
 					<div ng-repeat="item in vm.departmentList">
-						<input type="radio" name="department" value="department.id" ng-model="departmentAssigned"/>
+						<input type="radio" name="department" ng-value="item.id" ng-model="vm.departmentAssigned"/>
 						{{ item.departmentName }}
 					</div>
 				</div>
 			</div>
-			<div class="col-md-4">
-				<h5>Record Status</h5>
+			<div class="col-md-4" ng-if="vm.bulkType == 'Edit'">
+				<h5><i class="fa fa-star-o"></i> Record Status</h5>
 				<div class="bulk-items">				
 					<div>
-						<input type="radio" name="recordStatus" ng-model="recordStatus" ng-value="1" ng-checked="recordStatus"/>
-						Active
+						<input type="radio" name="recordStatus" ng-model="vm.recordStatus" ng-value="1" ng-checked="vm.recordStatus"/>
+						Active 
 					</div>
 					<div>
-						<input type="radio" name="recordStatus" ng-model="recordStatus" ng-value="0" ng-checked="recordStatus"/>
+						<input type="radio" name="recordStatus" ng-model="vm.recordStatus" ng-value="0" ng-checked="vm.recordStatus"/>
 						Inactive
 					</div>
 					<div>
-						<input type="radio" name="recordStatus" ng-model="recordStatus" ng-value="" ng-checked="recordStatus" />
+						<input type="radio" name="recordStatus" ng-model="vm.recordStatus" ng-value="null" ng-checked="vm.recordStatus" />
 						No Changes
 					</div>
 				</div>
 			</div>
 
-			<div class="col-md-3 pull-right text-right" ng-if="vm.bulkType == 'Edit'">
-				<button class="btn btn-sm btn-primary" ng-click="vm.saveChanges();"><i class="fa fa-download"></i> Save changes</button>
-				<button class="btn btn-sm btn-danger" ng-click="vm.cancelBulkItems();"><i class="fa fa-ban"></i> Cancel</button>
+			<div class="col-md-6 pull-right text-right" ng-if="vm.bulkType == 'Edit'">
+				<button class="btn btn-sm btn-primary" ng-click="vm.saveChanges();"><i class="fa fa-download"></i> Yes, save all changes.</button>
+				<button class="btn btn-sm btn-danger" ng-click="vm.closeBulkItems();"><i class="fa fa-ban"></i> No, cancel editing.</button>
 			</div>
+
+			<div class="col-md-6" ng-if="vm.bulkType == 'Remove'">
+				<h5><i class="fa fa-trash"></i> Trash them?</h5>
+				<div class="callout callout-warning">
+					<h4>Are you sure?</h4>
+					<p>Note that all time records, activities and reports will also be deleted.</p>
+					<p>Do you want to remove these selected employee(s) <strong>permanently</strong>?</p>
+				</div>
+
+				<button class="btn btn-sm btn-primary" ng-click="vm.removeSelectedItems();"><i class="fa fa-trash"></i> Yes, remove them.</button>
+				<button class="btn btn-sm btn-danger" ng-click="vm.closeBulkItems();"><i class="fa fa-ban"></i> No, cancel removing.</button>
+			</div>
+
+			<form name="exportItemsForm" ng-model="exportItemsForm" novalidate ng-if="vm.bulkType == 'Export'">
+
+				<div class="col-md-4" ng-if="vm.bulkType == 'Export'">
+					<h5><i class="fa fa-tasks"></i> Export Employee Time Records - Type of report</h5>
+					<div class="bulk-items" style="height:6.2em;" ng-class="{ 'has-error': (exportItemsForm.exportType.$touched || exportItemsForm.$submitted) && exportItemsForm.exportType.$invalid }">
+						<div>
+							<input type="radio" name="exportType" ng-model="vm.exportType" ng-required="true" ng-value="0" ng-checked="vm.exportType"/>
+							<i class="fa fa-file-pdf-o"></i> PDF File Format
+							
+						</div>
+						<div>
+							<input type="radio" name="exportType" ng-model="vm.exportType" ng-required="true" ng-value="1" ng-checked="vm.exportType"/>
+							<i class="fa fa-file-text"></i> CSV(comma-separated values) File Format		
+						</div>	
+						<div>
+							<input type="radio" name="exportType" ng-model="vm.exportType" ng-required="true" ng-value="2" ng-checked="vm.exportType"/>
+							<i class="fa fa-file-word-o"></i> Microsoft Word(.doc) File Format		
+						</div>					
+						<span class="help-block" ng-if="(exportItemsForm.exportType.$touched || exportItemsForm.$submitted) && exportItemsForm.exportType.$error.required">Starts-At is required</span>					 
+					</div>
+					<h5><i class="fa fa-calendar-o"></i> Export Date Range</h5>
+
+					<div class="form-group" ng-class="{ 'has-error': (exportItemsForm.startsAt.$touched || exportItemsForm.$submitted) && exportItemsForm.startsAt.$invalid }">						
+						<div class="input-group has-min-margin-bottom">
+			              <div class="input-group-addon">
+			                <i class="fa fa-calendar"></i>
+			              </div>
+			              <input
+			              	placeholder="Starts At"
+			              	name="startsAt"
+			                type="text"
+			                class="form-control pull-right"               
+			                uib-datepicker-popup="dd MMMM yyyy"
+			                ng-required="true"
+			                ng-model="vm.exportDate.startsAt"
+			                is-open="vm.time_record_datePicker.startsAt"
+			                close-text="Close" ng-click="vm.toggle($event, 'startsAt', vm.time_record_datePicker)"/>              
+			            </div>
+		            	<span class="help-block" ng-if="(exportItemsForm.startsAt.$touched || exportItemsForm.$submitted) && exportItemsForm.startsAt.$error.required">Starts-At is required</span>	
+			            <!-- /.input group -->
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': (exportItemsForm.endsAt.$touched || exportItemsForm.$submitted) && exportItemsForm.endsAt.$invalid }">
+			            <div class="input-group">
+			              <div class="input-group-addon">
+			                <i class="fa fa-calendar"></i>
+			              </div>
+			              <input
+			              	placeholder="Ends At"
+			                type="text"
+			              	name="endsAt"
+			                ng-required="true"	                
+			                class="form-control pull-right"               
+			                uib-datepicker-popup="dd MMMM yyyy"
+			                ng-model="vm.exportDate.endsAt"
+			                is-open="vm.time_record_datePicker.endsAt"
+			                close-text="Close" ng-click="vm.toggle($event, 'endsAt', vm.time_record_datePicker)"/>              
+			            </div>
+		            	<span class="help-block" ng-if="(exportItemsForm.endsAt.$touched || exportItemsForm.$submitted) && exportItemsForm.endsAt.$error.required">Ends-At is required</span>	
+			            <!-- /.input group -->
+					</div>
+				</div>
+
+				<div class="col-md-4" ng-if="vm.bulkType == 'Export'">
+					<h5><i class="fa fa-cloud-upload"></i> Continue to export?</h5>
+					<div class="callout callout-info">
+						<h4>Please confirm?</h4>
+						<p>Do you want to continue <strong>generating</strong> selected items for reports?</p>
+					</div>
+					<button class="btn btn-sm btn-primary" ng-click="vm.exportItems();" ng-disabled="exportItemsForm.$invalid"><i class="fa fa-cloud-upload"></i> Yes, start exporting.</button>
+					<button class="btn btn-sm btn-danger" ng-click="vm.closeBulkItems();"><i class="fa fa-ban"></i> No, cancel exporting.</button>
+				</div>		
+
+			</form>	
 
 			<div class="clearfix"></div>
 		</div>

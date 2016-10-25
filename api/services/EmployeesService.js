@@ -67,7 +67,7 @@ module.exports = {
 
             callback(employee);
         });
-    },
+    },    
 
     removeEmployee : function( id, callback) {
 

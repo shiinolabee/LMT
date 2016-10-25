@@ -18,22 +18,8 @@
 
         $scope.config = {
             showBulkActionsContent : false,
-        };
-
-        $scope.filterOptions = {
-            title : "Filters",
-            isSelectedOption : true,
-            template : 'templates/common/filter-options.html',        
-            placement : 'bottom-right',
-
-            toggle : function(){
-                if ( this.isSelectedOption ) {
-                    this.isSelectedOption = false;
-                } else {
-                    this.isSelectedOption = true;
-                }
-            }
-        }; 
+            showFilterOptionsContent : false,
+        };       
 
         _self.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
@@ -61,11 +47,21 @@
             _self[type].splice(index, 1);
         };
 
-        _self.showBulkActions = function( type ){           
-            
-            $scope.bulkActionType = type ? 'Edit' : 'Remove';
+        _self.showBulkActions = function( type ){     
+
+            if ( type == 1 ) {
+                $scope.bulkActionType = 'Edit';
+            } else if ( type == 2 ) {
+                $scope.bulkActionType = 'Export';
+            } else {
+                $scope.bulkActionType = 'Remove';
+            }
             
             $scope.config.showBulkActionsContent = true;            
+        };
+
+        _self.showFilterOptions = function( type ){                       
+            $scope.config.showFilterOptionsContent = true;            
         };
 
         _self.tableHeaders = [
@@ -73,7 +69,7 @@
             { name : 'fullName', label : 'Full Name' },
             { name : 'departmentAssigned', label : 'Department Assigned' },
             { name : 'position', label : 'Position' },
-            { name : 'dateHired', label : 'Date Hired' },
+            { name : 'recordStatus', label : 'Record Status' },
         ];
 
         _self.initEmployeeValues = function( isEditMode, index){
@@ -133,7 +129,7 @@
             
         };
 
-        _self.getEmployeeList = function() {
+        $scope.getEmployeeList = function() {
 
             $scope.parentShowLoader = true;
 
@@ -433,7 +429,7 @@
 
                 if ( responseData.success ) {
 
-                    _self.getEmployeeList();        
+                    $scope.getEmployeeList();        
 
                     $scope.addAlert('employeeListAlerts', {
                         type: 'success',
@@ -571,7 +567,7 @@
             });
         };               
 
-        _self.getEmployeeList();
+        $scope.getEmployeeList();
 
     };
 

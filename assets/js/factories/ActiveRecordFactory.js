@@ -67,11 +67,11 @@
                 return defer.promise;
             }, 
 
-            updateActiveRecord: function( activeRecordDetails, url ) {
+            updateActiveRecord: function( data, url ) {
 
                 var defer = $q.defer();
                 
-                $http.post(url, { activeRecordObj : activeRecordDetails })
+                $http.post(url, data)
                     .success(function(resp){
                         defer.resolve(resp);
                     })

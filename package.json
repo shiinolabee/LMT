@@ -44,6 +44,7 @@
   "license": "",
   "devDependencies": {
     "highcharts": "^4.2.6",
-    "moment": "^2.15.1"
+    "moment": "^2.15.1",
+    "q": "^1.4.1"
   }
 }
