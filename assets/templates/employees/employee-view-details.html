@@ -1,0 +1,100 @@
+<div class="col-md-12 no-padding">
+	<div class="col-md-3">
+		<div class="box box-warning">
+	        <div class="box-body box-profile">
+	          <img class="profile-user-img img-responsive img-circle" ng-src="img/{{ vm.employee.gender && 'avatar' || !vm.employee.gender && 'avatar2' }}.png"/>  
+
+	          <h3 class="profile-username text-center">{{ vm.employee.fullName }}</h3>
+
+	          <p class="text-muted text-center">{{ vm.employee.position }}</p>
+
+	          <ul class="list-group list-group-unbordered">
+	            <li class="list-group-item">
+	              <b>Employee ID</b> <a class="pull-right">{{ vm.employee.empId }}</a>
+	              <div class="clearfix"></div>                  
+	            </li>
+	            <li class="list-group-item">
+	              <b>Department</b> <a class="pull-right"><show-subdetails-employee index="vm.index" id="{{vm.employee.departmentAssigned}}" type="
+	              departmentAssigned"></show-subdetails-employee></a>
+	              <div class="clearfix"></div>
+	            </li>
+	            <li class="list-group-item">
+	              <b>Email</b> <a class="pull-right">{{ vm.employee.emailAddress | contentIsEmpty}}</a>
+	              <div class="clearfix"></div>
+	            </li>
+	          </ul>
+
+	          <a href="javascript:void(0);" ng-click="vm.sendPrivateEmail( vm.employee.id );" class="btn btn-primary btn-block"><b>Send Private Email</b></a>
+	        </div>
+	        <!-- /.box-body -->
+	  	</div>    	
+
+	  	<div class="box box-warning">
+	        <div class="box-header with-border">
+	          <h3 class="box-title" uib-tooltip="Time Record Legends">DTR Legends</h3>
+
+	          <div class="box-tools">
+	          </div>
+	        </div>
+	        <div class="box-body no-padding">
+	          <ul class="nav nav-pills nav-stacked">
+	            <!-- <li><a href="#"><i class="fa fa-circle text-red"></i> Important</a></li> -->
+	            <li><a href="#"><i class="fa fa-circle text-aqua"></i> Clock-in/Attended</a></li>
+	            <li><a href="#"><i class="fa fa-circle text-purple"></i> On Leave</a></li>
+	            <li><a href="#"><i class="fa fa-circle text-orange"></i> Absent</a></li>
+	          </ul>
+	        </div>
+	        <!-- /.box-body -->
+	      </div>			    				
+	</div>
+
+	<div class="col-md-9">
+
+		<div class="nav-tabs-custom">
+	    	<uib-tabset active="active">	    	
+	    		<uib-tab index="0" select="vm.getDailyTimeRecordCalendar()">
+	    			<uib-tab-heading>
+	    				 <i class="fa fa-calendar"></i> Daily Time Record Calendar    	
+	    			</uib-tab-heading>   
+
+					<ajax-loader show-loader="childShowLoader"></ajax-loader>	
+				  	
+				  	<div ng-if="!vm.employeeTimeRecords.length" uib-alert class="alert-warning">
+				  	<i class="icon fa fa-warning"></i> No Time Records yet uploaded.</div>  				
+
+	    			<employee-daily-time-record-calendar></employee-daily-time-record-calendar>					
+	    			<div class="clearfix"></div>
+	    		</uib-tab>	   
+
+				<uib-tab index="2" select="vm.getTrackingActivities()">
+	    			<uib-tab-heading>
+	                    <i class="fa fa-home"></i> Tracking Activities
+	    			</uib-tab-heading>
+
+	    			<ajax-loader show-loader="childShowLoader"></ajax-loader>	
+
+	    			<employee-tracking-activities activities="activities" show-loader="childShowLoader" emp-id="{{vm.employee.empId}}"></employee-tracking-activities>
+	    			<div class="clearfix"></div>
+	    		</uib-tab>
+
+	    		<uib-tab index="3" select="vm.getStatisticsReport()">
+	    			<uib-tab-heading>
+	                    <i class="fa fa-filter"></i> Statistics & Report   				
+	    			</uib-tab-heading>
+
+	    			<ajax-loader show-loader="childShowLoader"></ajax-loader>	
+
+	    			<div ng-show="!childShowLoader">
+	    				<employee-statistics-report emp-id="vm.employee.empId" employee-time-records="vm.employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
+	    			</div>
+	    			<div class="clearfix"></div>
+	    		</uib-tab>
+	    	</uib-tabset>			
+		</div>
+	</div>
+	<div class="col-md-3 pull-right text-right">
+		<button class="btn btn-danger" ng-click="vm.close();"><i class="fa fa-ban"></i> Close</button>
+	</div>
+	<div class="clearfix"></div>	
+</div>
+<div class="clearfix"></div>

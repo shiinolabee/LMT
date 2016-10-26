@@ -88,6 +88,109 @@
 
 	});
 
+	cereliDirectives.directive('employeeViewDetails', function(){
+
+		return {
+
+			restrict : 'E',
+
+			transclude : true,
+
+			templateUrl : 'templates/employees/employee-view-details.html',
+
+			scope : true,
+
+			bindToController : {
+				departmentList : '=',
+				employee : '=',
+				employeeTimeRecords : '=',
+				index : "="
+			},
+
+			controllerAs : 'vm',
+
+			controller : [ '$scope', 'ActiveRecordFactory', function( $scope, ActiveRecordFactory ){
+
+				var _self = this;
+			   	
+                $scope.hasSelectedOtherTab = false;
+                $scope.statisticsRecordResult = [];   
+
+                $scope.$watchCollection(function(){
+                	return [ _self.employeeTimeRecords, _self.employee];
+                }, function( newValue ){
+                	$scope.employeeTimeRecords = newValue[0];
+                	$scope.employee = newValue[1];
+                });
+
+                _self.close = function(){
+                	$scope.$parent.$parent.config.showEmployeeDetailsContent = false;
+                	$scope.$parent.$parent.config.active = 1;
+                };
+
+                _self.sendPrivateEmail = function(){
+
+                    var innerModalInstance = $uibModal.open({
+                        animation : true,
+                        ariaLabelledBy: 'modal-title',
+                        ariaDescribedBy: 'modal-body',
+                        keyboard : false,
+                        backdrop : 'static',
+                        templateUrl : 'templates/common/create-email.html',
+                        size : 'md'
+                    });
+                };
+
+                _self.getStatisticsReport = function(){
+                    $scope.childShowLoader = true;
+
+                    $scope.initDate = moment();
+
+                    $scope.selectedYear = $scope.initDate.format('YYYY');
+                    $scope.selectedMonth = $scope.initDate.format('MMMM');                    
+
+                    ActiveRecordFactory.getActiveRecord({ id : _self.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
+                        if ( response.success ) {                                
+                            $scope.statisticsRecordResult = response.data;
+                            $scope.childShowLoader = false;                                
+                        } 
+                    });
+                };
+         
+                _self.getDailyTimeRecordCalendar = function(){    
+
+                    if( $scope.hasSelectedOtherTab ) {
+
+                        $scope.childShowLoader = true;
+
+                        ActiveRecordFactory.getActiveRecord({ id : _self.employee.empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
+                            if ( response.success ) {                                
+                                $scope.employeeTimeRecords = response.data;
+                                $scope.childShowLoader = false;                                
+                            } 
+                        });                      
+
+                    }  
+                };     
+
+                _self.getTrackingActivities = function(){
+
+                    $scope.hasSelectedOtherTab = true;
+                    $scope.childShowLoader = true;
+
+                    ActiveRecordFactory.getActiveRecord({ id : _self.employee.id }, 'employee_activities/getEmployeeActivities').then(function( response ){
+                        if ( response.success) {
+                            $scope.activities = response.data;
+                            $scope.childShowLoader = false;                                
+                        }
+                    });
+
+                };                 
+			}]
+		}
+
+	});
+
 	cereliDirectives.directive('employeeBulkActions', function(){
 
 		return {
@@ -120,7 +223,9 @@
                 _self.exportType = 2; // set to .doc file type
 
 				_self.removeFromBulkItems = function( index ) {
+					console.log(_self.selectedEmployees, index);
 					_self.selectedEmployees.splice(index, 1);  
+					console.log(_self.selectedEmployees);
 				};		
 
 				/**
@@ -139,7 +244,7 @@
 
 		        	angular.forEach(dataList, function( item, key ){
 		        		Object.keys(item).forEach(function( prop ){		        			
-		        			if ( prop !== 'id' && prop !== 'departmentAssigned' && prop !== 'recordStatus' && prop !== 'selected' ) {
+		        			if ( prop !== 'id' && prop !== 'departmentAssigned' && prop !== 'recordStatus') {
 		        				delete item[prop];
 		        			}
 		        		});		        		
@@ -150,23 +255,18 @@
 		        /**
 		        * Filters the selected employee lists via selected attribute/property
 		        **/
-		        _self.filterSelectedEmployees = function( obj ){
+		        _self.filterPropertiesOfSelectedEmployees = function( obj ){
 
 		        	var id = obj.id;
 
-                    delete obj.id;                                    
-
-                    if ( obj.hasOwnProperty('selected') ) {
+                    delete obj.id;                                                       
 		        		
-		        		_self.selectedEmployeeIds.push(id);
+	        		_self.selectedEmployeeIds.push(id);
 
-		        		obj.departmentAssigned = _self.departmentAssigned;
-		        		obj.recordStatus = _self.recordStatus !== null ? parseInt(_self.recordStatus) : 1;
+	        		obj.departmentAssigned = _self.departmentAssigned;
+	        		obj.recordStatus = _self.recordStatus !== null ? parseInt(_self.recordStatus) : 1;	        	
 
-		        		delete obj.selected; 
-
-                    	return true;
-                    } else return false;
+                	return true;                   
 		        	
 		        }
 
@@ -186,7 +286,7 @@
 
 					_self.removeUnnecessaryObjectProperties(duplicateSelectedEmployees);
 
-					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterSelectedEmployees);
+					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterPropertiesOfSelectedEmployees);
 					var totalSelectedEmployeeIds = _self.selectedEmployeeIds;
 
 					_self.selectedEmployeeIds = [];					
@@ -240,30 +340,32 @@
 
 					_self.removeUnnecessaryObjectProperties(duplicateSelectedEmployees);
 
-					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterSelectedEmployees);
+					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterPropertiesOfSelectedEmployees);
 					var totalSelectedEmployeeIds = _self.selectedEmployeeIds;
 
-					_self.selectedEmployeeIds = [];					
+					_self.selectedEmployeeIds = [];		
 
-					if ( totalSelectedEmployees.length > 0 && totalSelectedEmployeeIds.length > 0 ) {
+					console.log(totalSelectedEmployees, totalSelectedEmployeeIds);			
 
-						_self.showLoader = true;
-						ActiveRecordFactory.updateActiveRecord({ ids : totalSelectedEmployeeIds, data : totalSelectedEmployees[0], userId : _self.authorizeUserId }, 'employees/saveEmployee').then(function( response ){
-							if ( response.success ) {
+					// if ( totalSelectedEmployees.length > 0 && totalSelectedEmployeeIds.length > 0 ) {
+
+					// 	_self.showLoader = true;
+					// 	ActiveRecordFactory.updateActiveRecord({ ids : totalSelectedEmployeeIds, data : totalSelectedEmployees[0], userId : _self.authorizeUserId }, 'employees/saveEmployee').then(function( response ){
+					// 		if ( response.success ) {
 								
-								_self.showLoader = false;
+					// 			_self.showLoader = false;
 
-								$scope.$parent.$parent.addAlert('employeeListAlerts', {
-                                    type: 'success',
-                                    msg: 'Employee List Details Successfully Updated.'
-                                });     
+					// 			$scope.$parent.$parent.addAlert('employeeListAlerts', {
+     //                                type: 'success',
+     //                                msg: 'Employee List Details Successfully Updated.'
+     //                            });     
 
-                                $scope.$parent.$parent.getEmployeeList();
+     //                            $scope.$parent.$parent.getEmployeeList();
 
-								_self.closeBulkItems();
-							}
-						});
-					}
+					// 			_self.closeBulkItems();
+					// 		}
+					// 	});
+					// }
 				};				
 
 			}],
@@ -510,7 +612,7 @@
 
 			controller : function( $scope ){
 
-				var _self = this;			
+				var _self = this;		
 
 				$scope.initDate = moment();	
 				$scope.selectedYear = $scope.initDate.format('YYYY');
@@ -875,6 +977,13 @@
 		        $scope.closeAlert = function(type, index) {
 		            _self[type].splice(index, 1);
 		        };
+
+		        $scope.$watchCollection('[employeeTimeRecords, employee]', function( newValue ){
+
+		        	_self.initializeCalendar();
+		        	_self.employeeDetails = newValue[1];
+
+		        });
 		      
                 //Daily Time Record 
                 _self.calendarView = 'year';           

@@ -19,7 +19,16 @@
         $scope.config = {
             showBulkActionsContent : false,
             showFilterOptionsContent : false,
-        };       
+            showEmployeeDetailsContent : false,
+            selectedViewEmployeeDetails : {
+                employee : {}
+            }
+        };     
+
+        $scope.$watch('mainDataList', function( newValue ){            
+            $scope.mainDataList = newValue;            
+            _self.selectedEditEmployees = newValue.filter(_self.filterSelectedEmployees);
+        }, true);      
 
         _self.recordStatusArr = [ 
             {  name : 'Active', value : 1 },
@@ -53,12 +62,21 @@
                 $scope.bulkActionType = 'Edit';
             } else if ( type == 2 ) {
                 $scope.bulkActionType = 'Export';
-            } else {
+            } else if( type == 0 ){
                 $scope.bulkActionType = 'Remove';
             }
+
+            _self.selectedEditEmployees = angular.copy($scope.mainDataList).filter(_self.filterSelectedEmployees);
             
             $scope.config.showBulkActionsContent = true;            
         };
+
+        /**
+        * Filters the selected employee lists via selected attribute/property
+        **/
+        _self.filterSelectedEmployees = function( obj ){                     
+            return obj.hasOwnProperty('selected') && obj.selected == true ? true : false;            
+        }
 
         _self.showFilterOptions = function( type ){                       
             $scope.config.showFilterOptionsContent = true;            
@@ -119,9 +137,7 @@
             
         };
 
-        _self.selectAllEmployees = function(){
-            
-            _self.selectedAll = _self.selectedAll ? true : false;
+        _self.selectAllEmployees = function(){            
 
             angular.forEach($scope.mainDataList, function( employee ){
                 employee.selected = _self.selectedAll;
@@ -150,134 +166,22 @@
             });
         };     
 
-        _self.viewEmployeeDetails = function(index, empId) {
+        _self.viewEmployeeDetailsContent = function( index, empId){
 
-            _self.$index = index;
-            $scope.parentShowLoader = true;            
+            ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
+                if ( response.success ) {
 
-            var modalInstance = $uibModal.open({
-                animation : true,
-                keyboard : false,
-                backdrop : 'static',
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                resolve : {                   
-                    employeeInitialValues : function(){
-                        return _self.initEmployeeValues(true, _self.$index);                        
-                    },
-                    getDepartmentList : function(){
-                        return $scope.departmentList;
-                    },
-                    isEditMode : function(){
-                        return false;
-                    },
-                    getEmployeeTimeRecord : function( ActiveRecordFactory ){
+                    $scope.config.showEmployeeDetailsContent = true;
 
-                        if ( $scope.mainDataList[index].time_records.length > 0 ) {                            
-                            return $scope.mainDataList[index].time_records;
-                        } else {                            
-                            return ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord');                            
-                        }
-                    }
-                },
-                
-                templateUrl : 'templates/employees/view.html',
-                
-                size : 'lg',                      
+                    $scope.config.selectedViewEmployeeDetails.index = index;
+                    $scope.config.selectedViewEmployeeDetails.employee = _self.initEmployeeValues(true, index);                    
+                    $scope.config.selectedViewEmployeeDetails.time_records = response.data;                    
 
-                controller : function( $scope, employeeInitialValues, isEditMode, getDepartmentList, getEmployeeTimeRecord, $uibModal ){                                        
-
-                    var _self = this;                 
-
-                    $scope.editMode = isEditMode;
-                    $scope.employee = employeeInitialValues;                 
-                    $scope.statisticsRecordResult = [];   
-                    $scope.hasSelectedOtherTab = false;
-               
-                    $scope.departmentList = getDepartmentList; 
-                    $scope.employeeTimeRecords = angular.isObject(getEmployeeTimeRecord.data) ? getEmployeeTimeRecord.data : getEmployeeTimeRecord;                    
-
-                    $scope.modalOptions = {
-                        headerText : 'View Employee Details',
-                        closeButtonText : 'Cancel',
-                        actionButtonText : 'Close',
-
-                        close : function(){                                                    
-                            modalInstance.close();                            
-                        }                        
-                    };    
-
-                    _self.sendPrivateEmail = function(){
-
-                        var innerModalInstance = $uibModal.open({
-                            animation : true,
-                            ariaLabelledBy: 'modal-title',
-                            ariaDescribedBy: 'modal-body',
-                            keyboard : false,
-                            backdrop : 'static',
-                            templateUrl : 'templates/common/create-email.html',
-                            size : 'md'
-                        });
-                    };
-
-                    _self.getStatisticsReport = function(){
-                        $scope.childShowLoader = true;
-
-                        $scope.initDate = moment();
-
-                        $scope.selectedYear = $scope.initDate.format('YYYY');
-                        $scope.selectedMonth = $scope.initDate.format('MMMM');                    
-
-                        ActiveRecordFactory.getActiveRecord({ id : $scope.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
-                            if ( response.success ) {                                
-                                $scope.statisticsRecordResult = response.data;
-                                $scope.childShowLoader = false;                                
-                            } 
-                        });
-                    };
-             
-                    _self.getDailyTimeRecordCalendar = function(){    
-
-                        if( $scope.hasSelectedOtherTab ) {
-
-                            $scope.childShowLoader = true;
-
-                            ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
-                                if ( response.success ) {                                
-                                    $scope.employeeTimeRecords = response.data;
-                                    $scope.childShowLoader = false;                                
-                                } 
-                            });                      
-
-                        }                        
-
-                    };       
-
-
-                    _self.getTrackingActivities = function(){
-
-                        $scope.hasSelectedOtherTab = true;
-                        $scope.childShowLoader = true;
-
-                        ActiveRecordFactory.getActiveRecord({ id : $scope.employee.id }, 'employee_activities/getEmployeeActivities').then(function( response ){
-                            if ( response.success) {
-                                $scope.activities = response.data;
-                                $scope.childShowLoader = false;                                
-                            }
-                        });
-
-                    };                 
-                   
-                },
-
-                controllerAs : 'viewEmployeeDetailsCtrl'
+                    $scope.config.active = 2;
+                }
             });
 
-            modalInstance.closed.then(function( responseData ){
-               $scope.parentShowLoader = false;
-            });
-
-        };
+        };  
 
         _self.getEmployeeActivities = function( getAll ){
             
@@ -297,7 +201,6 @@
                 }
             });
         };
-
         
         
         _self.saveEmployee = function( index, isEditMode ) {

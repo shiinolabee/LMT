@@ -9,10 +9,11 @@
 				<h5><i class="fa fa-users"></i> Employees</h5>
 
 				<div class="bulk-items">
-					<div ng-repeat="item in vm.selectedEmployees | pick : 'selected == true'" ng-model="vm.selectedEmployees">
+					<div ng-repeat="item in vm.selectedEmployees" ng-model="vm.selectedEmployees">
 						<a href="javascript:void(0);" ng-click="vm.removeFromBulkItems($index);" uib-tooltip="Remove from bulk items"><i class="fa fa-times"></i></a>
 						{{ item.empId }} - {{ item.fullName }} - {{ item.position | contentIsEmpty }}
-					</div>					
+					</div>		
+					<h5 class="text-orange text-center" ng-if="vm.selectedEmployees.length == 0">No selected employee(s).</h5>			
 				</div>
 
 				<angucomplete-alt id="ex2"
@@ -57,7 +58,7 @@
 			</div>
 
 			<div class="col-md-6 pull-right text-right" ng-if="vm.bulkType == 'Edit'">
-				<button class="btn btn-sm btn-primary" ng-click="vm.saveChanges();"><i class="fa fa-download"></i> Yes, save all changes.</button>
+				<button class="btn btn-sm btn-primary" ng-click="vm.saveChanges();" ng-disabled="vm.selectedEmployees.length == 0"><i class="fa fa-download"></i> Yes, save all changes.</button>
 				<button class="btn btn-sm btn-danger" ng-click="vm.closeBulkItems();"><i class="fa fa-ban"></i> No, cancel editing.</button>
 			</div>
 
@@ -69,7 +70,7 @@
 					<p>Do you want to remove these selected employee(s) <strong>permanently</strong>?</p>
 				</div>
 
-				<button class="btn btn-sm btn-primary" ng-click="vm.removeSelectedItems();"><i class="fa fa-trash"></i> Yes, remove them.</button>
+				<button class="btn btn-sm btn-primary" ng-disabled="vm.selectedEmployees.length == 0" ng-click="vm.removeSelectedItems();"><i class="fa fa-trash"></i> Yes, remove them.</button>
 				<button class="btn btn-sm btn-danger" ng-click="vm.closeBulkItems();"><i class="fa fa-ban"></i> No, cancel removing.</button>
 			</div>
 
