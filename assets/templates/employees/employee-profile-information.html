@@ -1,0 +1,75 @@
+<div ng-if="authorizeUser">
+	<form novalidate name="employeeProfileForm" style="position:relative;">
+		<ajax-loader show-loader="vm.childShowLoader"></ajax-loader>
+		<div class="col-md-4">
+			<div class="box box-warning">
+				<div class="box-header with-border">
+					<h3 class="box-title"> Basic Information</h3>
+				</div>
+				<div class="box-body">
+					<strong><i class="fa fa-user margin-r-5 has-min-margin-bottom"></i> Full Name </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.fullName }} </p>
+					<input type="text" class="form-control" name="fullName" ng-model="vm.formCopyEmployeeDetails.fullName" ng-if="vm.isToggleInput"/>
+					<hr>
+					<strong><i class="fa margin-r-5 has-min-margin-bottom" ng-class="{ 'fa-male' : vm.employee.gender == 1, 'fa-female' : vm.employee.gender == 0}"></i> Gender</strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput">{{ vm.employee.gender | filterGender }}</p>
+                    <select class="form-control" ng-if="vm.isToggleInput" name="gender" ng-model="vm.formCopyEmployeeDetails.gender" ng-options="gender.value as gender.name for gender in vm.genderArr"></select>
+					<hr>
+					<strong><i class="fa fa-phone-square margin-r-5 has-min-margin-bottom"></i> Contact Number </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.contactNumber | contentIsEmpty }} </p>
+					<input type="text" class="form-control" name="contactNumber" ng-model="vm.formCopyEmployeeDetails.contactNumber" ng-if="vm.isToggleInput"/>				
+					<hr>
+					<strong><i class="fa fa-map-marker margin-r-5 has-min-margin-bottom"></i> Home Address/Location </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.homeAddress | contentIsEmpty }} </p>
+					<input type="text" class="form-control" name="homeAddress" ng-model="vm.formCopyEmployeeDetails.homeAddress" ng-if="vm.isToggleInput"/>	
+					<hr>	
+					<strong><i class="fa fa-user margin-r-5 has-min-margin-bottom"></i> Position/Designation </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.position | contentIsEmpty }} </p>				
+					<input type="text" class="form-control" name="position" ng-model="vm.formCopyEmployeeDetails.position" ng-if="vm.isToggleInput"/>	
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="box box-primary">
+				<div class="box-header with-border">
+					<h3 class="box-title"> More Information</h3>
+				</div>
+				<div class="box-body">
+					<strong><i class="fa fa-calendar-plus-o margin-r-5 has-min-margin-bottom"></i> Date Hired </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.dateHired | date:'MMM dd yyyy' }} </p>
+					<input type="text" class="form-control" name="dateHired" ng-model="vm.formCopyEmployeeDetails.dateHired" ng-if="vm.isToggleInput"/>	
+					
+					<hr>
+					<strong><i class="fa fa-calendar-check-o margin-r-5 has-min-margin-bottom"></i> Date Regularized </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.dateRegularized | date:'MMM dd yyyy' }} </p>
+					<input type="text" class="form-control" name="dateRegularized" ng-model="vm.formCopyEmployeeDetails.dateRegularized" ng-if="vm.isToggleInput"/>	
+					<hr>
+					<strong><i class="fa fa-calendar-o margin-r-5 has-min-margin-bottom"></i> Date Record Updated </strong>
+					<p class="text-muted"> {{ vm.employee.updatedAt | date:'MMM dd yyyy h:mm a' }} </p>				
+					<hr>	
+					<strong><i class="fa fa-calendar-plus-o margin-r-5 has-min-margin-bottom"></i> Date Record Created </strong>
+					<p class="text-muted"> {{ vm.employee.createdAt | date:'MMM dd yyyy' }} </p>	
+					<hr>	
+					<strong><i class="fa fa-clock-o margin-r-5 has-min-margin-bottom"></i> Total Time Records  </strong>
+					<p class="text-muted"> 
+						{{ vm.employeeTimeRecords.length }} record(s) 
+					<!-- 	<div bindonce ng-repeat="( key, value ) in vm.employeeTimeRecords | groupBy : 'date' | date:'MMM'">
+							<h4> {{ key | date :'MMM dd yyyy' }} </h4>
+							<h5>
+								{{ value.length }} record(s)
+							</h5>
+						</div> -->
+					</p>
+				</div>
+			</div>
+		</div>		
+		<div class="col-md-12 pull-right text-right">
+
+			<div uib-alert ng-repeat="alert in vm.alerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('alerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>  
+
+			<button class="btn btn-primary btn-sm" type="button" ng-if="!vm.isToggleInput" ng-click="vm.isToggleInput=!vm.isToggleInput"><i class="fa fa-cog"> Toggle To Edit Details</i></button>
+			<button class="btn btn-primary btn-sm" type="button" ng-if="vm.isToggleInput" ng-click="vm.saveEmployeeDetails();"><i class="fa fa-download"> Save Changes</i></button>
+			<button class="btn btn-danger btn-sm" type="button" ng-if="vm.isToggleInput" ng-click="vm.isToggleInput=!vm.isToggleInput"><i class="fa fa-ban"> Cancel Editing</i></button>
+		</div>
+	</form>
+</div>

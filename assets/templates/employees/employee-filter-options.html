@@ -6,11 +6,21 @@
 		<ajax-loader show-loader="vm.showLoader"></ajax-loader>	
 
 		<div class="col-md-4">
-			<h5>Departments</h5>
+			<h5><i class="fa fa-building"></i> Departments</h5>			
 			<div class="bulk-items">
 				<div ng-repeat="item in vm.departmentList">
 					<input type="checkbox" name="department" ng-value="item.id" ng-click="vm.toggleFilter();" ng-checked="true"/>
 					{{ item.departmentName }}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<h5><i class="fa fa-tasks"></i> Time Records</h5>			
+			<div class="bulk-items">
+				<div>		
+					<input type="checkbox" name="department" ng-value="item.id" ng-click="vm.toggleFilter();" ng-checked="true"/>
+								
 				</div>
 			</div>
 		</div>

@@ -22,7 +22,8 @@
             showEmployeeDetailsContent : false,
             selectedViewEmployeeDetails : {
                 employee : {}
-            }
+            },
+            childTab : {}
         };     
 
         $scope.$watch('mainDataList', function( newValue ){            
@@ -166,7 +167,7 @@
             });
         };     
 
-        _self.viewEmployeeDetailsContent = function( index, empId){
+        _self.viewEmployeeDetailsContent = function( index, empId, childTab ){
 
             ActiveRecordFactory.getActiveRecord({ id : empId }, 'employees/getEmployeeTimeRecord').then(function( response ){
                 if ( response.success ) {
@@ -178,10 +179,12 @@
                     $scope.config.selectedViewEmployeeDetails.time_records = response.data;                    
 
                     $scope.config.active = 2;
+
+                    $scope.config.childTab.active = childTab;
                 }
             });
 
-        };  
+        };          
 
         _self.getEmployeeActivities = function( getAll ){
             
@@ -349,55 +352,7 @@
         **/
         _self.selectedSearchEmployee = function( data ){             
             $scope.mainDataList = [data.originalObject];       
-        };
-
-        /**
-        * Add New Employee Time Record
-        **/
-        _self.saveTimeRecord = function(){
-
-             var modalInstance = $uibModal.open({
-                animation: true,
-                keyboard: false,
-                backdrop: 'static',                    
-                templateUrl: 'templates/employees/time-record-form.html',                
-                size: 'md',
-                controller: function($scope, ActiveRecordFactory) {                       
-
-                    $scope.modalOptions = {
-                        closeButtonText: 'Cancel',
-                        headerText: 'Add New Time Record',
-                        actionButtonText: 'Save'                        
-                    };
-
-                    $scope.modalOptions.ok = function (result) {
-
-                        var responseData;
-
-                        ActiveRecordFactory.saveActiveRecord($scope.time_record, false, 'employee_time_records/saveEmployeeTimeRecord').then(function(response) {                            
-                            responseData = response;                                                                
-                        }).finally(function(){
-                            modalInstance.close(responseData);                                
-                        });                      
-                    };
-
-                    $scope.modalOptions.close = function (result) {                        
-                        modalInstance.dismiss('cancel');
-                    };
-
-                }
-            });
-
-            modalInstance.result.then(function( response ){
-                if ( response.success ) {
-                    $scope.addAlert('employeeListAlerts', {
-                        type: 'success',
-                        msg: 'Employee Time Record Details Successfully Saved.'
-                    });                    
-                    
-                }
-            })
-        };
+        };       
 
         /**
         * Removes/Deletes employee by id        

@@ -30,6 +30,17 @@
 		}
 	});
 
+	cereliDirectives.filter('filterGender', function(){
+
+		return function( value ) {
+			if ( !value ) {
+				return 'Female';
+			}
+
+			return 'Male';
+		}
+	});
+
 	cereliDirectives.filter('recordStatus', function(){
 
 		return function( value ) {
@@ -104,7 +115,8 @@
 				departmentList : '=',
 				employee : '=',
 				employeeTimeRecords : '=',
-				index : "="
+				index : "=",
+				childTabActive : '='
 			},
 
 			controllerAs : 'vm',
@@ -186,6 +198,88 @@
                     });
 
                 };                 
+			}]
+		}
+
+	});
+
+	cereliDirectives.directive('employeeProfileInformation', function( moment ){
+
+		return {
+
+			restrict : 'E',
+
+			transclude : true,
+
+			templateUrl : 'templates/employees/employee-profile-information.html',
+
+			scope : true,
+
+			bindToController :{
+				employee : '=',
+				employeeTimeRecords : '='
+			},
+
+			controllerAs : 'vm',
+
+			controller : [ '$scope', 'ActiveRecordFactory', function( $scope, ActiveRecordFactory ){
+
+				var _self = this;
+
+				_self.alerts = [];
+            	_self.formCopyEmployeeDetails = angular.copy(_self.employee);
+
+				$scope.$watch(function(){
+                	return _self.employee;
+                }, function( newValue ){          
+                	_self.employee = newValue;      	
+            		_self.formCopyEmployeeDetails = angular.copy(newValue);
+                });
+
+              	$scope.addAlert = function(type, options) {
+		            _self[type].push(options);
+		        };		        
+
+		        $scope.closeAlert = function(type, index) {
+		            _self[type].splice(index, 1);
+		        };
+
+				_self.genderArr = [
+		            { name : 'Male', value : 1 },
+		            { name : 'Female', value : 0}
+		        ];	         	
+
+		        _self.saveEmployeeDetails = function(){
+
+	        		var formCopyEmployeeDetails = _self.formCopyEmployeeDetails;		        		
+
+		        	delete _self.formCopyEmployeeDetails.time_records;		
+
+		        	// console.log(formCopyEmployeeDetails);
+
+		        	if ( formCopyEmployeeDetails ) {
+
+		        		_self.childShowLoader = true;
+
+		        		ActiveRecordFactory.saveActiveRecord(formCopyEmployeeDetails, true, 'employees/saveEmployee').then(function( response ) {	        			
+
+		        			_self.childShowLoader = false;
+
+		        			if( response.success ) {
+
+		        				$scope.addAlert('alerts', {
+		        					type : 'success',
+		        					msg  : 'Employee Details Successfully Updated.'
+		        				});
+
+		        				_self.isToggleInput = false;		        			        				
+
+		        				_self.employee = response.data[0];
+		        			}
+                        });
+		        	}
+		        }
+
 			}]
 		}
 
@@ -343,29 +437,27 @@
 					var totalSelectedEmployees = duplicateSelectedEmployees.filter(_self.filterPropertiesOfSelectedEmployees);
 					var totalSelectedEmployeeIds = _self.selectedEmployeeIds;
 
-					_self.selectedEmployeeIds = [];		
+					_self.selectedEmployeeIds = [];							
 
-					console.log(totalSelectedEmployees, totalSelectedEmployeeIds);			
+					if ( totalSelectedEmployees.length > 0 && totalSelectedEmployeeIds.length > 0 ) {
 
-					// if ( totalSelectedEmployees.length > 0 && totalSelectedEmployeeIds.length > 0 ) {
-
-					// 	_self.showLoader = true;
-					// 	ActiveRecordFactory.updateActiveRecord({ ids : totalSelectedEmployeeIds, data : totalSelectedEmployees[0], userId : _self.authorizeUserId }, 'employees/saveEmployee').then(function( response ){
-					// 		if ( response.success ) {
+						_self.showLoader = true;
+						ActiveRecordFactory.updateActiveRecord({ ids : totalSelectedEmployeeIds, data : totalSelectedEmployees[0], userId : _self.authorizeUserId }, 'employees/saveEmployee').then(function( response ){
+							if ( response.success ) {
 								
-					// 			_self.showLoader = false;
+								_self.showLoader = false;
 
-					// 			$scope.$parent.$parent.addAlert('employeeListAlerts', {
-     //                                type: 'success',
-     //                                msg: 'Employee List Details Successfully Updated.'
-     //                            });     
+								$scope.$parent.$parent.addAlert('employeeListAlerts', {
+                                    type: 'success',
+                                    msg: 'Employee List Details Successfully Updated.'
+                                });     
 
-     //                            $scope.$parent.$parent.getEmployeeList();
+                                $scope.$parent.$parent.getEmployeeList();
 
-					// 			_self.closeBulkItems();
-					// 		}
-					// 	});
-					// }
+								_self.closeBulkItems();
+							}
+						});
+					}
 				};				
 
 			}],

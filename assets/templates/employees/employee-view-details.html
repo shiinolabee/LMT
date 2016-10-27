@@ -51,7 +51,7 @@
 	<div class="col-md-9">
 
 		<div class="nav-tabs-custom">
-	    	<uib-tabset active="active">	    	
+	    	<uib-tabset active="vm.childTabActive">	    	
 	    		<uib-tab index="0" select="vm.getDailyTimeRecordCalendar()">
 	    			<uib-tab-heading>
 	    				 <i class="fa fa-calendar"></i> Daily Time Record Calendar    	
@@ -66,7 +66,7 @@
 	    			<div class="clearfix"></div>
 	    		</uib-tab>	   
 
-				<uib-tab index="2" select="vm.getTrackingActivities()">
+				<uib-tab index="1" select="vm.getTrackingActivities()">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-home"></i> Tracking Activities
 	    			</uib-tab-heading>
@@ -77,7 +77,7 @@
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 
-	    		<uib-tab index="3" select="vm.getStatisticsReport()">
+	    		<uib-tab index="2" select="vm.getStatisticsReport()">
 	    			<uib-tab-heading>
 	                    <i class="fa fa-filter"></i> Statistics & Report   				
 	    			</uib-tab-heading>
@@ -87,6 +87,17 @@
 	    			<div ng-show="!childShowLoader">
 	    				<employee-statistics-report emp-id="vm.employee.empId" employee-time-records="vm.employeeTimeRecords" statistics-record-result="statisticsRecordResult"></employee-statistics-report>	    				
 	    			</div>
+	    			<div class="clearfix"></div>
+	    		</uib-tab>
+
+	    		<uib-tab index="3">
+	    			<uib-tab-heading>
+	                    <i class="fa fa-info-circle"></i> Profile &amp; Information   				
+	    			</uib-tab-heading>	    			
+
+	    			<!-- <div ng-show="!childShowLoader"> -->
+	    				<employee-profile-information employee="vm.employee" employee-time-records="vm.employeeTimeRecords"></employee-profile-information>	    				
+	    			<!-- </div> -->
 	    			<div class="clearfix"></div>
 	    		</uib-tab>
 	    	</uib-tabset>			

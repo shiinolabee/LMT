@@ -35,7 +35,13 @@ module.exports = {
     
     getEmployee : function( criteria, callback ) {
 
-        Employees.find({ empId : { 'contains': criteria } }, { fullName : { 'contains': criteria } }, { emailAddress : { 'contains': criteria } }, { position : { 'contains': criteria } })
+        Employees.find({ 
+            or : [
+                { fullName: { 'contains': criteria } },
+                { empId: { 'contains': criteria } },
+                { position: { 'contains': criteria } },
+                { emailAddress: { 'contains': criteria } }
+            ]})
             .exec(function( err, employees ) {
 
                 if( err ) callback(err);

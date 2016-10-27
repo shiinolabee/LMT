@@ -187,6 +187,7 @@ table.dataTable td, table.dataTable th {
 .angucomplete-dropdown {
     overflow-y: auto;
     max-height: 200px;
+    top : 45px;
 }
 
 .angucomplete-title span.highlight{

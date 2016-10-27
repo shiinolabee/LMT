@@ -2,9 +2,6 @@
 
     <div class="col-md-12">
         <div uib-alert ng-repeat="alert in employeeCtrl.employeeListAlerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="closeAlert('employeeListAlerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>     
-        
-        <!-- <button class="btn btn-primary margin-bottom" ng-click="employeeCtrl.saveTimeRecord()"><i class="fa fa-user"></i> <b>New Employee Time Record</b></button> -->
-
     </div>   
     
     <!-- Employee Tabs Section -->    
@@ -39,7 +36,7 @@
                 <div class="input-group input-group-md">
                   <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>                    
                   <angucomplete-alt id="ex2"
-                    placeholder="Search by Emp. ID, Name"
+                    placeholder="Search by Emp. ID, Name, Position"
                     pause="400"
                     selected-object="employeeCtrl.selectedSearchEmployee"
                     selected-object-data="row"
@@ -113,8 +110,8 @@
                     <!-- <td>{{ employee.emailAddress }}</td> -->
                     <td>{{ employee.recordStatus | recordStatus }}</td>
                     <td colspan="4">                      
-                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.viewEmployeeDetailsContent($index,employee.empId);" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
-                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.saveEmployee($index, true)" uib-tooltip="Edit Employee Details"><i class="fa fa-pencil"></i></button>
+                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.viewEmployeeDetailsContent($index, employee.empId, 0)" uib-tooltip="View Employee Details"><i class="fa fa-search"></i></button>
+                      <button class="btn btn-default btn-xs" ng-click="employeeCtrl.viewEmployeeDetailsContent($index, employee.empId, 3)" uib-tooltip="Edit Employee Details"><i class="fa fa-pencil"></i></button>
                       <button class="btn btn-default btn-xs" ng-click="employeeCtrl.removeEmployee(employee.id, $index)" uib-tooltip="Delete Employee Details"><i class="fa fa-trash"></i></button>                  
                     </td>
                   </tr>                                   
@@ -161,7 +158,7 @@
                 <i class="fa fa-user"></i> {{config.selectedViewEmployeeDetails.employee.fullName}}               
               </uib-tab-heading>
               <!-- Employee View Details Section -->
-              <employee-view-details bindonce ng-if="config.showEmployeeDetailsContent" index="config.selectedViewEmployeeDetails.index" department-list="departmentList" employee-time-records="config.selectedViewEmployeeDetails.time_records" employee="config.selectedViewEmployeeDetails.employee"></employee-view-details>  
+              <employee-view-details bindonce ng-if="config.showEmployeeDetailsContent" child-tab-active="config.childTab.active" index="config.selectedViewEmployeeDetails.index" department-list="departmentList" employee-time-records="config.selectedViewEmployeeDetails.time_records" employee="config.selectedViewEmployeeDetails.employee"></employee-view-details>  
               <!-- !Employee View Details Section -->     
             </uib-tab>
             <!-- !View Employee Details Dynamic Tab -->            
