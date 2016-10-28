@@ -83,7 +83,7 @@
               <div class="clearfix"></div><br>
 
               <!-- Filter Options Content -->
-              <employee-filter-options department-list="departmentList" ng-if="config.showFilterOptionsContent"></employee-filter-options>
+              <employee-filter-options department-list="departmentList" employee-list="mainDataList" ng-if="config.showFilterOptionsContent"></employee-filter-options>
                 
               <!-- Bulk Items Content -->
               <employee-bulk-actions bindonce ng-if="config.showBulkActionsContent" authorize-user-id="authorizeUser.user.id" bulk-type="bulkActionType" selected-employees="employeeCtrl.selectedEditEmployees" department-list="departmentList"></employee-bulk-actions>              
@@ -100,7 +100,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                  <tr bindonce="employee" ng-repeat="employee in mainDataList | filter:employeeCtrl.searchString" class="animate-repeat">               
+                  <tr bindonce="employee" ng-repeat="employee in mainDataList" class="animate-repeat">               
                     <td><input type="checkbox" value="{{ employee.id }}" ng-model="employee.selected"></td>                
                     <td>{{ employee.empId }}</td>
                     <td>{{ employee.fullName }} </td>

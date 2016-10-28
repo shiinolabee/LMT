@@ -37,12 +37,11 @@
 				<div class="box-body">
 					<strong><i class="fa fa-calendar-plus-o margin-r-5 has-min-margin-bottom"></i> Date Hired </strong>
 					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.dateHired | date:'MMM dd yyyy' }} </p>
-					<input type="text" class="form-control" name="dateHired" ng-model="vm.formCopyEmployeeDetails.dateHired" ng-if="vm.isToggleInput"/>	
-					
+					<input type="text" uib-datepicker-popup="{{datePickerOptions.formatSelected}}" datepicker-options="datePickerOptions.dateHiredOptions" class="form-control" name="dateHired" id="dateHired" close-text="Close" ng-model="vm.formCopyEmployeeDetails.dateHired" ng-required="true" ng-click="datePickerOptions.openDateHired()" is-open="datePickerOptions.isOpenDateHired.opened" alt-input-formats="datePickerOptions.altInputFormats" ng-if="vm.isToggleInput"/>
 					<hr>
 					<strong><i class="fa fa-calendar-check-o margin-r-5 has-min-margin-bottom"></i> Date Regularized </strong>
 					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.dateRegularized | date:'MMM dd yyyy' }} </p>
-					<input type="text" class="form-control" name="dateRegularized" ng-model="vm.formCopyEmployeeDetails.dateRegularized" ng-if="vm.isToggleInput"/>	
+					<input type="text" uib-datepicker-popup="{{datePickerOptions.formatSelected}}" class="form-control" is-open="datePickerOptions.isOpenDateRegularized.opened" datepicker-options="datePickerOptions.dateRegularizedOptions" ng-click="datePickerOptions.openDateRegularized()" name="dateRegularized" id="dateRegularized" ng-model="vm.formCopyEmployeeDetails.dateRegularized" ng-required="true" alt-input-formats="datePickerOptions.altInputFormats" ng-if="vm.isToggleInput"/>		
 					<hr>
 					<strong><i class="fa fa-calendar-o margin-r-5 has-min-margin-bottom"></i> Date Record Updated </strong>
 					<p class="text-muted"> {{ vm.employee.updatedAt | date:'MMM dd yyyy h:mm a' }} </p>				
@@ -52,7 +51,7 @@
 					<hr>	
 					<strong><i class="fa fa-clock-o margin-r-5 has-min-margin-bottom"></i> Total Time Records  </strong>
 					<p class="text-muted"> 
-						{{ vm.employeeTimeRecords.length }} record(s) 
+						<strong>{{ vm.employeeTimeRecords.length }}</strong> record(s) 
 					<!-- 	<div bindonce ng-repeat="( key, value ) in vm.employeeTimeRecords | groupBy : 'date' | date:'MMM'">
 							<h4> {{ key | date :'MMM dd yyyy' }} </h4>
 							<h5>

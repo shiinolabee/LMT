@@ -79,19 +79,64 @@
 			scope : true,
 
 			bindToController : {
-				departmentList : '='
+				departmentList : '=',
+				employeeList : '='
 			},
 
 			controller : [ '$scope' , function( $scope ){
 				var _self = this;
 
+				_self.dummyList = [];
+				_self.selectedDepartmentId = 0;
+
+				$scope.$watch(function(){
+					return _self.employeeList;
+				}, function( newValue ){
+					console.log(newValue)
+					_self.employeeList = newValue;
+				});
+
 				_self.close = function(){									
 					$scope.$parent.$parent.config.showFilterOptionsContent = false;	
 				};
 
-				_self.toggleFilter = function(){
+				_self.check = function( obj ){					
 
-				}
+					if ( obj.departmentAssigned == _self.selectedDepartmentId ) {
+						_self.dummyList.push(obj);
+					}
+
+					return obj.departmentAssigned == _self.selectedDepartmentId ? false : true;
+				};
+
+				_self.toggleFilter = function( departmentId ){
+
+					console.log(_self.selectedDepartmentId, departmentId);
+
+					if ( _self.selectedDepartmentId !== 0 )  {
+						if ( _self.selectedDepartmentId == departmentId ) {
+							_self.selectedDepartmentId = departmentId;
+							$scope.$parent.$parent.mainDataList = $scope.$parent.$parent.mainDataList.concat(_self.dummyList);					 
+						} else {
+							_self.selectedDepartmentId = departmentId;
+
+							var employeeList = angular.copy(_self.employeeList).filter(_self.check);									
+
+							$scope.$parent.$parent.mainDataList = employeeList;									
+						}
+
+					} else {
+
+						_self.selectedDepartmentId = departmentId;
+
+						var employeeList = angular.copy(_self.employeeList).filter(_self.check);									
+
+						$scope.$parent.$parent.mainDataList = employeeList;											
+					}
+
+
+						
+				};
 			}],
 
 			controllerAs : 'vm'
@@ -231,9 +276,11 @@
 
 				$scope.$watch(function(){
                 	return _self.employee;
-                }, function( newValue ){          
+                }, function( newValue ){                        	
                 	_self.employee = newValue;      	
-            		_self.formCopyEmployeeDetails = angular.copy(newValue);
+            	 	_self.employee.dateHired = new Date(_self.employee.dateHired);
+                    _self.employee.dateRegularized = new Date(_self.employee.dateRegularized);
+            		_self.formCopyEmployeeDetails = angular.copy(_self.employee);
                 });
 
               	$scope.addAlert = function(type, options) {
@@ -243,6 +290,34 @@
 		        $scope.closeAlert = function(type, index) {
 		            _self[type].splice(index, 1);
 		        };
+
+		        $scope.datePickerOptions = {                                                
+	                // dateDisabled: disabled,  
+	                dateHiredOptions : {
+	                    formatYear: 'yy',
+	                    startingDay: 1                            
+	                }, 
+	                dateRegularizedOptions : {
+	                    formatYear: 'yy',
+	                    startingDay: 1                            
+	                },
+	                formats : ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'],
+	                altInputFormats : ['M!/d!/yyyy', 'MMM dd yyyy'],
+	                openDateHired : function(){
+	                    $scope.datePickerOptions.isOpenDateHired.opened = true;                            
+	                },
+	                openDateRegularized : function(){
+	                    $scope.datePickerOptions.isOpenDateRegularized.opened = true;                            
+	                },
+	                isOpenDateHired : {
+	                    opened :false
+	                },
+	                isOpenDateRegularized : {
+	                    opened :false
+	                }
+	            };                  
+
+	            $scope.datePickerOptions.formatSelected = $scope.datePickerOptions.formats[0];
 
 				_self.genderArr = [
 		            { name : 'Male', value : 1 },
@@ -272,7 +347,7 @@
 		        					msg  : 'Employee Details Successfully Updated.'
 		        				});
 
-		        				_self.isToggleInput = false;		        			        				
+		        				_self.isToggleInput = false;		        					        			        				
 
 		        				_self.employee = response.data[0];
 		        			}
@@ -1475,7 +1550,7 @@
 	/**
 	* Directive for Employee import/export time records
  	**/
-	cereliDirectives.directive('employeeToolsOptions', [ 'Upload', '$timeout', '$uibModal', function( Upload, $timeout, $uibModal ){
+	cereliDirectives.directive('employeeToolsOptions', [ 'Upload', '$timeout', '$uibModal', 'PagerService', function( Upload, $timeout, $uibModal, PagerService ){
 		
 		return {
 			
@@ -1555,7 +1630,7 @@
 
 			            controllerAs : 'vm',
 
-			            controller: function( $scope, getList, pagerService ){			   
+			            controller: function( $scope, getList ){			   
 
 			            	$scope.mainDataList = getList;
 

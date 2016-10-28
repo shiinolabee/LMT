@@ -8,9 +8,9 @@
 		<div class="col-md-4">
 			<h5><i class="fa fa-building"></i> Departments</h5>			
 			<div class="bulk-items">
-				<div ng-repeat="item in vm.departmentList">
-					<input type="checkbox" name="department" ng-value="item.id" ng-click="vm.toggleFilter();" ng-checked="true"/>
-					{{ item.departmentName }}
+				<div ng-repeat="department in vm.departmentList">
+					<input type="checkbox" name="department" ng-click="vm.toggleFilter(department.id);" ng-checked="true"/>
+					{{ department.departmentName }}
 				</div>
 			</div>
 		</div>
@@ -19,8 +19,16 @@
 			<h5><i class="fa fa-tasks"></i> Time Records</h5>			
 			<div class="bulk-items">
 				<div>		
-					<input type="checkbox" name="department" ng-value="item.id" ng-click="vm.toggleFilter();" ng-checked="true"/>
-								
+					<input type="checkbox" name="department" ng-value="item.id" toggle-filter-records deparment-list="vm.departmentList" employee-list="vm.employeeList"/>
+					Has less than 50 records		
+				</div>
+				<div>		
+					<input type="checkbox" name="department" ng-value="item.id" toggle-filter-records deparment-list="vm.departmentList" employee-list="vm.employeeList"/>
+					Has less than 100 records			
+				</div>
+				<div>		
+					<input type="checkbox" name="department" toggle-filter-records deparment-list="vm.departmentList" employee-list="vm.employeeList" />
+					Has more than 100 records
 				</div>
 			</div>
 		</div>
