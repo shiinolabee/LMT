@@ -134,6 +134,23 @@ module.exports = {
 
     },
 
+    getTimeRecordsByDates : function( req, res ){
+
+        if ( req.param('id').length > 0 ) {
+            var empId = req.param('id');
+
+            var selectedDates = req.param('dates');
+
+            var startsAt = moment(selectedDates.startsAt);
+            var endsAt = moment(selectedDates.endsAt);
+
+            Employee_time_records.find({ where : { empId : empId, date: { '>=': startsAt.format('YYYY-MM-DD'), '<=': endsAt.format('YYYY-MM-DD') } } })/*.max('startsAt')*/
+                .then(function( result ){
+                res.json({ success : true, data : result });
+            });  
+
+        }
+    },
 
     getEmployeeStatisticsReport : function( req, res ){
 

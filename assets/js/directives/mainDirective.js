@@ -144,7 +144,7 @@
 
 	});
 
-	cereliDirectives.directive('employeeViewDetails', function(){
+	cereliDirectives.directive('employeeViewDetails', [ '$uibModal', function( $uibModal ){
 
 		return {
 
@@ -173,6 +173,7 @@
                 $scope.hasSelectedOtherTab = false;
                 $scope.statisticsRecordResult = [];   
 
+
                 $scope.$watchCollection(function(){
                 	return [ _self.employeeTimeRecords, _self.employee];
                 }, function( newValue ){
@@ -198,6 +199,91 @@
                     });
                 };
 
+                _self.generateDTRFile = function( empId ){
+
+                	var innerModalInstance = $uibModal.open({
+                        animation : true,
+                        ariaLabelledBy: 'modal-title',
+                        ariaDescribedBy: 'modal-body',
+                        keyboard : false,
+                        backdrop : 'static',
+                        resolve : {
+                        	getEmployeeId : function(){
+                        		return empId;
+                        	}
+                        },
+                        templateUrl : 'templates/employees/employee-choose-dtr-month.html',
+                        size : 'lg',
+                        bindToController : true,
+                        controllerAs : 'vm',
+                        controller : [ '$scope', 'getEmployeeId', 'ActiveRecordFactory', function( $scope, getEmployeeId, ActiveRecordFactory ){
+
+                        	var _self = this;
+                			
+                			_self.time_record_datePicker = {};	
+
+                			_self.exportType = 0; // set to .pdf file type
+                			_self.time_record_dp_options = {
+			                	startsAt : {
+			                		formatYear: 'yy',
+			                    	startingDay: 1                    		
+			                	},
+			                	endsAt : {
+			                		formatYear: 'yy',
+			                        startingDay: 1    
+			                	}
+			                };
+
+                    	   	/**
+							* Toggles event for the date picker pop-up
+							**/
+							_self.toggle = function($event, field, event) {
+						      	$event.preventDefault();
+						      	$event.stopPropagation();
+						      	event[field] = !event[field];
+						    };
+
+						    _self.onChangeStartsAt = function(){			    	
+						    	_self.time_record_dp_options.endsAt.minDate = _self.exportDate.startsAt;
+						    };
+
+						    _self.generateReport = function(){
+
+						    	// console.log(_self.exportDate);
+
+						    	if ( _self.exportDate ) {
+
+						    		_self.showLoader = true;
+
+						    		ActiveRecordFactory.getActiveRecord({ id : getEmployeeId, dates : _self.exportDate }, 'employee_time_records/getTimeRecordsByDates')
+						    		.then(function(response){
+						    			if ( response.success ) {
+
+						    			}
+
+						    			_self.showLoader = false;
+						    		});
+
+						    	}
+						    };
+
+                        	$scope.modalOptions = {
+                        		headerText : "Generate DTR Report for Employee " + getEmployeeId,
+                        		// actionButtonText : "Generate DTR Report",
+                        		closeButtonText : "Cancel",
+
+                        		ok : function(){
+
+                        		},
+
+                        		close : function(){
+                        			innerModalInstance.dismiss('cancel');
+                        		}
+                        	};
+                        }]
+                    });
+                };             
+
                 _self.getStatisticsReport = function(){
                     $scope.childShowLoader = true;
 
@@ -206,7 +292,7 @@
                     $scope.selectedYear = $scope.initDate.format('YYYY');
                     $scope.selectedMonth = $scope.initDate.format('MMMM');                    
 
-                    ActiveRecordFactory.getActiveRecord({ id : _self.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
+                    ActiveRecordFactory.getActiveRecord({ id : _self.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getTimeRecordsByDates').then(function( response ){
                         if ( response.success ) {                                
                             $scope.statisticsRecordResult = response.data;
                             $scope.childShowLoader = false;                                
@@ -246,7 +332,7 @@
 			}]
 		}
 
-	});
+	}]);
 
 	cereliDirectives.directive('employeeProfileInformation', function( moment ){
 
@@ -1157,7 +1243,7 @@
                 _self.viewDate = moment().startOf('year').toDate();
 
                 var actions = [{
-                  label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
+                  label: '<i class=\'fa fa-pencil\'></i>',
 
                   onClick: function(args) {
 
@@ -1184,7 +1270,7 @@
                   }
                 }, 
                 {                	
-                  label: '<i class=\'glyphicon glyphicon-remove\'></i>',
+                  label: '<i class=\'fa fa-trash\'></i>',
                   onClick: function(args) {                   
 
                     ActiveRecordFactory.removeActiveRecord( { id : args.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){
