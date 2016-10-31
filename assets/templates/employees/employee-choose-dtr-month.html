@@ -1,0 +1,84 @@
+<div class="modal-header">
+    <h4>{{modalOptions.headerText}}</h4>
+</div>
+<div class="modal-body">
+	  <form novalidate="" name="dtrForm">
+	  		<ajax-loader show-loader="vm.showLoader"></ajax-loader>
+	  		<div class="col-md-6">
+				<h5><i class="fa fa-tasks"></i> Type of report</h5>
+				<div class="bulk-items" style="height:6.2em;" ng-class="{ 'has-error': (dtrForm.exportType.$touched || dtrForm.$submitted) && dtrForm.exportType.$invalid }">
+					<div>
+						<input type="radio" name="exportType" ng-model="vm.exportType" ng-required="true" ng-value="0" ng-checked="vm.exportType"/>
+						<i class="fa fa-file-pdf-o"></i> PDF File Format
+						
+					</div>
+					<div>
+						<input type="radio" name="exportType" ng-disabled="true" ng-model="vm.exportType" ng-required="true" ng-value="1" ng-checked="vm.exportType"/>
+						<i class="fa fa-file-text"></i> CSV(comma-separated values) File Format		
+					</div>	
+					<div>
+						<input type="radio" name="exportType" ng-disabled="true" ng-model="vm.exportType" ng-required="true" ng-value="2" ng-checked="vm.exportType"/>
+						<i class="fa fa-file-word-o"></i> Microsoft Word(.doc) File Format		
+					</div>					
+					<span class="help-block" ng-if="(dtrForm.exportType.$touched || dtrForm.$submitted) && dtrForm.exportType.$error.required">Starts-At is required</span>					 
+				</div>
+				<h5><i class="fa fa-calendar-o"></i> Select Month/Date Range</h5>
+
+				<div class="form-group" ng-class="{ 'has-error': (dtrForm.startsAt.$touched || dtrForm.$submitted) && dtrForm.startsAt.$invalid }">						
+					<div class="input-group has-min-margin-bottom">
+		              <div class="input-group-addon">
+		                <i class="fa fa-calendar"></i>
+		              </div>
+		              <input
+		              	placeholder="Starts At"
+		              	name="startsAt"
+		                type="text"
+		                class="form-control pull-right"               
+		                uib-datepicker-popup="dd MMMM yyyy"
+		                datepicker-options="vm.time_record_dp_options.startsAt"		                
+		                ng-required="true"
+				        ng-change="vm.onChangeStartsAt();"
+		                ng-model="vm.exportDate.startsAt"
+		                is-open="vm.time_record_datePicker.startsAt"
+		                close-text="Close" ng-click="vm.toggle($event, 'startsAt', vm.time_record_datePicker)"/>              
+		            </div>
+		        	<span class="help-block" ng-if="(dtrForm.startsAt.$touched || dtrForm.$submitted) && dtrForm.startsAt.$error.required">Starts-At is required</span>	
+		            <!-- /.input group -->
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': (dtrForm.endsAt.$touched || dtrForm.$submitted) && dtrForm.endsAt.$invalid }">
+		            <div class="input-group">
+		              <div class="input-group-addon">
+		                <i class="fa fa-calendar"></i>
+		              </div>
+		              <input
+		              	placeholder="Ends At"
+		                type="text"
+		              	name="endsAt"
+		                ng-required="true"	                
+		                class="form-control pull-right"               
+		                uib-datepicker-popup="dd MMMM yyyy"
+		                datepicker-options="vm.time_record_dp_options.endsAt"
+		                ng-model="vm.exportDate.endsAt"
+		                is-open="vm.time_record_datePicker.endsAt"
+		                close-text="Close" ng-click="vm.toggle($event, 'endsAt', vm.time_record_datePicker)"/>              
+		            </div>
+		        	<span class="help-block" ng-if="(dtrForm.endsAt.$touched || dtrForm.$submitted) && dtrForm.endsAt.$error.required">Ends-At is required</span>	
+		            <!-- /.input group -->
+				</div>
+			</div>
+			<div class="col-md-6">
+				<h5><i class="fa fa-cloud-upload"></i> Continue to generate?</h5>
+				<div class="callout callout-info">
+					<h4>Please make ..</h4>
+					<p>Make sure that the selected month/date is atleast <strong>15</strong> days total.</p>
+				</div>
+				<button class="btn btn-sm btn-primary" ng-click="vm.generateReport();" ng-disabled="dtrForm.$invalid"><i class="fa fa-cloud-upload"></i> Yes, start exporting.</button>
+				<button class="btn btn-sm btn-danger" ng-click="modalOptions.close();"><i class="fa fa-ban"></i> No, cancel generating report.</button>
+			</div>	
+			<div class="clearfix"></div>
+	  </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
+    <!-- <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="eventForm.$invalid"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button> -->
+</div>
