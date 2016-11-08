@@ -266,3 +266,27 @@ button.filter-options-content{
 .min-margin-right {
   margin-right: 10px;
 }
+
+.dtr-preview-container{
+  /*background:#fff !important;*/
+  min-height: 850px;
+  padding : 40px;
+  margin: 10px auto;
+}
+
+.dtr-preview-header, .dtr-preview-subheader {
+  margin : 20px auto;
+}
+
+h4.dtr-preview-signature-overprinted-name{
+  padding : 10px 0px;
+  border-top: 1px solid #000;
+}
+
+.no-border{
+  border: 0px none !important;
+}
+
+.dtr-preview-body h5, .dtr-preview-body h6{
+  margin : 0px auto !important;
+}

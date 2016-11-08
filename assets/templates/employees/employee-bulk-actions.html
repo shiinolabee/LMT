@@ -103,11 +103,13 @@
 			              </div>
 			              <input
 			              	placeholder="Starts At"
+			              	datepicker-options="vm.time_record_dp_options.startsAt"
 			              	name="startsAt"
 			                type="text"
 			                class="form-control pull-right"               
 			                uib-datepicker-popup="dd MMMM yyyy"
 			                ng-required="true"
+				        	ng-change="vm.onChangeStartsAt();"
 			                ng-model="vm.exportDate.startsAt"
 			                is-open="vm.time_record_datePicker.startsAt"
 			                close-text="Close" ng-click="vm.toggle($event, 'startsAt', vm.time_record_datePicker)"/>              
@@ -124,6 +126,7 @@
 			              	placeholder="Ends At"
 			                type="text"
 			              	name="endsAt"
+			              	datepicker-options="vm.time_record_dp_options.endsAt"
 			                ng-required="true"	                
 			                class="form-control pull-right"               
 			                uib-datepicker-popup="dd MMMM yyyy"

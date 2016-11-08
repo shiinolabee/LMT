@@ -19,6 +19,17 @@ module.exports = {
         });
 
     },
+
+    getTimeRecordsByDates : function( data, callback ){
+
+        Employee_time_records.find({ where : { empId : data.id, date: { '>=': data.startsAt, '<=': data.endsAt } } })
+            .exec(function( err, time_records ){   
+
+                if ( err ) throw err;                                        
+            
+                callback(time_records);            
+        });   
+    },
     
     getEmployeeTimeRecord : function( id, callback ) {
 

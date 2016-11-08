@@ -17,7 +17,7 @@
 			return totalHours.toFixed(2) + ' hr(s)';
 		}
 
-	})
+	});
 
 	cereliDirectives.filter('contentIsEmpty', function(){
 
@@ -29,6 +29,15 @@
 			return value;
 		}
 	});
+
+	cereliDirectives.filter('UnsafeHtml', ["$sce",
+	  function($sce) {
+	    return function(val) {
+	      return $sce.trustAsHtml(val);
+	    };
+	  }
+	]);
+
 
 	cereliDirectives.filter('filterGender', function(){
 
@@ -91,8 +100,7 @@
 
 				$scope.$watch(function(){
 					return _self.employeeList;
-				}, function( newValue ){
-					console.log(newValue)
+				}, function( newValue ){				
 					_self.employeeList = newValue;
 				});
 
@@ -292,7 +300,7 @@
                     $scope.selectedYear = $scope.initDate.format('YYYY');
                     $scope.selectedMonth = $scope.initDate.format('MMMM');                    
 
-                    ActiveRecordFactory.getActiveRecord({ id : _self.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getTimeRecordsByDates').then(function( response ){
+                    ActiveRecordFactory.getActiveRecord({ id : _self.employee.empId, date : $scope.initDate.format('YYYY-MM-DD') }, 'employee_time_records/getEmployeeStatisticsReport').then(function( response ){
                         if ( response.success ) {                                
                             $scope.statisticsRecordResult = response.data;
                             $scope.childShowLoader = false;                                
@@ -446,7 +454,7 @@
 
 	});
 
-	cereliDirectives.directive('employeeBulkActions', function(){
+	cereliDirectives.directive('employeeBulkActions', [ 'moment', function( moment ){
 
 		return {
 
@@ -465,7 +473,7 @@
 				authorizeUserId : '='
 			},
 
-			controller : ['$scope', 'ActiveRecordFactory', function( $scope, ActiveRecordFactory ){
+			controller : ['$scope', 'ActiveRecordFactory', '$location', '$injector', function( $scope, ActiveRecordFactory, $location, $injector ){
 
 				var _self = this;		
 				
@@ -475,12 +483,28 @@
 				_self.selectedEmployeeIds = []; // selected ids array container
 
                 _self.time_record_datePicker = {};	
-                _self.exportType = 2; // set to .doc file type
+                _self.exportType = 0; // set to .doc file type
 
-				_self.removeFromBulkItems = function( index ) {
-					console.log(_self.selectedEmployees, index);
-					_self.selectedEmployees.splice(index, 1);  
-					console.log(_self.selectedEmployees);
+        		_self.time_record_dp_options = {
+                	startsAt : {
+                		formatYear: 'yy',
+                    	startingDay: 1                    		
+                	},
+                	endsAt : {
+                		formatYear: 'yy',
+                        startingDay: 1    
+                	}
+                };        	  
+
+			    _self.onChangeStartsAt = function(){
+
+			    	_self.time_record_dp_options.endsAt.minDate = _self.exportDate.startsAt;
+			      	_self.time_record_dp_options.endsAt.initDate = moment(_self.exportDate.startsAt).toDate();		      	
+
+			    };
+
+				_self.removeFromBulkItems = function( index ) {					
+					_self.selectedEmployees.splice(index, 1);  					
 				};		
 
 				/**
@@ -572,6 +596,55 @@
 				* Sets to export selected employees for reports purposes
 				**/
 				_self.exportItems = function(){
+					
+					var duplicateSelectedEmployees = angular.copy(_self.selectedEmployees);
+
+					_self.selectedEmployeeIds = [];
+
+					var totalSelectedEmployees = duplicateSelectedEmployees.filter(function(obj){						
+						_self.selectedEmployeeIds.push(obj.empId);
+
+						return true;
+					});
+
+					var totalSelectedEmployeeIds = _self.selectedEmployeeIds;
+
+					if ( _self.time_record_datePicker && totalSelectedEmployees.length > 0 ) {
+
+			    		_self.showLoader = true;
+
+			    		ActiveRecordFactory.getActiveRecord({ ids : _self.selectedEmployeeIds, dates : _self.exportDate }, 'employee_time_records/getTimeRecordListByDates')
+			    		.then(function(response){
+			    			if ( response.success ) {
+			    				
+			    				response.data.filter(function(obj){						
+
+									obj.date = moment(obj.date).format('YYYY-MM-DD');
+
+									var employeeId = obj.empId;
+
+									var employee = _self.selectedEmployees.find(function( obj ){
+										return obj.empId == employeeId;
+									});
+
+									employee.time_records.push(obj);
+
+									return true;
+								});
+
+			    				$injector.get('$state').go('admin.dtrpreview',
+			    					{ 
+			    						dtrDataList : response.data,
+			    						employeeList : _self.selectedEmployees, 
+			    						selectedDates : _self.exportDate 
+			    					}
+		    					);
+			    			}
+
+			    			_self.showLoader = false;
+			    		});
+
+			    	}
 
 				};
 
@@ -626,7 +699,7 @@
 			controllerAs : 'vm'
 		}
 
-	});
+	}]);
 
 	cereliDirectives.directive('ajaxLoader', function(){
 
@@ -823,7 +896,7 @@
 
 		return {		
 
-			scope : { id : '@' },			
+			scope : { id : '=' },			
 
 			link : function( scope, element, attr ) {				
 
@@ -845,6 +918,20 @@
 			template : '{{ selectedDepartment }}',
 		};
 
+	});
+
+	cereliDirectives.directive('toggleTimeRecordEdit', function( $compile ){
+
+		return {
+
+			restrict : 'A',
+
+			link : function( scope, elems, attrs ){
+
+
+
+			}
+		}
 	});
 
 	cereliDirectives.directive('employeeStatisticsReport', [ 'moment', 'ActiveRecordFactory', function( moment, ActiveRecordFactory ){
@@ -1192,6 +1279,7 @@
 
 	}] );
 
+
 	/**
 	* Employee's Details and Time Record Details with Calendar View	
 	**/
@@ -1243,7 +1331,7 @@
                 _self.viewDate = moment().startOf('year').toDate();
 
                 var actions = [{
-                  label: '<i class=\'fa fa-pencil\'></i>',
+                  label: '<i class=\'fa fa-pencil\' title="Edit Time Record"></i>',
 
                   onClick: function(args) {
 
@@ -1270,7 +1358,7 @@
                   }
                 }, 
                 {                	
-                  label: '<i class=\'fa fa-trash\'></i>',
+                  label: '<i class=\'fa fa-trash\' title="Remove Time Record"></i>',
                   onClick: function(args) {                   
 
                     ActiveRecordFactory.removeActiveRecord( { id : args.calendarEvent.id, fullName : _self.employeeDetails.fullName, empId : _self.employeeDetails.empId }, 'employee_time_records/removeEmployeeTimeRecord').then(function( response ){

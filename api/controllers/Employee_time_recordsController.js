@@ -7,6 +7,8 @@
 var responseDataList = []; 
 
 var moment = require('moment');
+var promise = require('q');
+
 
 module.exports = {
 
@@ -144,11 +146,57 @@ module.exports = {
             var startsAt = moment(selectedDates.startsAt);
             var endsAt = moment(selectedDates.endsAt);
 
-            Employee_time_records.find({ where : { empId : empId, date: { '>=': startsAt.format('YYYY-MM-DD'), '<=': endsAt.format('YYYY-MM-DD') } } })/*.max('startsAt')*/
-                .then(function( result ){
+            Employee_time_records.find({ where : { id : empId, date: { '>=': startsAt.format('YYYY-MM-DD'), '<=': endsAt.format('YYYY-MM-DD') } } })/*.max('startsAt')*/
+                .exec(function( result ){
                 res.json({ success : true, data : result });
             });  
 
+        }
+    },
+
+    getTimeRecordListByDates : function( req, res ){
+
+        if ( req.param('ids').length > 0 ) {
+
+                var empIds = req.param('ids');
+
+                var selectedDates = req.param('dates');
+
+                var startsAt = moment(selectedDates.startsAt);
+                var endsAt = moment(selectedDates.endsAt);
+                
+                var callbacks = [];
+
+                empIds.forEach(function (id) {
+
+                    var deffered = promise.defer();
+
+                    EmployeesTimeRecordService.getTimeRecordsByDates({ id : id, startsAt : startsAt.format('YYYY-MM-DD'), endsAt : endsAt.format('YYYY-MM-DD') }, function( response ){
+                    
+                        if ( response ) {                            
+                            return deffered.resolve(response);                                      
+                        } 
+
+                        return deffered.reject(response);
+                            
+                    });       
+
+                    callbacks.push(deffered.promise);
+
+                });
+
+                promise.allSettled(callbacks).then(function( result ){
+                    var responseData = [];                    
+
+                    result.forEach(function( item ){
+                        responseData = responseData.concat(item.value);
+                    });
+
+                    res.json({ success : true, data : responseData }); 
+                });
+
+        } else {
+            res.json({ success : false, error : "No employee(s) is selected."});
         }
     },
 
@@ -160,7 +208,7 @@ module.exports = {
             var selectedDate = moment(req.param('date'));
             var lastDayofSelectedDate = moment(req.param('date')).date(selectedDate.daysInMonth());
 
-            console.log(selectedDate.format('YYYY-MM-DD hh:mm:ss'), lastDayofSelectedDate.format('YYYY-MM-DD hh:mm:ss'));
+            // console.log(selectedDate.format('YYYY-MM-DD hh:mm:ss'), lastDayofSelectedDate.format('YYYY-MM-DD hh:mm:ss'));
 
             Employee_time_records.find({ where : { empId : id, startsAt : { '>=': selectedDate.format('YYYY-MM-DD hh:mm:ss'), '<': lastDayofSelectedDate.format('YYYY-MM-DD hh:mm:ss') }, date: { '>=': selectedDate.format('YYYY-MM-DD'), '<': lastDayofSelectedDate.format('YYYY-MM-DD') } } })/*.max('startsAt')*/
                 .then(function( result ){

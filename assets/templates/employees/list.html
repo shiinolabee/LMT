@@ -104,8 +104,7 @@
                     <td><input type="checkbox" value="{{ employee.id }}" ng-model="employee.selected"></td>                
                     <td>{{ employee.empId }}</td>
                     <td>{{ employee.fullName }} </td>
-                    <td><show-subdetails-employee index="$index" id="{{employee.departmentAssigned}}" type="
-                      departmentAssigned"></show-subdetails></td>
+                    <td><show-subdetails-employee id="employee.departmentAssigned"></show-subdetails></td>
                     <td>{{ employee.position | contentIsEmpty }}</td>
                     <!-- <td>{{ employee.emailAddress }}</td> -->
                     <td>{{ employee.recordStatus | recordStatus }}</td>

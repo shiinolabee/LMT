@@ -152,12 +152,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header" ng-if="authorizeUser">
       <h1>
-        {{ currentState | uppercase }}
+        {{ currentState | ucfirst }}
         <small>Control panel</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="javascript:void(0);" ui-sref="admin.dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active" ng-if="currentState !== 'dashboard'">{{ currentState | uppercase }}</li>
+        <li class="active" ng-if="currentState !== 'dashboard'">{{ currentState | ucfirst }}</li>
       </ol>
     </section>
 

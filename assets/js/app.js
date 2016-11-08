@@ -88,7 +88,28 @@
                     access: AccessLevels.user,
                     menuCode : 1,
                     isChild : false
+                }
+            })
+
+            .state('admin.dtrpreview', {
+                url : 'dtr/preview',
+                params : {
+                    employeeList : null,
+                    selectedDates : null,
+                    dtrDataList : null
                 },
+                views : {
+                    'child-content' : {
+                        templateUrl : 'templates/employees/employee-dtr-preview.html',                       
+                        controller : 'employeeDtrController',
+                        controllerAs : 'employeeDtrCtrl'            
+                    }
+                },
+                data: {
+                    access: AccessLevels.user,
+                    menuCode : 1,
+                    isChild : false
+                }
             })
 
             .state('admin.employees', {               
@@ -126,7 +147,7 @@
                     menuCode : 2.5,
                     isChild : false
                 }
-            })  
+            })             
 
             .state('admin.reports' ,{
                 url : 'reports',
