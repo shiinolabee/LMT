@@ -1,7 +1,7 @@
 <div ng-if="authorizeUser">
 	<form novalidate name="employeeProfileForm" style="position:relative;">
 		<ajax-loader show-loader="vm.childShowLoader"></ajax-loader>
-		<div class="col-md-4">
+		<div class="col-md-4 col-lg-7">
 			<div class="box box-warning">
 				<div class="box-header with-border">
 					<h3 class="box-title"> Basic Information</h3>
@@ -26,15 +26,23 @@
 					<strong><i class="fa fa-user margin-r-5 has-min-margin-bottom"></i> Position/Designation </strong>
 					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.position | contentIsEmpty }} </p>				
 					<input type="text" class="form-control" name="position" ng-model="vm.formCopyEmployeeDetails.position" ng-if="vm.isToggleInput"/>	
+					<hr>
+					<strong><i class="fa fa-user margin-r-5 has-min-margin-bottom"></i> Email Address </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.emailAddress }} </p>
+					<input type="text" class="form-control" name="emailAddress" ng-model="vm.formCopyEmployeeDetails.emailAddress" ng-if="vm.isToggleInput"/>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-8">
+		<div class="col-md-8 col-lg-7">
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<h3 class="box-title"> More Information</h3>
 				</div>
 				<div class="box-body">
+					<strong><i class="fa fa-user margin-r-5 has-min-margin-bottom"></i> Employee ID </strong>
+					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.empId }} </p>
+					<input type="text" class="form-control" name="empId" ng-model="vm.formCopyEmployeeDetails.empId" ng-if="vm.isToggleInput"/>
+					<hr>
 					<strong><i class="fa fa-calendar-plus-o margin-r-5 has-min-margin-bottom"></i> Date Hired </strong>
 					<p class="text-muted" ng-if="!vm.isToggleInput"> {{ vm.employee.dateHired | date:'MMM dd yyyy' }} </p>
 					<input type="text" uib-datepicker-popup="{{datePickerOptions.formatSelected}}" datepicker-options="datePickerOptions.dateHiredOptions" class="form-control" name="dateHired" id="dateHired" close-text="Close" ng-model="vm.formCopyEmployeeDetails.dateHired" ng-required="true" ng-click="datePickerOptions.openDateHired()" is-open="datePickerOptions.isOpenDateHired.opened" alt-input-formats="datePickerOptions.altInputFormats" ng-if="vm.isToggleInput"/>

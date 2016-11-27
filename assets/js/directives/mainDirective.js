@@ -152,6 +152,51 @@
 
 	});
 
+	cereliDirectives.directive('timeRecordList', [ 'PagerService', function( PagerService ){
+
+		return {
+
+			restrict : 'E',
+
+			templateUrl : "templates/employees/un-tracked-time-record-list.html",
+
+			scope : {
+				mainDataList : '=',
+			},
+
+			controller : function( $scope ){
+
+				var _self = this;
+
+        		_self.pager = {};   
+        		_self.dummyEmployeeList = $scope.mainDataList;  
+
+
+        		_self.setPage = function( page ){            
+
+		            if (page < 1 || page > _self.pager.totalPages) {
+		                return;
+		            }
+
+		            // new pager
+		            var pagerInstance = new PagerService(_self.dummyEmployeeList.length, 10);
+
+		            _self.pager = pagerInstance.getPager(page);
+
+		            // get current page of items
+		            $scope.mainDataList = _self.dummyEmployeeList.slice(_self.pager.startIndex, _self.pager.endIndex + 1);
+		            
+		        };  
+
+		        _self.setPage(1); 
+
+			},
+
+			controllerAs : 'vm'
+
+		}
+	}])
+
 	cereliDirectives.directive('employeeViewDetails', [ '$uibModal', function( $uibModal ){
 
 		return {
@@ -179,15 +224,36 @@
 				var _self = this;
 			   	
                 $scope.hasSelectedOtherTab = false;
-                $scope.statisticsRecordResult = [];   
+                $scope.statisticsRecordResult = [];
 
 
                 $scope.$watchCollection(function(){
                 	return [ _self.employeeTimeRecords, _self.employee];
                 }, function( newValue ){
                 	$scope.employeeTimeRecords = newValue[0];
-                	$scope.employee = newValue[1];
+                	$scope.employee = newValue[1]; 
+
+                	_self.getDepartmentNameById();
                 });
+
+
+                _self.getDepartmentNameById = function(){
+
+                	// console.info("Searching Department name...");
+
+                	if ( _self.employee.departmentAssigned > 0 ) {
+
+	                	angular.forEach(_self.departmentList, function(value, key){
+
+							if ( value.id == _self.employee.departmentAssigned ) {						
+								_self.selectedDepartment = value.departmentName;																			
+							}
+						});
+                	} else {
+                		_self.selectedDepartment = "Not yet specified.";
+                	}
+
+                };
 
                 _self.close = function(){
                 	$scope.$parent.$parent.config.showEmployeeDetailsContent = false;
@@ -336,7 +402,9 @@
                         }
                     });
 
-                };                 
+                };       
+
+                _self.getDepartmentNameById();          
 			}]
 		}
 
@@ -901,7 +969,6 @@
 			link : function( scope, element, attr ) {				
 
 				if ( scope.id > 0 ) {
-
 					angular.forEach(scope.$parent.departmentList, function(value, key){
 
 						if ( value.id == scope.id ) {						

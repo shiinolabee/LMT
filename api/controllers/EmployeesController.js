@@ -95,6 +95,19 @@ module.exports = {
 
     },
 
+    getTimeRecordList : function( req, res ){
+
+        Employee_time_records.find().exec(function( err, time_records ) {
+
+            if( err ) callback(err);
+
+            sails.log('There are %d time_records time record(s) fetched in the collection.', time_records.length);
+
+            res.json({ success : true, data : time_records});
+            
+        });
+    },
+
     getEmployeeTimeRecord : function( req, res ){
 
         EmployeesTimeRecordService.getEmployeeTimeRecord(req.param('id'),function( response ){
@@ -138,6 +151,46 @@ module.exports = {
             }
         });
 
+    },
+
+    saveBulkEmployees : function( req, res ){
+
+        if ( req.param('empIds') ) {
+            var i, transactionResults = [];
+
+            var empIds = req.param('empIds').split(',');
+
+            for (var i=0; i < empIds.length; i++) (function(i){
+
+                var empDataRecord = req.param('dataAttrs');
+
+                empDataRecord.empId = empIds[i].trim();
+
+                EmployeesService.saveEmployee( empDataRecord, function(response) {                
+
+                    if ( response ) transactionResults.push(response);
+
+                    return transactionResults;
+                });                   
+
+            })(i); // avoid the closure loop problem
+
+            promise.all(transactionResults).then(function(response){
+
+                var responseData = response || transactionResults;
+                var id = req.param('userId');
+                var title = "Created Employee Dummy List" ;
+                var description = "Employee IDs\'s [ " + req.param('empIds') + " ] List has been registered.";
+
+                EmployeeActivitiesService.saveEmployeeActivity({ type : 1.3, userId : id, description : description, title : title }, function( response ){
+
+                    if ( response ) {
+                        return res.json( { success : true , data : responseData  });    
+                    }
+                });
+
+            });   
+        }
     },
 
     getEmployeeList : function( req, res ){         
@@ -278,7 +331,7 @@ module.exports = {
 
                         if( err ) throw err;
 
-                        sails.log('Time record details of Employee ID ' + response[0].empId +' successfully removed in the collection.'); 
+                        sails.log('Employee ID ' + response[0].empId +' successfully removed in the collection.'); 
                         
                         return queryResults;
                     });

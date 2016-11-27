@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h4>{{modalOptions.headerText}}</h4>
+</div>
+<div class="modal-body">
+	<!-- <div class="row"> -->
+		<ajax-loader show-loader="vm.showLoader"></ajax-loader>
+
+		<form novalidate="" name="bulkDummyForm">
+			
+			<div class="col-md-8 no-padding">
+				<div class="callout callout-warning">
+					<h4>Employee Attributes?</h4>
+					<p>Note that each of employee id you entered will have each default attributes set by <strong>default</strong>.</p>					
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group" ng-class="{ 'has-error': (bulkDummyForm.empIds.$touched || bulkDummyForm.$submitted) && bulkDummyForm.empIds.$invalid }">
+					<label> Enter Employee IDs(separated by commas)</label>
+					<input type="empIds" name="empIds" ng-model="dummyRecord.empIds" class="form-control" ng-required />
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		   <div uib-alert ng-repeat="alert in vm.alerts" ng-class="'alert-' + ({{alert.type}} || 'success')" type="{{alert.type}}" close="employeeCtrl.closeAlert('alerts', $index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
+		</form>
+	<!-- </div> -->
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="modalOptions.close()"><span class="glyphicon glyphicon-ban-circle"></span> {{modalOptions.closeButtonText}}</button>
+    <button class="btn btn-primary" data-ng-click="modalOptions.ok();" ng-disabled="employeeForm.$invalid"><span class="glyphicon glyphicon-plus-sign"></span> {{modalOptions.actionButtonText}}</button>
+</div>

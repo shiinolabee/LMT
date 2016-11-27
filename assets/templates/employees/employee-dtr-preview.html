@@ -1,199 +1,8 @@
-<div ng-if="authorizeUser">	
+<div ng-if="authorizeUser" class="row no-padding">	
+	<ajax-loader show-loader="showLoader"></ajax-loader>	
  	<div class="btn btn-primary" ng-click="generatePDF();"><i class="fa fa-file-pdf-o"></i> Generate PDF Report</div> 	 
  
- 	<!-- <div id="htmlData3">
- 		<div class="col-md-9 text-center center-block dtr-preview-container">		
-	 		<div class="dtr-preview-header text-center">
-				<h3>Cereli Electrical Services</h3>
-				<h4>Tawason, Mandaue City</h4>				
-				<h4>Tel no. 422-2361</h4>
-				<h4>Daily Time Record</h4>
-			</div>
-			<div class="dtr-preview-subheader">
-				<div class="col-md-6">
-					<dl class="dl-horizontal">
-						<dt>Employee's ID:</dt><dd>Test ID</dd>
-						<dt>Employee's Name:</dt><dd>Test Name</dd>						
-						<dt>Department:</dt><dd>Not Specified.</dd>						
-					</dl>
-				</div>
-				<div class="col-md-6 pull-right">
-				<dl class="dl-horizontal">
-					<dt>Total Regular Hours:</dt><dd>105:50</dd>
-					<dt>Total Overtime Hours:</dt><dd>5:60</dd>
-					<dt>Leave:</dt><dd>1</dd>
-					<dt>Tardiness:</dt><dd>45:50</dd>
-				</dl>
-				</div>				
-				<div class="clearfix"></div>
-			</div>
-			<div class="dtr-preview-body col-md-12">
-				<h4 class="text-center">Period From : Jan 1 To: Jan 15</h4>
-				<table class="table table-responsive">
-					<thead>
-						<tr>
-							<th colspan="1"></th>
-							<th colspan="2">Morning</th>
-							<th colspan="2">Afternoon</th>
-							<th colspan="2">Overtime</th>
-							<th colspan="2">Regular</th>
-							<th colspan="2">Overtime</th>
-						</tr>
-						<tr>
-							<th>Date</th>
-							<th>In </th>
-							<th>Out</th>
-							<th>In </th>
-							<th>Out</th>
-							<th>In </th>
-							<th>Out</th>
-							<th colspan="2">Hours</th>
-							<th colspan="2">Hours</th>
-							<th>Tardiness</th>
-							<th>Remarks</th>
-						</tr>
-					</thead>
-					<tbody>
-							<tr class="ng-scope">
-								<td class="no-border ng-binding">01-Jan</td>							
-								
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">02-Jan</td>							
-								
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">03-Jan</td>							
-								
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">04-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:33 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:33 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">05-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:24 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">06:21 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:24 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">06:21 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">06-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:09 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:17 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:09 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:17 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">07-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">08:45 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:55 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">08:45 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:55 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">08-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">08:48 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:21 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">08:48 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:21 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">09-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">10:36 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">04:28 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">04:28 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">10:36 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">10-Jan</td>							
-								
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">11-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:19 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">06:15 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:19 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">06:15 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">12-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:38 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">08:17 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:38 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">08:17 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">13-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">07:04 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:17 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:17 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">07:04 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">14-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:18 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:23 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:18 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:23 </h5>									
-								</td>
-							</tr><tr class="ng-scope">
-								<td class="no-border ng-binding">15-Jan</td>							
-								<td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:30 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:37 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">09:30 </h5>									
-								</td><td class="no-border ng-scope">
-									<h5 toggle-time-record-edit="" class="ng-binding">05:37 </h5>									
-								</td>
-							</tr>
-						</tbody>
-				</table>
-			</div>				
-			<div class="pull-right col-md-3">
-				<h4 class="dtr-preview-signature-overprinted-name text-center">Signature Over Printed Name</h4>
-			</div>
-			<div class="clearfix"></div>
- 		</div> 		
- 	</div> -->
- 	<div class="dtr-data-list-container" id="htmlData"> 		
+ 	<div class="dtr-data-list-container" id="htmlData"> 	
 		<div class="col-md-9 text-center center-block dtr-preview-container" ng-repeat="employee in employeeList">			
 			<div class="dtr-preview-header text-center">
 				<h3>Cereli Electrical Services</h3>
@@ -220,7 +29,7 @@
 			</div>
 			<div class="dtr-preview-body col-md-12">
 				<h4 class="text-center">Period From : {{ employeeDtrCtrl.selectedDates.startsAt | date:'dd-MMM' }} To : {{ employeeDtrCtrl.selectedDates.endsAt | date:'dd-MMM' }}</h4>
-				<table class="table table-responsive">
+				<table class="table dtr-table table-responsive">
 					<thead>
 						<tr>
 							<th colspan="1"></th>
@@ -229,6 +38,8 @@
 							<th colspan="2">Overtime</th>
 							<th colspan="2">Regular</th>
 							<th colspan="2">Overtime</th>
+							<th></th>
+							<th></th>
 						</tr>
 						<tr>
 							<th>Date</th>

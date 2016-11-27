@@ -215,6 +215,11 @@ span.toggle-show-password{
   z-index: 3;
 }
 
+.no-padding {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
 .no-margin-bottom{
   margin-bottom: 0px !important;
 }
@@ -269,9 +274,15 @@ button.filter-options-content{
 
 .dtr-preview-container{
   /*background:#fff !important;*/
-  min-height: 850px;
-  padding : 40px;
-  margin: 10px auto;
+  min-height: 1000px;
+  max-height: 1000px;
+  padding : 0px;
+  margin: 5px auto 5px 110px;
+}
+
+.dtr-preview-container h3, .dtr-preview-container h4{
+  margin-top:  7px !important;
+  margin-bottom: 7px !important;
 }
 
 .dtr-preview-header, .dtr-preview-subheader {
@@ -285,6 +296,14 @@ h4.dtr-preview-signature-overprinted-name{
 
 .no-border{
   border: 0px none !important;
+}
+
+.dtr-table > tbody > tr > td, .dtr-table > thead > tr > th{
+  padding : 5px !important;
+}
+
+.dtr-table h5{
+  line-height: normal !important;
 }
 
 .dtr-preview-body h5, .dtr-preview-body h6{

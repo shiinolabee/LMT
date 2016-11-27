@@ -38,78 +38,61 @@
 
 		$scope.generatePDF = function(){
 		 	
-		 	console.log("starting HTMLclick");
+		 	console.log("Converting to PDF has started.");
+
+		 	$scope.showLoader = true;
 
 		 	var doc = new jsPDF('l', 'mm', 'a4');
 		    
 		    var element = document.getElementById('htmlData');
 
 		    html2canvas((element), {
+		    	logging : true
+		    }).then(function( canvas ) {
 
-		        onrendered: function(canvas) {
+		    	$scope.showLoader = false;
 
-		            var imgData = canvas.toDataURL(
-		                'image/png');
+	    	 	var imgData = canvas.toDataURL(
+	                'image/png');
 
-		            var d = new Date();
-		            var n = d.toLocaleDateString();
+	            var d = new Date();
+	            var n = d.toLocaleDateString();
 
-		            doc.page = 1; // use this as a counter.
+	            doc.page = 1; // use this as a counter.
 
-		            function footer() {
+	            function footer() {
 
-		                doc.setFontSize(8);
-		                doc.text(185, 295, n); //print number bottom right
-		                doc.page++;
+	                doc.setFontSize(8);
+	                doc.text(185, 295, n); //print number bottom right
+	                doc.page++;
 
-		            };
+	            };
 
-		            var imgWidth = 280;
-		            var pageHeight = 180;
-		            var imgHeight = canvas.height * imgWidth / canvas.width;
-		            var heightLeft = imgHeight;
-		            var position = 0;
+	            var imgWidth = 280;
+	            var pageHeight = 200;
+	            var imgHeight = canvas.height * imgWidth / canvas.width;
+	            var heightLeft = imgHeight;
+	            var position = 0;
+	            var positionDecrementor = 20;
 
-		            doc.addImage(imgData, 'PNG', 25, 10, imgWidth, imgHeight);
+	            doc.addImage(imgData, 'PNG', 25, 5, imgWidth, imgHeight);
 
-		            footer();
+	            footer();
 
-		            heightLeft -= pageHeight;
+	            heightLeft -= pageHeight;
 
-		            while (heightLeft >= 0) {
-		                position = heightLeft - imgHeight;
-		                doc.addPage();
-		                doc.addImage(imgData, 'PNG', 25, position, imgWidth, imgHeight);
-		                footer();
-		                heightLeft -= pageHeight;
-		            }
+	            while (heightLeft >= 0) {
+	                position = heightLeft - imgHeight;
+	            	// console.info(position);
+	                doc.addPage();
+	                doc.addImage(imgData, 'PNG', 25, (position - positionDecrementor), imgWidth, imgHeight);
+	                footer();
+	                heightLeft -= pageHeight;
+	                positionDecrementor = positionDecrementor + 20;
+	            }
 
-		            doc.save('sample-file.pdf');
-		        }
-		    });      	
-	     
-
-			// html2canvas(document.getElementById('htmlData'),{
-			// 	onrendered : function( canvas ){
-
-			// 		var imgString = canvas.toDataURL('image/png');	
-
-			// 		// console.log(imgString);
-
-			// 		var img = new Image();
-
-			// 		img.src = imgString;					
-
-			// 		img.onload = function(){
-
-			// 			var pdf = new jsPDF('l', 'mm', 'a4');					
-
-			// 			pdf.addImage(imgString, 'JPEG', 25, 10);
-
-			// 			pdf.save('Test.pdf');
-			// 		}				
-			// 	}				
-			// });
+	            doc.save('Employee-DTR-' + n +'.pdf');
+		    });     	
 
 		};
 

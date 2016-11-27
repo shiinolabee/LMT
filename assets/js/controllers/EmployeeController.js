@@ -345,7 +345,105 @@
 
             });
 
-        };           
+        };      
+
+        _self.getTimeRecordList = function(){
+            ActiveRecordFactory.getActiveRecordList('employees/getTimeRecordList').then(function( response ){
+                _self.timeRecordList = response.data;
+            });
+        };    
+
+        _self.bulkNewBulkEmployees = function(){
+
+            var isEditMode = false;
+
+            var modalInstance = $uibModal.open({
+                templateUrl : "templates/employees/employee-add-bulk-dummy-records.html",
+                animation: true,
+                keyboard: false,
+                backdrop: false,
+                size: 'md',
+
+                resolve : {
+                    initEmployeeValues : function(){
+                        return _self.initEmployeeValues(0, 0);
+                    }
+                },
+
+                controller : function( $scope, initEmployeeValues ){
+
+                    var _self = this;
+
+                    $scope.dummyRecord = {
+                        empIds : null,
+                        dataAttrs : initEmployeeValues,
+                        userId : $scope.authorizeUser.user.id
+                    };  
+
+                    $scope.dummyRecord.dataAttrs.gender = 0;
+                    $scope.dummyRecord.dataAttrs.departmentAssigned = 0;
+                    $scope.dummyRecord.dataAttrs.fullName = "Dummy Name";
+
+                    $scope.modalOptions = {
+                        headerText : "New Bulk Employees",
+                        closeButtonText : "Cancel",
+                        actionButtonText : "Save",
+
+                        ok : function(result){
+
+                            _self.showLoader = true;
+
+                            var responseData, id;                                               
+
+                            ActiveRecordFactory.getActiveRecord($scope.dummyRecord, 'employees/saveBulkEmployees').then(function( response ) {
+                                responseData = response;
+
+                                if ( responseData.success ) {
+                                    modalInstance.close(responseData);                                    
+                                } else {
+
+                                    $scope.addAlert('employeeListAlerts', {
+                                        type: 'danger',
+                                        msg: 'Employee data list saving occurred.'
+                                    });     
+
+                                }
+                            });
+
+
+                        },
+
+                        close : function(){
+                            modalInstance.dismiss('cancel');
+                        }
+                    } 
+
+                },
+
+                controllerAs : 'vm'  
+
+            });
+
+
+            // modalInstance.closed.then(function( responseData ){
+            //     $scope.parentShowLoader = false;  
+            // });
+
+            modalInstance.result.then(function( responseData ){
+
+                if ( responseData.success ) {
+
+                    $scope.getEmployeeList();        
+
+                    $scope.addAlert('employeeListAlerts', {
+                        type: 'success',
+                        msg: 'Dummy Employee Records Successfully ' + ( isEditMode ? 'Updated' : 'Added' )
+                    });                                                              
+                }
+
+            });
+
+        };
 
         /**
         * Selects employee in search box via string
@@ -426,6 +524,8 @@
         };               
 
         $scope.getEmployeeList();
+
+        _self.getTimeRecordList();
 
     };
 

@@ -1,0 +1,49 @@
+<ajax-loader show-loader="vm.showLoader"></ajax-loader>
+
+<div class="clearfix"></div>
+
+<table class="table table-responsive table-striped">
+	<thead>
+		<tr>
+			<th> Employee ID </th>
+			<th> Total Time Records</th>
+			<!-- <th> Date Created </th> -->
+			<!-- <th> Date Updated </th> -->
+		</tr>
+	</thead>
+	<tbody>
+		<tr bindonce ng-repeat="(key, value) in mainDataList | groupBy : 'empId'">
+			<td>{{ key }}</td>
+			<td>{{ value.length }}</td>
+		</tr>
+	</tbody>
+</table>
+
+<div class="row">
+  	<div class="col-sm-5">
+	    <div class="dataTables_info">
+	      Showing {{ vm.pager.startIndex + 1}} to {{ vm.pager.endIndex + 1 }} of {{ vm.pager.totalItems }} records
+	    </div>
+  	</div>
+  	<div class="col-sm-7">
+	    <div class="dataTables_paginate paging_simple_numbers">                  
+	      <ul ng-if="vm.pager.pages.length" class="pagination">
+	          <li ng-class="{disabled:vm.pager.currentPage === 1}">
+	              <a ng-click="vm.setPage(1)">First</a>
+	          </li>
+	          <li ng-class="{disabled:vm.pager.currentPage === 1}">
+	              <a ng-click="vm.setPage(vm.pager.currentPage - 1)">Previous</a>
+	          </li>
+	          <li ng-repeat="page in vm.pager.pages" ng-class="{active:vm.pager.currentPage === page}">
+	              <a ng-click="vm.setPage(page)">{{page}}</a>
+	          </li>                
+	          <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
+	              <a ng-click="vm.setPage(vm.pager.currentPage + 1)">Next</a>
+	          </li>
+	          <li ng-class="{disabled:vm.pager.currentPage === vm.pager.totalPages}">
+	              <a ng-click="vm.setPage(vm.pager.totalPages)">Last</a>
+	          </li>
+	      </ul>
+	    </div>
+  	</div>
+</div> 
