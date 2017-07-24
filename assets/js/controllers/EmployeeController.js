@@ -348,7 +348,13 @@
         };      
 
         _self.getTimeRecordList = function(){
+
+            $scope.childShowLoader = true;
+
             ActiveRecordFactory.getActiveRecordList('employees/getTimeRecordList').then(function( response ){
+               
+                $scope.childShowLoader = false;
+                
                 _self.timeRecordList = response.data;
             });
         };    
@@ -523,9 +529,7 @@
             });
         };               
 
-        $scope.getEmployeeList();
-
-        _self.getTimeRecordList();
+        $scope.getEmployeeList();       
 
     };
 

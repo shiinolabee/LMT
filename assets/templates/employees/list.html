@@ -25,7 +25,7 @@
             </uib-tab>
             <!-- !Employee Timeline -->
             <!-- Employees Tab -->
-            <uib-tab index="1" select="employeeCtrl.getEmployeeList();">
+            <uib-tab index="1" select="getEmployeeList();">
               <uib-tab-heading>
                     <i class="fa fa-th-list"></i> List of Employees
               </uib-tab-heading>
@@ -170,7 +170,7 @@
             <!-- !View Employee Details Dynamic Tab -->    
 
             <!-- Untracked Time Record List -->
-            <uib-tab index="3">
+            <uib-tab index="3" select="employeeCtrl.getTimeRecordList();">
               <uib-tab-heading>
                 <i class="fa fa-th-list"></i> Un/Tracked Time Record List
               </uib-tab-heading>
